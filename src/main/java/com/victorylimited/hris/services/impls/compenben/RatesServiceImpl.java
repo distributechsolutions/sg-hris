@@ -53,7 +53,6 @@ public class RatesServiceImpl implements RatesService {
         rates.setOvertimeHourlyRate(object.getOvertimeHourlyRate());
         rates.setLateHourlyRate(object.getLateHourlyRate());
         rates.setAbsentDailyRate(object.getAbsentDailyRate());
-        rates.setAdditionalAllowance(object.getAdditionalAllowance());
         rates.setCurrentRates(object.isCurrentRates());
         rates.setUpdatedBy(object.getUpdatedBy());
         rates.setDateAndTimeUpdated(LocalDateTime.now(ZoneId.of("Asia/Manila")));
@@ -77,7 +76,6 @@ public class RatesServiceImpl implements RatesService {
         ratesDTO.setOvertimeHourlyRate(rates.getOvertimeHourlyRate());
         ratesDTO.setLateHourlyRate(rates.getLateHourlyRate());
         ratesDTO.setAbsentDailyRate(rates.getAbsentDailyRate());
-        ratesDTO.setAdditionalAllowance(rates.getAdditionalAllowance());
         ratesDTO.setCurrentRates(rates.isCurrentRates());
         ratesDTO.setUpdatedBy(rates.getUpdatedBy());
         ratesDTO.setCreatedBy(rates.getCreatedBy());
@@ -125,7 +123,6 @@ public class RatesServiceImpl implements RatesService {
                 ratesDTO.setOvertimeHourlyRate(rates.getOvertimeHourlyRate());
                 ratesDTO.setLateHourlyRate(rates.getLateHourlyRate());
                 ratesDTO.setAbsentDailyRate(rates.getAbsentDailyRate());
-                ratesDTO.setAdditionalAllowance(rates.getAdditionalAllowance());
                 ratesDTO.setCurrentRates(rates.isCurrentRates());
                 ratesDTO.setUpdatedBy(rates.getUpdatedBy());
                 ratesDTO.setCreatedBy(rates.getCreatedBy());
@@ -171,7 +168,6 @@ public class RatesServiceImpl implements RatesService {
                 ratesDTO.setOvertimeHourlyRate(rates.getOvertimeHourlyRate());
                 ratesDTO.setLateHourlyRate(rates.getLateHourlyRate());
                 ratesDTO.setAbsentDailyRate(rates.getAbsentDailyRate());
-                ratesDTO.setAdditionalAllowance(rates.getAdditionalAllowance());
                 ratesDTO.setCurrentRates(rates.isCurrentRates());
                 ratesDTO.setUpdatedBy(rates.getUpdatedBy());
                 ratesDTO.setCreatedBy(rates.getCreatedBy());

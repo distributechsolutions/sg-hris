@@ -60,7 +60,7 @@ public class AllowanceServiceImpl implements AllowanceService {
 
     @Override
     public AllowanceDTO getById(UUID id) {
-        logger.info("Retrieving employee's record record with UUID ".concat(id.toString()));
+        logger.info("Retrieving employee's allowance record with UUID ".concat(id.toString()));
 
         Allowance allowance = allowanceRepository.getReferenceById(id);
         AllowanceDTO allowanceDTO = new AllowanceDTO();
@@ -75,7 +75,7 @@ public class AllowanceServiceImpl implements AllowanceService {
         allowanceDTO.setUpdatedBy(allowance.getUpdatedBy());
         allowanceDTO.setDateAndTimeUpdated(allowance.getDateAndTimeUpdated());
 
-        logger.info("Employee's lallowance record with id ".concat(id.toString()).concat(" is successfully retrieved."));
+        logger.info("Employee's allowance record with id ".concat(id.toString()).concat(" is successfully retrieved."));
         return allowanceDTO;
     }
 

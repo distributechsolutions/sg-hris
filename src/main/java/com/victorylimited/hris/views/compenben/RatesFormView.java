@@ -50,8 +50,7 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
                             hourlyRateDecimalField,
                             overtimeHourlyRateDecimalField,
                             lateHourlyRateDecimalField,
-                            absentDailyRateDecimalField,
-                            additionalAllowanceDecimalField;
+                            absentDailyRateDecimalField;
     private Checkbox currentRatesCheckbox;
 
     public RatesFormView(RatesService ratesService,
@@ -139,14 +138,6 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
         absentDailyRateDecimalField.setPrefixComponent(phpPrefix);
         if (ratesDTO != null) absentDailyRateDecimalField.setValue(ratesDTO.getAbsentDailyRate());
 
-        additionalAllowanceDecimalField = new BigDecimalField("Additional Allowance");
-        additionalAllowanceDecimalField.setPlaceholder("0.00");
-        additionalAllowanceDecimalField.setRequired(true);
-        additionalAllowanceDecimalField.setRequiredIndicatorVisible(true);
-        additionalAllowanceDecimalField.setHelperText("If it is not required, just set its value to 0.00");
-        additionalAllowanceDecimalField.setPrefixComponent(phpPrefix);
-        if (ratesDTO != null) additionalAllowanceDecimalField.setValue(ratesDTO.getAdditionalAllowance());
-
         currentRatesCheckbox = new Checkbox("Is Current Rate?");
         if (ratesDTO != null) currentRatesCheckbox.setValue(ratesDTO.isCurrentRates());
 
@@ -174,7 +165,6 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
                                overtimeHourlyRateDecimalField,
                                lateHourlyRateDecimalField,
                                absentDailyRateDecimalField,
-                               additionalAllowanceDecimalField,
                                currentRatesCheckbox,
                                buttonLayout);
         ratesDTOFormLayout.setColspan(employeeDTOComboBox, 2);
@@ -199,7 +189,6 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
         ratesDTO.setOvertimeHourlyRate(overtimeHourlyRateDecimalField.getValue());
         ratesDTO.setLateHourlyRate(lateHourlyRateDecimalField.getValue());
         ratesDTO.setAbsentDailyRate(absentDailyRateDecimalField.getValue());
-        ratesDTO.setAdditionalAllowance(additionalAllowanceDecimalField.getValue());
         ratesDTO.setCurrentRates(currentRatesCheckbox.getValue());
         ratesDTO.setUpdatedBy(loggedInUser);
 
