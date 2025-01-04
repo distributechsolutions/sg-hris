@@ -31,9 +31,6 @@ public class Rates extends BaseEntity {
     @Column(name = "absent_daily_rate", nullable = false)
     private BigDecimal absentDailyRate;
 
-    @Column(name = "additional_allowance", nullable = false)
-    private BigDecimal additionalAllowance;
-
     @Column(name = "is_current_rates", nullable = false)
     private boolean currentRates;
 
@@ -91,14 +88,6 @@ public class Rates extends BaseEntity {
 
     public void setAbsentDailyRate(BigDecimal absentDailyRate) {
         this.absentDailyRate = absentDailyRate;
-    }
-
-    public BigDecimal getAdditionalAllowance() {
-        return additionalAllowance;
-    }
-
-    public void setAdditionalAllowance(BigDecimal additionalAllowance) {
-        this.additionalAllowance = additionalAllowance;
     }
 
     public boolean isCurrentRates() {

@@ -31,8 +31,7 @@ import java.util.UUID;
 @PageTitle("Allowance Form")
 @Route(value = "allowance-form", layout = MainLayout.class)
 public class AllowanceFormView extends VerticalLayout implements HasUrlParameter<String> {
-    @Resource
-    private final AllowanceService allowanceService;
+    @Resource private final AllowanceService allowanceService;
     @Resource private final EmployeeService employeeService;
 
     private AllowanceDTO allowanceDTO;
