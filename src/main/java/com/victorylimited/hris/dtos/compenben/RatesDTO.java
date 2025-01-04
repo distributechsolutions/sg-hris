@@ -13,7 +13,6 @@ public class RatesDTO extends BaseDTO {
     private BigDecimal overtimeHourlyRate;
     private BigDecimal lateHourlyRate;
     private BigDecimal absentDailyRate;
-    private BigDecimal additionalAllowance;
     private boolean currentRates;
 
     public EmployeeDTO getEmployeeDTO() {
@@ -70,14 +69,6 @@ public class RatesDTO extends BaseDTO {
 
     public void setAbsentDailyRate(BigDecimal absentDailyRate) {
         this.absentDailyRate = absentDailyRate;
-    }
-
-    public BigDecimal getAdditionalAllowance() {
-        return additionalAllowance;
-    }
-
-    public void setAdditionalAllowance(BigDecimal additionalAllowance) {
-        this.additionalAllowance = additionalAllowance;
     }
 
     public boolean isCurrentRates() {

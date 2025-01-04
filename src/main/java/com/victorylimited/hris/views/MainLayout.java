@@ -24,6 +24,7 @@ import com.victorylimited.hris.views.attendance.LeaveApprovalsListView;
 import com.victorylimited.hris.views.common.DashboardView;
 import com.victorylimited.hris.views.common.LeaveFilingView;
 import com.victorylimited.hris.views.compenben.AllowanceListView;
+import com.victorylimited.hris.views.compenben.GovernmentContributionsListView;
 import com.victorylimited.hris.views.compenben.LeaveBenefitsListView;
 import com.victorylimited.hris.views.compenben.RatesListView;
 import com.victorylimited.hris.views.common.EmployeeInfoView;
@@ -168,8 +169,9 @@ public class MainLayout extends AppLayout {
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
             nav.setLabel("Compensation and Benefits");
             nav.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
-            nav.addItem(new SideNavItem("Leave Benefits", LeaveBenefitsListView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
             nav.addItem(new SideNavItem("Allowances", AllowanceListView.class, LineAwesomeIcon.COINS_SOLID.create()));
+            nav.addItem(new SideNavItem("Government Contributions", GovernmentContributionsListView.class, LineAwesomeIcon.HAND_HOLDING_USD_SOLID.create()));
+            nav.addItem(new SideNavItem("Leave Benefits", LeaveBenefitsListView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
         }
 
         return nav;
