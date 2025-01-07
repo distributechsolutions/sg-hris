@@ -23,10 +23,7 @@ import com.whizservices.hris.views.admin.UserListView;
 import com.whizservices.hris.views.attendance.LeaveApprovalsListView;
 import com.whizservices.hris.views.common.DashboardView;
 import com.whizservices.hris.views.common.LeaveFilingView;
-import com.whizservices.hris.views.compenben.AllowanceListView;
-import com.whizservices.hris.views.compenben.GovernmentContributionsListView;
-import com.whizservices.hris.views.compenben.LeaveBenefitsListView;
-import com.whizservices.hris.views.compenben.RatesListView;
+import com.whizservices.hris.views.compenben.*;
 import com.whizservices.hris.views.common.EmployeeInfoView;
 import com.whizservices.hris.views.attendance.TimesheetListView;
 import com.whizservices.hris.views.profile.EmployeeDepartmentListView;
@@ -171,6 +168,7 @@ public class MainLayout extends AppLayout {
             nav.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
             nav.addItem(new SideNavItem("Allowances", AllowanceListView.class, LineAwesomeIcon.COINS_SOLID.create()));
             nav.addItem(new SideNavItem("Government Contributions", GovernmentContributionsListView.class, LineAwesomeIcon.HAND_HOLDING_USD_SOLID.create()));
+            nav.addItem(new SideNavItem("Loan Deductions", LoanDeductionListView.class, LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
             nav.addItem(new SideNavItem("Leave Benefits", LeaveBenefitsListView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
         }
 

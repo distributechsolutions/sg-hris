@@ -99,7 +99,7 @@ public class AllowanceListView extends VerticalLayout {
         HorizontalLayout rowToolbarLayout = new HorizontalLayout();
 
         Button viewButton = new Button();
-        viewButton.setTooltipText("View Leave Benefit");
+        viewButton.setTooltipText("View Allowance");
         viewButton.setIcon(LineAwesomeIcon.SEARCH_SOLID.create());
         viewButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         viewButton.addClickListener(buttonClickEvent -> viewButton.getUI().ifPresent(ui -> {
@@ -110,7 +110,7 @@ public class AllowanceListView extends VerticalLayout {
         }));
 
         Button editButton = new Button();
-        editButton.setTooltipText("Edit Leave Benefit");
+        editButton.setTooltipText("Edit Allowance");
         editButton.setIcon(LineAwesomeIcon.PENCIL_ALT_SOLID.create());
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         editButton.addClickListener(buttonClickEvent -> editButton.getUI().ifPresent(ui -> {
