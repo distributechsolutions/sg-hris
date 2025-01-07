@@ -21,7 +21,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         this.setSizeFull();
         this.setAlignItems(Alignment.CENTER);
         this.setJustifyContentMode(JustifyContentMode.CENTER);
-        this.add(new H1("Victory Ltd HRIS and Payroll"), loginForm);
+        this.add(new H1("WSI - HRIS and Payroll"), loginForm);
     }
 
     @Override
