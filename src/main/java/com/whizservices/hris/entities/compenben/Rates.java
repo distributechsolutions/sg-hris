@@ -2,6 +2,7 @@ package com.whizservices.hris.entities.compenben;
 
 import com.whizservices.hris.entities.BaseEntity;
 import com.whizservices.hris.entities.profile.Employee;
+
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -13,26 +14,26 @@ public class Rates extends BaseEntity {
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private Employee employee;
 
-    @Column(name = "monthly_rate", nullable = false)
-    private BigDecimal monthlyRate;
+    @Column(name = "rate_type", length = 50, nullable = false)
+    private String rateType;
 
-    @Column(name = "daily_rate", nullable = false)
-    private BigDecimal dailyRate;
+    @Column(name = "monthly_compensation_rate", nullable = false)
+    private BigDecimal monthlyCompensationRate;
 
-    @Column(name = "hourly_rate", nullable = false)
-    private BigDecimal hourlyRate;
+    @Column(name = "daily_compensation_rate", nullable = false)
+    private BigDecimal dailyCompensationRate;
 
-    @Column(name = "overtime_hourly_rate", nullable = false)
-    private BigDecimal overtimeHourlyRate;
+    @Column(name = "hourly_compensation_rate", nullable = false)
+    private BigDecimal hourlyCompensationRate;
 
-    @Column(name = "late_hourly_rate", nullable = false)
-    private BigDecimal lateHourlyRate;
+    @Column(name = "overtime_hourly_compensation_rate", nullable = false)
+    private BigDecimal overtimeHourlyCompensationRate;
 
-    @Column(name = "absent_daily_rate", nullable = false)
-    private BigDecimal absentDailyRate;
+    @Column(name = "late_hourly_deduction_rate", nullable = false)
+    private BigDecimal lateHourlyDeductionRate;
 
-    @Column(name = "is_current_rates", nullable = false)
-    private boolean currentRates;
+    @Column(name = "daily_absent_deduction_rate", nullable = false)
+    private BigDecimal dailyAbsentDeductionRate;
 
     public Employee getEmployee() {
         return employee;
@@ -42,59 +43,59 @@ public class Rates extends BaseEntity {
         this.employee = employee;
     }
 
-    public BigDecimal getMonthlyRate() {
-        return monthlyRate;
+    public String getRateType() {
+        return rateType;
     }
 
-    public void setMonthlyRate(BigDecimal monthlyRate) {
-        this.monthlyRate = monthlyRate;
+    public void setRateType(String rateType) {
+        this.rateType = rateType;
     }
 
-    public BigDecimal getDailyRate() {
-        return dailyRate;
+    public BigDecimal getMonthlyCompensationRate() {
+        return monthlyCompensationRate;
     }
 
-    public void setDailyRate(BigDecimal dailyRate) {
-        this.dailyRate = dailyRate;
+    public void setMonthlyCompensationRate(BigDecimal monthlyCompensationRate) {
+        this.monthlyCompensationRate = monthlyCompensationRate;
     }
 
-    public BigDecimal getHourlyRate() {
-        return hourlyRate;
+    public BigDecimal getDailyCompensationRate() {
+        return dailyCompensationRate;
     }
 
-    public void setHourlyRate(BigDecimal hourlyRate) {
-        this.hourlyRate = hourlyRate;
+    public void setDailyCompensationRate(BigDecimal dailyCompensationRate) {
+        this.dailyCompensationRate = dailyCompensationRate;
     }
 
-    public BigDecimal getOvertimeHourlyRate() {
-        return overtimeHourlyRate;
+    public BigDecimal getHourlyCompensationRate() {
+        return hourlyCompensationRate;
     }
 
-    public void setOvertimeHourlyRate(BigDecimal overtimeHourlyRate) {
-        this.overtimeHourlyRate = overtimeHourlyRate;
+    public void setHourlyCompensationRate(BigDecimal hourlyCompensationRate) {
+        this.hourlyCompensationRate = hourlyCompensationRate;
     }
 
-    public BigDecimal getLateHourlyRate() {
-        return lateHourlyRate;
+    public BigDecimal getOvertimeHourlyCompensationRate() {
+        return overtimeHourlyCompensationRate;
     }
 
-    public void setLateHourlyRate(BigDecimal lateHourlyRate) {
-        this.lateHourlyRate = lateHourlyRate;
+    public void setOvertimeHourlyCompensationRate(BigDecimal overtimeHourlyCompensationRate) {
+        this.overtimeHourlyCompensationRate = overtimeHourlyCompensationRate;
     }
 
-    public BigDecimal getAbsentDailyRate() {
-        return absentDailyRate;
+    public BigDecimal getLateHourlyDeductionRate() {
+        return lateHourlyDeductionRate;
     }
 
-    public void setAbsentDailyRate(BigDecimal absentDailyRate) {
-        this.absentDailyRate = absentDailyRate;
+    public void setLateHourlyDeductionRate(BigDecimal lateHourlyDeductionRate) {
+        this.lateHourlyDeductionRate = lateHourlyDeductionRate;
     }
 
-    public boolean isCurrentRates() {
-        return currentRates;
+    public BigDecimal getDailyAbsentDeductionRate() {
+        return dailyAbsentDeductionRate;
     }
 
-    public void setCurrentRates(boolean currentRates) {
-        this.currentRates = currentRates;
+    public void setDailyAbsentDeductionRate(BigDecimal dailyAbsentDeductionRate) {
+        this.dailyAbsentDeductionRate = dailyAbsentDeductionRate;
     }
 }

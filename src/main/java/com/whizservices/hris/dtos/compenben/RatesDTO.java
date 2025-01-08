@@ -7,13 +7,13 @@ import java.math.BigDecimal;
 
 public class RatesDTO extends BaseDTO {
     private EmployeeDTO employeeDTO;
-    private BigDecimal monthlyRate;
-    private BigDecimal dailyRate;
-    private BigDecimal hourlyRate;
-    private BigDecimal overtimeHourlyRate;
-    private BigDecimal lateHourlyRate;
-    private BigDecimal absentDailyRate;
-    private boolean currentRates;
+    private String rateType;
+    private BigDecimal monthlyCompensationRate;
+    private BigDecimal dailyCompensationRate;
+    private BigDecimal hourlyCompensationRate;
+    private BigDecimal overtimeHourlyCompensationRate;
+    private BigDecimal lateHourlyDeductionRate;
+    private BigDecimal dailyAbsentDeductionRate;
 
     public EmployeeDTO getEmployeeDTO() {
         return employeeDTO;
@@ -23,59 +23,59 @@ public class RatesDTO extends BaseDTO {
         this.employeeDTO = employeeDTO;
     }
 
-    public BigDecimal getMonthlyRate() {
-        return monthlyRate;
+    public String getRateType() {
+        return rateType;
     }
 
-    public void setMonthlyRate(BigDecimal monthlyRate) {
-        this.monthlyRate = monthlyRate;
+    public void setRateType(String rateType) {
+        this.rateType = rateType;
     }
 
-    public BigDecimal getDailyRate() {
-        return dailyRate;
+    public BigDecimal getMonthlyCompensationRate() {
+        return monthlyCompensationRate;
     }
 
-    public void setDailyRate(BigDecimal dailyRate) {
-        this.dailyRate = dailyRate;
+    public void setMonthlyCompensationRate(BigDecimal monthlyCompensationRate) {
+        this.monthlyCompensationRate = monthlyCompensationRate;
     }
 
-    public BigDecimal getHourlyRate() {
-        return hourlyRate;
+    public BigDecimal getDailyCompensationRate() {
+        return dailyCompensationRate;
     }
 
-    public void setHourlyRate(BigDecimal hourlyRate) {
-        this.hourlyRate = hourlyRate;
+    public void setDailyCompensationRate(BigDecimal dailyCompensationRate) {
+        this.dailyCompensationRate = dailyCompensationRate;
     }
 
-    public BigDecimal getOvertimeHourlyRate() {
-        return overtimeHourlyRate;
+    public BigDecimal getHourlyCompensationRate() {
+        return hourlyCompensationRate;
     }
 
-    public void setOvertimeHourlyRate(BigDecimal overtimeHourlyRate) {
-        this.overtimeHourlyRate = overtimeHourlyRate;
+    public void setHourlyCompensationRate(BigDecimal hourlyCompensationRate) {
+        this.hourlyCompensationRate = hourlyCompensationRate;
     }
 
-    public BigDecimal getLateHourlyRate() {
-        return lateHourlyRate;
+    public BigDecimal getOvertimeHourlyCompensationRate() {
+        return overtimeHourlyCompensationRate;
     }
 
-    public void setLateHourlyRate(BigDecimal lateHourlyRate) {
-        this.lateHourlyRate = lateHourlyRate;
+    public void setOvertimeHourlyCompensationRate(BigDecimal overtimeHourlyCompensationRate) {
+        this.overtimeHourlyCompensationRate = overtimeHourlyCompensationRate;
     }
 
-    public BigDecimal getAbsentDailyRate() {
-        return absentDailyRate;
+    public BigDecimal getLateHourlyDeductionRate() {
+        return lateHourlyDeductionRate;
     }
 
-    public void setAbsentDailyRate(BigDecimal absentDailyRate) {
-        this.absentDailyRate = absentDailyRate;
+    public void setLateHourlyDeductionRate(BigDecimal lateHourlyDeductionRate) {
+        this.lateHourlyDeductionRate = lateHourlyDeductionRate;
     }
 
-    public boolean isCurrentRates() {
-        return currentRates;
+    public BigDecimal getDailyAbsentDeductionRate() {
+        return dailyAbsentDeductionRate;
     }
 
-    public void setCurrentRates(boolean currentRates) {
-        this.currentRates = currentRates;
+    public void setDailyAbsentDeductionRate(BigDecimal dailyAbsentDeductionRate) {
+        this.dailyAbsentDeductionRate = dailyAbsentDeductionRate;
     }
 }
