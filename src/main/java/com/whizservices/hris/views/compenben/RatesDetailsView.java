@@ -9,6 +9,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import com.whizservices.hris.dtos.compenben.RatesDTO;
+import com.whizservices.hris.services.compenben.AllowanceService;
 import com.whizservices.hris.services.compenben.RatesService;
 import com.whizservices.hris.views.MainLayout;
 
@@ -23,14 +24,17 @@ import java.util.UUID;
 @PageTitle("Rates Details")
 @Route(value = "rates-details", layout = MainLayout.class)
 public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<String> {
-    @Resource
-    private final RatesService ratesService;
+    @Resource private final RatesService ratesService;
+    @Resource private final AllowanceService allowanceService;
+
     private RatesDTO ratesDTO;
 
     private final FormLayout ratesDetailsLayout = new FormLayout();
 
-    public RatesDetailsView(RatesService ratesService) {
+    public RatesDetailsView(RatesService ratesService,
+                            AllowanceService allowanceService) {
         this.ratesService = ratesService;
+        this.allowanceService = allowanceService;
 
         setSizeFull();
         setMargin(true);
@@ -67,52 +71,60 @@ public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<
         Span employeeNameValueSpan = new Span(employeeName);
         employeeNameValueSpan.getStyle().setFontWeight("bold");
 
+        Span isCurrentRatesLabelSpan = new Span("Rate Type");
+        isCurrentRatesLabelSpan.getStyle().set("text-align", "right");
+
+        Span isCurrentRatesValueSpan = new Span(ratesDTO.getRateType());
+        isCurrentRatesValueSpan.getStyle().setFontWeight("bold");
+
+        Span monthlyAllowanceRateLabelSpan = new Span("Total Monthly Allowance");
+        monthlyAllowanceRateLabelSpan.getStyle().set("text-align", "right");
+
+        Span monthlyAllowanceRateValueSpan = new Span("PHP ".concat(String.valueOf(allowanceService.getSumOfAllowanceByEmployeeDTO(ratesDTO.getEmployeeDTO()))));
+        monthlyAllowanceRateValueSpan.getStyle().setFontWeight("bold");
+
         Span monthlyRateLabelSpan = new Span("Monthly Rate");
         monthlyRateLabelSpan.getStyle().set("text-align", "right");
 
-        Span monthlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getMonthlyRate())));
+        Span monthlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getMonthlyCompensationRate())));
         monthlyRateValueSpan.getStyle().setFontWeight("bold");
 
         Span dailyRateLabelSpan = new Span("Daily Rate");
         dailyRateLabelSpan.getStyle().set("text-align", "right");
 
-        Span dailyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getDailyRate())));
+        Span dailyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getDailyCompensationRate())));
         dailyRateValueSpan.getStyle().setFontWeight("bold");
 
         Span hourlyRateLabelSpan = new Span("Hourly Rate");
         hourlyRateLabelSpan.getStyle().set("text-align", "right");
 
-        Span hourlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getHourlyRate())));
+        Span hourlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getHourlyCompensationRate())));
         hourlyRateValueSpan.getStyle().setFontWeight("bold");
 
         Span overtimeHourlyRateLabelSpan = new Span("Overtime Hourly Rate");
         overtimeHourlyRateLabelSpan.getStyle().set("text-align", "right");
 
-        Span overtimeHourlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getOvertimeHourlyRate())));
+        Span overtimeHourlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getOvertimeHourlyCompensationRate())));
         overtimeHourlyRateValueSpan.getStyle().setFontWeight("bold");
 
         Span lateHourlyRateLabelSpan = new Span("Late Hourly Rate");
         lateHourlyRateLabelSpan.getStyle().set("text-align", "right");
 
-        Span lateHourlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getLateHourlyRate())));
+        Span lateHourlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getLateHourlyDeductionRate())));
         lateHourlyRateValueSpan.getStyle().setFontWeight("bold");
 
         Span absentDailyRateLabelSpan = new Span("Absent Daily Rate");
         absentDailyRateLabelSpan.getStyle().set("text-align", "right");
 
-        Span absentDailyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getAbsentDailyRate())));
+        Span absentDailyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getDailyAbsentDeductionRate())));
         absentDailyRateValueSpan.getStyle().setFontWeight("bold");
-
-        Span isCurrentRatesLabelSpan = new Span("Is Current Rates?");
-        isCurrentRatesLabelSpan.getStyle().set("text-align", "right");
-
-        Span isCurrentRatesValueSpan = new Span(ratesDTO.isCurrentRates() ? "Yes" : "No");
-        isCurrentRatesValueSpan.getStyle().setFontWeight("bold");
 
         ratesDetailsLayout.add(employeeNoLabelSpan,
                             employeeNoValueSpan,
                             employeeNameLabelSpan,
                             employeeNameValueSpan,
+                            monthlyAllowanceRateLabelSpan,
+                            monthlyAllowanceRateValueSpan,
                             monthlyRateLabelSpan,
                             monthlyRateValueSpan,
                             dailyRateLabelSpan,

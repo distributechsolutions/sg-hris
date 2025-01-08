@@ -1,6 +1,7 @@
 package com.whizservices.hris.repositories.compenben;
 
 import com.whizservices.hris.entities.compenben.Allowance;
+import com.whizservices.hris.entities.profile.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,7 @@ public interface AllowanceRepository extends JpaRepository<Allowance, UUID> {
            OR LOWER(a.employee.lastName) LIKE LOWER(CONCAT('%', :param, '%'))
            """)
     public List<Allowance> findByStringParameter(@Param("param") String parameter);
+
+    @Query("SELECT SUM(a.allowanceAmount) FROM Allowance a WHERE a.employee = :param")
+    public Object findSumOfAllowanceByEmployee(@Param("param") Employee employee);
 }

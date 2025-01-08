@@ -4,11 +4,9 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -78,26 +76,17 @@ public class RatesListView extends VerticalLayout {
                                                             .concat(ratesDTO.getEmployeeDTO().getSuffix() != null ? ratesDTO.getEmployeeDTO().getSuffix() : ""))
                     .setHeader("Employee Name")
                     .setSortable(true);
-        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getMonthlyRate())))
+        ratesDTOGrid.addColumn(RatesDTO::getRateType)
+                    .setHeader("Rate Type")
+                    .setSortable(true);
+        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getMonthlyCompensationRate())))
                     .setHeader("Monthly Rate")
                     .setSortable(true);
-        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getDailyRate())))
+        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getDailyCompensationRate())))
                     .setHeader("Daily Rate")
                     .setSortable(true);
-        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getHourlyRate())))
+        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getHourlyCompensationRate())))
                     .setHeader("Hourly Rate")
-                    .setSortable(true);
-        ratesDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, ratesDTO) -> {
-                                    String theme = String.format("badge %s", ratesDTO.isCurrentRates() ? "success" : "error");
-
-                                    Span activeSpan = new Span();
-                                    activeSpan.getElement().setAttribute("theme", theme);
-                                    activeSpan.setText(ratesDTO.isCurrentRates() ? "Yes" : "No");
-
-                                    layout.setJustifyContentMode(JustifyContentMode.CENTER);
-                                    layout.add(activeSpan);
-                                }))
-                    .setHeader("Is Current Rates?")
                     .setSortable(true);
         ratesDTOGrid.addComponentColumn(userDTO -> buildRowToolbar()).setHeader("Action");
         ratesDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,

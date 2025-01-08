@@ -2,12 +2,12 @@ package com.whizservices.hris.views.compenben;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.BeforeEvent;
@@ -18,6 +18,7 @@ import com.vaadin.flow.router.Route;
 
 import com.whizservices.hris.dtos.compenben.RatesDTO;
 import com.whizservices.hris.dtos.profile.EmployeeDTO;
+import com.whizservices.hris.services.compenben.AllowanceService;
 import com.whizservices.hris.services.compenben.RatesService;
 import com.whizservices.hris.services.profile.EmployeeService;
 import com.whizservices.hris.utils.SecurityUtil;
@@ -26,6 +27,7 @@ import com.whizservices.hris.views.MainLayout;
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -35,28 +37,33 @@ import java.util.UUID;
 @PageTitle("Rates Form")
 @Route(value = "rates-form", layout = MainLayout.class)
 public class RatesFormView extends VerticalLayout implements HasUrlParameter<String> {
-    @Resource
-    private final RatesService ratesService;
-    @Resource
-    private final EmployeeService employeeService;
+    @Resource private final RatesService ratesService;
+    @Resource private final EmployeeService employeeService;
+    @Resource private final AllowanceService allowanceService;
 
     private RatesDTO ratesDTO;
     private UUID parameterId;
+    private String loggedInUser;
 
     private final FormLayout ratesDTOFormLayout = new FormLayout();
     private ComboBox<EmployeeDTO> employeeDTOComboBox;
-    private BigDecimalField monthlyRateDecimalField,
+    private RadioButtonGroup<String> rateTypeRadioButtonGroup;
+    private BigDecimalField totalMonthlyAllowanceDecimalField,
+                            monthlyRateDecimalField,
                             dailyRateDecimalField,
                             hourlyRateDecimalField,
                             overtimeHourlyRateDecimalField,
                             lateHourlyRateDecimalField,
                             absentDailyRateDecimalField;
-    private Checkbox currentRatesCheckbox;
 
     public RatesFormView(RatesService ratesService,
-                         EmployeeService employeeService) {
+                         EmployeeService employeeService,
+                         AllowanceService allowanceService) {
         this.ratesService = ratesService;
         this.employeeService = employeeService;
+        this.allowanceService = allowanceService;
+
+        loggedInUser = Objects.requireNonNull(SecurityUtil.getAuthenticatedUser()).getUsername();
 
         setSizeFull();
         setMargin(true);
@@ -79,67 +86,104 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
 
         employeeDTOComboBox = new ComboBox<>("Employee");
         employeeDTOComboBox.setItems((employeeDTO, filterString) -> employeeDTO.getEmployeeFullName().toLowerCase().contains(filterString.toLowerCase()),
-                                                                    employeeService.getAll(employeeQuery.getPage(), employeeQuery.getPageSize()));
+                                                                                       employeeService.getAll(employeeQuery.getPage(), employeeQuery.getPageSize()));
         employeeDTOComboBox.setItemLabelGenerator(EmployeeDTO::getEmployeeFullName);
         employeeDTOComboBox.setClearButtonVisible(true);
         employeeDTOComboBox.setRequired(true);
         employeeDTOComboBox.setRequiredIndicatorVisible(true);
         if (ratesDTO != null) employeeDTOComboBox.setValue(ratesDTO.getEmployeeDTO());
 
-        // Add a prefix div label for each of the decimal fields.
-        Div phpPrefix = new Div();
-        phpPrefix.setText("PHP");
+        rateTypeRadioButtonGroup = new RadioButtonGroup<>("Rate Type");
+        rateTypeRadioButtonGroup.setItems("Monthly", "Daily");
+        rateTypeRadioButtonGroup.setRequiredIndicatorVisible(true);
+        rateTypeRadioButtonGroup.setRequired(true);
+        if (ratesDTO != null) rateTypeRadioButtonGroup.setValue(ratesDTO.getRateType());
+
+        totalMonthlyAllowanceDecimalField = new BigDecimalField("Total Monthly Allowance");
+        totalMonthlyAllowanceDecimalField.setPlaceholder("0.00");
+        totalMonthlyAllowanceDecimalField.setHelperText("Value will automatically get from the selected employee.");
+        totalMonthlyAllowanceDecimalField.setPrefixComponent(new Span("PHP"));
+        totalMonthlyAllowanceDecimalField.setReadOnly(true);
+        if (ratesDTO != null) totalMonthlyAllowanceDecimalField.setValue(allowanceService.getSumOfAllowanceByEmployeeDTO(employeeDTOComboBox.getValue()));
 
         monthlyRateDecimalField = new BigDecimalField("Monthly Rate");
         monthlyRateDecimalField.setPlaceholder("0.00");
         monthlyRateDecimalField.setRequired(true);
         monthlyRateDecimalField.setRequiredIndicatorVisible(true);
-        monthlyRateDecimalField.setHelperText("If it is not required, just set its value to 0.00");
-        monthlyRateDecimalField.setPrefixComponent(phpPrefix);
-        if (ratesDTO != null) monthlyRateDecimalField.setValue(ratesDTO.getMonthlyRate());
+        monthlyRateDecimalField.setHelperText("Provide the monthly salary rate.");
+        monthlyRateDecimalField.setPrefixComponent(new Span("PHP"));
+        if (ratesDTO != null) monthlyRateDecimalField.setValue(ratesDTO.getMonthlyCompensationRate());
 
         dailyRateDecimalField = new BigDecimalField("Daily Rate");
         dailyRateDecimalField.setPlaceholder("0.00");
-        dailyRateDecimalField.setRequired(true);
-        dailyRateDecimalField.setRequiredIndicatorVisible(true);
-        dailyRateDecimalField.setHelperText("If it is not required, just set its value to 0.00");
-        dailyRateDecimalField.setPrefixComponent(phpPrefix);
-        if (ratesDTO != null) dailyRateDecimalField.setValue(ratesDTO.getDailyRate());
+        dailyRateDecimalField.setHelperText("This is an auto-compute field.");
+        dailyRateDecimalField.setPrefixComponent(new Span("PHP"));
+        dailyRateDecimalField.setReadOnly(true);
+        if (ratesDTO != null) dailyRateDecimalField.setValue(ratesDTO.getDailyCompensationRate());
 
         hourlyRateDecimalField = new BigDecimalField("Hourly Rate");
         hourlyRateDecimalField.setPlaceholder("0.00");
-        hourlyRateDecimalField.setRequired(true);
-        hourlyRateDecimalField.setRequiredIndicatorVisible(true);
-        hourlyRateDecimalField.setHelperText("If it is not required, just set its value to 0.00");
-        hourlyRateDecimalField.setPrefixComponent(phpPrefix);
-        if (ratesDTO != null) hourlyRateDecimalField.setValue(ratesDTO.getHourlyRate());
+        hourlyRateDecimalField.setHelperText("This is an auto-compute field.");
+        hourlyRateDecimalField.setPrefixComponent(new Span("PHP"));
+        hourlyRateDecimalField.setReadOnly(true);
+        if (ratesDTO != null) hourlyRateDecimalField.setValue(ratesDTO.getHourlyCompensationRate());
 
         overtimeHourlyRateDecimalField = new BigDecimalField("Overtime Hourly Rate");
         overtimeHourlyRateDecimalField.setPlaceholder("0.00");
-        overtimeHourlyRateDecimalField.setRequired(true);
-        overtimeHourlyRateDecimalField.setRequiredIndicatorVisible(true);
-        overtimeHourlyRateDecimalField.setHelperText("If it is not required, just set its value to 0.00");
-        overtimeHourlyRateDecimalField.setPrefixComponent(phpPrefix);
-        if (ratesDTO != null) overtimeHourlyRateDecimalField.setValue(ratesDTO.getOvertimeHourlyRate());
+        overtimeHourlyRateDecimalField.setHelperText("This is an auto-compute field.");
+        overtimeHourlyRateDecimalField.setPrefixComponent(new Span("PHP"));
+        overtimeHourlyRateDecimalField.setReadOnly(true);
+        if (ratesDTO != null) overtimeHourlyRateDecimalField.setValue(ratesDTO.getOvertimeHourlyCompensationRate());
 
         lateHourlyRateDecimalField = new BigDecimalField("Late Hourly Rate");
         lateHourlyRateDecimalField.setPlaceholder("0.00");
-        lateHourlyRateDecimalField.setRequired(true);
-        lateHourlyRateDecimalField.setRequiredIndicatorVisible(true);
-        lateHourlyRateDecimalField.setHelperText("If it is not required, just set its value to 0.00");
-        lateHourlyRateDecimalField.setPrefixComponent(phpPrefix);
-        if (ratesDTO != null) lateHourlyRateDecimalField.setValue(ratesDTO.getLateHourlyRate());
+        lateHourlyRateDecimalField.setHelperText("This is an auto-compute field.");
+        lateHourlyRateDecimalField.setPrefixComponent(new Span("PHP"));
+        lateHourlyRateDecimalField.setReadOnly(true);
+        if (ratesDTO != null) lateHourlyRateDecimalField.setValue(ratesDTO.getLateHourlyDeductionRate());
 
         absentDailyRateDecimalField = new BigDecimalField("Absent Daily Rate");
         absentDailyRateDecimalField.setPlaceholder("0.00");
-        absentDailyRateDecimalField.setRequired(true);
-        absentDailyRateDecimalField.setRequiredIndicatorVisible(true);
-        absentDailyRateDecimalField.setHelperText("If it is not required, just set its value to 0.00");
-        absentDailyRateDecimalField.setPrefixComponent(phpPrefix);
-        if (ratesDTO != null) absentDailyRateDecimalField.setValue(ratesDTO.getAbsentDailyRate());
+        absentDailyRateDecimalField.setHelperText("This is an auto-compute field.");
+        absentDailyRateDecimalField.setPrefixComponent(new Span("PHP"));
+        absentDailyRateDecimalField.setReadOnly(true);
+        if (ratesDTO != null) absentDailyRateDecimalField.setValue(ratesDTO.getDailyAbsentDeductionRate());
 
-        currentRatesCheckbox = new Checkbox("Is Current Rate?");
-        if (ratesDTO != null) currentRatesCheckbox.setValue(ratesDTO.isCurrentRates());
+        // Do the auto-compute of fields from the selected value of employee's combobox.
+        employeeDTOComboBox.addValueChangeListener(event -> {
+            EmployeeDTO employeeDTO = event.getValue();
+
+            if (employeeDTO != null) {
+                totalMonthlyAllowanceDecimalField.setValue(allowanceService.getSumOfAllowanceByEmployeeDTO(employeeDTO));
+            } else {
+                totalMonthlyAllowanceDecimalField.clear();
+            }
+        });
+
+        monthlyRateDecimalField.addValueChangeListener(event -> {
+            BigDecimal monthlySalaryRate = event.getValue();
+
+            // Populate the computed values in each field.
+            if (monthlySalaryRate != null) {
+                BigDecimal totalMonthlyAllowance = totalMonthlyAllowanceDecimalField.getValue() != null ? totalMonthlyAllowanceDecimalField.getValue() : new BigDecimal("0.00");
+                BigDecimal totalMonthlySalaryRate = monthlySalaryRate.add(totalMonthlyAllowance);
+                BigDecimal dailySalaryRate = totalMonthlySalaryRate.divide(new BigDecimal("26"), 2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal hourlySalaryRate = dailySalaryRate.divide(new BigDecimal("8"), 2, BigDecimal.ROUND_HALF_UP);
+
+                dailyRateDecimalField.setValue(dailySalaryRate);
+                hourlyRateDecimalField.setValue(hourlySalaryRate);
+                overtimeHourlyRateDecimalField.setValue(hourlySalaryRate);
+                lateHourlyRateDecimalField.setValue(hourlySalaryRate);
+                absentDailyRateDecimalField.setValue(dailySalaryRate);
+            } else {
+                dailyRateDecimalField.clear();
+                hourlyRateDecimalField.clear();
+                overtimeHourlyRateDecimalField.clear();
+                lateHourlyRateDecimalField.clear();
+                absentDailyRateDecimalField.clear();
+            }
+
+        });
 
         Button saveButton = new Button("Save");
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -159,13 +203,14 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
         buttonLayout.setPadding(true);
 
         ratesDTOFormLayout.add(employeeDTOComboBox,
+                               rateTypeRadioButtonGroup,
+                               totalMonthlyAllowanceDecimalField,
                                monthlyRateDecimalField,
                                dailyRateDecimalField,
                                hourlyRateDecimalField,
                                overtimeHourlyRateDecimalField,
                                lateHourlyRateDecimalField,
                                absentDailyRateDecimalField,
-                               currentRatesCheckbox,
                                buttonLayout);
         ratesDTOFormLayout.setColspan(employeeDTOComboBox, 2);
         ratesDTOFormLayout.setColspan(buttonLayout, 2);
@@ -173,8 +218,6 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
     }
 
     private void saveOrUpdateRatesDTO() {
-        String loggedInUser = Objects.requireNonNull(SecurityUtil.getAuthenticatedUser()).getUsername();
-
         if (parameterId != null) {
             ratesDTO = ratesService.getById(parameterId);
         } else {
@@ -183,13 +226,13 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
         }
 
         ratesDTO.setEmployeeDTO(employeeDTOComboBox.getValue());
-        ratesDTO.setMonthlyRate(monthlyRateDecimalField.getValue());
-        ratesDTO.setDailyRate(dailyRateDecimalField.getValue());
-        ratesDTO.setHourlyRate(hourlyRateDecimalField.getValue());
-        ratesDTO.setOvertimeHourlyRate(overtimeHourlyRateDecimalField.getValue());
-        ratesDTO.setLateHourlyRate(lateHourlyRateDecimalField.getValue());
-        ratesDTO.setAbsentDailyRate(absentDailyRateDecimalField.getValue());
-        ratesDTO.setCurrentRates(currentRatesCheckbox.getValue());
+        ratesDTO.setRateType(rateTypeRadioButtonGroup.getValue());
+        ratesDTO.setMonthlyCompensationRate(monthlyRateDecimalField.getValue());
+        ratesDTO.setDailyCompensationRate(dailyRateDecimalField.getValue());
+        ratesDTO.setHourlyCompensationRate(hourlyRateDecimalField.getValue());
+        ratesDTO.setOvertimeHourlyCompensationRate(overtimeHourlyRateDecimalField.getValue());
+        ratesDTO.setLateHourlyDeductionRate(lateHourlyRateDecimalField.getValue());
+        ratesDTO.setDailyAbsentDeductionRate(absentDailyRateDecimalField.getValue());
         ratesDTO.setUpdatedBy(loggedInUser);
 
         ratesService.saveOrUpdate(ratesDTO);
