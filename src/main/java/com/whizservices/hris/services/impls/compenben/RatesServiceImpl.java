@@ -47,13 +47,13 @@ public class RatesServiceImpl implements RatesService {
         }
 
         rates.setEmployee(employeeRepository.getReferenceById(object.getEmployeeDTO().getId()));
-        rates.setMonthlyRate(object.getMonthlyRate());
-        rates.setDailyRate(object.getDailyRate());
-        rates.setHourlyRate(object.getHourlyRate());
-        rates.setOvertimeHourlyRate(object.getOvertimeHourlyRate());
-        rates.setLateHourlyRate(object.getLateHourlyRate());
-        rates.setAbsentDailyRate(object.getAbsentDailyRate());
-        rates.setCurrentRates(object.isCurrentRates());
+        rates.setRateType(object.getRateType());
+        rates.setMonthlyCompensationRate(object.getMonthlyCompensationRate());
+        rates.setDailyCompensationRate(object.getDailyCompensationRate());
+        rates.setHourlyCompensationRate(object.getHourlyCompensationRate());
+        rates.setOvertimeHourlyCompensationRate(object.getOvertimeHourlyCompensationRate());
+        rates.setLateHourlyDeductionRate(object.getLateHourlyDeductionRate());
+        rates.setDailyAbsentDeductionRate(object.getDailyAbsentDeductionRate());
         rates.setUpdatedBy(object.getUpdatedBy());
         rates.setDateAndTimeUpdated(LocalDateTime.now(ZoneId.of("Asia/Manila")));
 
@@ -70,13 +70,13 @@ public class RatesServiceImpl implements RatesService {
 
         ratesDTO.setId(rates.getId());
         ratesDTO.setEmployeeDTO(new EmployeeServiceImpl(employeeRepository).getById(rates.getEmployee().getId()));
-        ratesDTO.setMonthlyRate(rates.getMonthlyRate());
-        ratesDTO.setDailyRate(rates.getDailyRate());
-        ratesDTO.setHourlyRate(rates.getHourlyRate());
-        ratesDTO.setOvertimeHourlyRate(rates.getOvertimeHourlyRate());
-        ratesDTO.setLateHourlyRate(rates.getLateHourlyRate());
-        ratesDTO.setAbsentDailyRate(rates.getAbsentDailyRate());
-        ratesDTO.setCurrentRates(rates.isCurrentRates());
+        ratesDTO.setRateType(rates.getRateType());
+        ratesDTO.setMonthlyCompensationRate(rates.getMonthlyCompensationRate());
+        ratesDTO.setDailyCompensationRate(rates.getDailyCompensationRate());
+        ratesDTO.setHourlyCompensationRate(rates.getHourlyCompensationRate());
+        ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
+        ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
+        ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
         ratesDTO.setUpdatedBy(rates.getUpdatedBy());
         ratesDTO.setCreatedBy(rates.getCreatedBy());
         ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());
@@ -117,13 +117,13 @@ public class RatesServiceImpl implements RatesService {
 
                 ratesDTO.setId(rates.getId());
                 ratesDTO.setEmployeeDTO(employeeService.getById(rates.getEmployee().getId()));
-                ratesDTO.setMonthlyRate(rates.getMonthlyRate());
-                ratesDTO.setDailyRate(rates.getDailyRate());
-                ratesDTO.setHourlyRate(rates.getHourlyRate());
-                ratesDTO.setOvertimeHourlyRate(rates.getOvertimeHourlyRate());
-                ratesDTO.setLateHourlyRate(rates.getLateHourlyRate());
-                ratesDTO.setAbsentDailyRate(rates.getAbsentDailyRate());
-                ratesDTO.setCurrentRates(rates.isCurrentRates());
+                ratesDTO.setRateType(rates.getRateType());
+                ratesDTO.setMonthlyCompensationRate(rates.getMonthlyCompensationRate());
+                ratesDTO.setDailyCompensationRate(rates.getDailyCompensationRate());
+                ratesDTO.setHourlyCompensationRate(rates.getHourlyCompensationRate());
+                ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
+                ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
+                ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
                 ratesDTO.setUpdatedBy(rates.getUpdatedBy());
                 ratesDTO.setCreatedBy(rates.getCreatedBy());
                 ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());
@@ -141,16 +141,10 @@ public class RatesServiceImpl implements RatesService {
 
     @Override
     public List<RatesDTO> findByParameter(String param) {
-        List<RatesDTO> ratesDTOList = new ArrayList<>();
-        List<Rates> ratesList = null;
-
         logger.info("Retrieving employee's rates records with search parameter '%".concat(param).concat("%' from the database."));
 
-        if (param.equalsIgnoreCase("Yes") || param.equalsIgnoreCase("No")) {
-            ratesList = ratesRepository.findByBooleanParameter(param.equalsIgnoreCase("Yes"));
-        } else {
-            ratesList = ratesRepository.findByStringParameter(param);
-        }
+        List<RatesDTO> ratesDTOList = new ArrayList<>();
+        List<Rates> ratesList = ratesList = ratesRepository.findByStringParameter(param);
 
         if (!ratesList.isEmpty()) {
             logger.info("Employee's rates records with parameter '%".concat(param).concat("%' has successfully retrieved."));
@@ -162,13 +156,13 @@ public class RatesServiceImpl implements RatesService {
 
                 ratesDTO.setId(rates.getId());
                 ratesDTO.setEmployeeDTO(employeeService.getById(rates.getEmployee().getId()));
-                ratesDTO.setMonthlyRate(rates.getMonthlyRate());
-                ratesDTO.setDailyRate(rates.getDailyRate());
-                ratesDTO.setHourlyRate(rates.getHourlyRate());
-                ratesDTO.setOvertimeHourlyRate(rates.getOvertimeHourlyRate());
-                ratesDTO.setLateHourlyRate(rates.getLateHourlyRate());
-                ratesDTO.setAbsentDailyRate(rates.getAbsentDailyRate());
-                ratesDTO.setCurrentRates(rates.isCurrentRates());
+                ratesDTO.setRateType(rates.getRateType());
+                ratesDTO.setMonthlyCompensationRate(rates.getMonthlyCompensationRate());
+                ratesDTO.setDailyCompensationRate(rates.getDailyCompensationRate());
+                ratesDTO.setHourlyCompensationRate(rates.getHourlyCompensationRate());
+                ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
+                ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
+                ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
                 ratesDTO.setUpdatedBy(rates.getUpdatedBy());
                 ratesDTO.setCreatedBy(rates.getCreatedBy());
                 ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());

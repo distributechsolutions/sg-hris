@@ -1,6 +1,7 @@
 package com.whizservices.hris.services.impls.compenben;
 
 import com.whizservices.hris.dtos.compenben.AllowanceDTO;
+import com.whizservices.hris.dtos.profile.EmployeeDTO;
 import com.whizservices.hris.entities.compenben.Allowance;
 import com.whizservices.hris.repositories.compenben.AllowanceRepository;
 import com.whizservices.hris.repositories.profile.EmployeeRepository;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -157,5 +159,12 @@ public class AllowanceServiceImpl implements AllowanceService {
         }
 
         return allowanceDTOList;
+    }
+
+    @Override
+    public BigDecimal getSumOfAllowanceByEmployeeDTO(EmployeeDTO employeeDTO) {
+        Object sumOfAllowanceByEmployeeDTO = allowanceRepository.findSumOfAllowanceByEmployee(employeeRepository.getReferenceById(employeeDTO.getId()));
+        BigDecimal sumOfAllowance = new BigDecimal(sumOfAllowanceByEmployeeDTO != null ? sumOfAllowanceByEmployeeDTO.toString() : "0.00");
+        return sumOfAllowance;
     }
 }
