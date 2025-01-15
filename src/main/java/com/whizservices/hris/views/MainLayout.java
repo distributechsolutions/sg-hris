@@ -29,6 +29,7 @@ import com.whizservices.hris.views.attendance.TimesheetListView;
 import com.whizservices.hris.views.profile.EmployeeDepartmentListView;
 import com.whizservices.hris.views.profile.EmployeeListView;
 import com.whizservices.hris.views.profile.EmployeePositionListView;
+import com.whizservices.hris.views.reference.CalendarHolidaysListView;
 
 import jakarta.annotation.Resource;
 
@@ -175,17 +176,24 @@ public class MainLayout extends AppLayout {
         return nav;
     }
 
-    private SideNav createAdminNavigation() {
+    private SideNav createReferenceNavigation() {
         SideNav nav = new SideNav();
+        nav.setLabel("Reference");
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
-            nav.setLabel("Administration");
-
+            nav.addItem(new SideNavItem("Calendar Holidays", CalendarHolidaysListView.class, LineAwesomeIcon.CALENDAR.create()));
             nav.addItem(new SideNavItem("Positions", PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
             nav.addItem(new SideNavItem("Departments", DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
         }
+
+        return nav;
+    }
+
+    private SideNav createAdminNavigation() {
+        SideNav nav = new SideNav();
+        nav.setLabel("Administration");
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER")) {
@@ -202,6 +210,7 @@ public class MainLayout extends AppLayout {
                              this.createEmployeeNavigation(),
                              this.createAttendanceNavigation(),
                              this.createCompenbenNavigation(),
+                             this.createReferenceNavigation(),
                              this.createAdminNavigation());
         navigationLayout.setSpacing(true);
         navigationLayout.setSizeUndefined();
@@ -210,6 +219,7 @@ public class MainLayout extends AppLayout {
         this.createEmployeeNavigation().setWidthFull();
         this.createAttendanceNavigation().setWidthFull();
         this.createCompenbenNavigation().setWidthFull();
+        this.createReferenceNavigation().setWidthFull();
         this.createAdminNavigation().setWidthFull();
 
         return navigationLayout;
