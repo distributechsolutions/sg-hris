@@ -37,12 +37,10 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
 
     private final FormLayout employeeDTOFormLayout = new FormLayout();
     private TextField employeeNoTextField,
-                      biometricNoTextField,
                       lastNameTextField,
                       firstNameTextField,
                       middleNameTextField,
-                      suffixTextField,
-                      atmAccountNoTextField;
+                      suffixTextField;
     private ComboBox<String> genderComboBox;
     private DatePicker dateHiredDatePicker;
 
@@ -71,13 +69,6 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
         employeeNoTextField.setMaxLength(10);
         employeeNoTextField.setClearButtonVisible(true);
         if (employeeDTO != null) employeeNoTextField.setValue(employeeDTO.getEmployeeNumber());
-
-        biometricNoTextField = new TextField("Biometric Number");
-        biometricNoTextField.setRequired(true);
-        biometricNoTextField.setAllowedCharPattern("\\d*");
-        biometricNoTextField.setMaxLength(10);
-        biometricNoTextField.setClearButtonVisible(true);
-        if (employeeDTO != null) biometricNoTextField.setValue(employeeDTO.getBiometricsNumber());
 
         lastNameTextField = new TextField("Last Name");
         lastNameTextField.setRequired(true);
@@ -122,15 +113,6 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
         dateHiredDatePicker.setClearButtonVisible(true);
         if (employeeDTO != null) dateHiredDatePicker.setValue(employeeDTO.getDateHired());
 
-        atmAccountNoTextField = new TextField("ATM Account Number");
-        atmAccountNoTextField.setRequired(true);
-        atmAccountNoTextField.setAllowedCharPattern("\\d*");
-        atmAccountNoTextField.setMinLength(10);
-        atmAccountNoTextField.setMaxLength(15);
-        atmAccountNoTextField.setClearButtonVisible(true);
-        atmAccountNoTextField.setHelperText("Set 000000000000000 if the employee doesn't have an ATM account number.");
-        if (employeeDTO != null) atmAccountNoTextField.setValue(employeeDTO.getAtmAccountNumber());
-
         Button saveButton = new Button("Save");
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         saveButton.addClickListener(buttonClickEvent -> {
@@ -149,16 +131,14 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
         buttonLayout.setPadding(true);
 
         employeeDTOFormLayout.add(employeeNoTextField,
-                                  biometricNoTextField,
                                   lastNameTextField,
                                   suffixTextField,
                                   firstNameTextField,
                                   middleNameTextField,
                                   genderComboBox,
                                   dateHiredDatePicker,
-                                  atmAccountNoTextField,
                                   buttonLayout);
-        employeeDTOFormLayout.setColspan(atmAccountNoTextField, 2);
+        employeeDTOFormLayout.setColspan(employeeNoTextField, 2);
         employeeDTOFormLayout.setColspan(buttonLayout, 2);
         employeeDTOFormLayout.setMaxWidth("768px");
     }
@@ -174,14 +154,12 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
         }
 
         employeeDTO.setEmployeeNumber(employeeNoTextField.getValue());
-        employeeDTO.setBiometricsNumber(biometricNoTextField.getValue());
         employeeDTO.setLastName(lastNameTextField.getValue());
         employeeDTO.setSuffix(suffixTextField.getValue());
         employeeDTO.setFirstName(firstNameTextField.getValue());
         employeeDTO.setMiddleName(middleNameTextField.getValue());
         employeeDTO.setGender(genderComboBox.getValue());
         employeeDTO.setDateHired(dateHiredDatePicker.getValue());
-        employeeDTO.setAtmAccountNumber(atmAccountNoTextField.getValue());
         employeeDTO.setUpdatedBy(loggedInUser);
 
         employeeService.saveOrUpdate(employeeDTO);

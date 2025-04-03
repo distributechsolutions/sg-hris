@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "wsi_ref_region")
+@Table(name = "sg_hris_ref_region")
 public class Region implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

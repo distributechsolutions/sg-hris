@@ -5,7 +5,7 @@ import com.whizservices.hris.entities.profile.Employee;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "wsi_user_account")
+@Table(name = "sg_hris_user_account")
 public class User extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "id", unique = true, nullable = false)

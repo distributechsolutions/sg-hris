@@ -18,10 +18,10 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 
 import com.whizservices.hris.dtos.admin.UserDTO;
-import com.whizservices.hris.dtos.attendance.LeaveFilingDTO;
+import com.whizservices.hris.dtos.attendance.EmployeeLeaveFilingDTO;
 import com.whizservices.hris.dtos.compenben.LeaveBenefitsDTO;
 import com.whizservices.hris.services.admin.UserService;
-import com.whizservices.hris.services.attendance.LeaveFilingService;
+import com.whizservices.hris.services.attendance.EmployeeLeaveFilingService;
 import com.whizservices.hris.services.compenben.LeaveBenefitsService;
 import com.whizservices.hris.utils.SecurityUtil;
 import com.whizservices.hris.views.MainLayout;
@@ -39,21 +39,21 @@ import java.util.Objects;
                "ROLE_MANAGER",
                "ROLE_SUPERVISOR"})
 @Route(value = "leave-approvals-list-view", layout = MainLayout.class)
-public class LeaveApprovalsListView extends VerticalLayout {
-    @Resource private final LeaveFilingService leaveFilingService;
+public class EmployeeLeaveApprovalsListView extends VerticalLayout {
+    @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
     @Resource private final LeaveBenefitsService leaveBenefitsService;
     @Resource private final UserService userService;
 
-    private Grid<LeaveFilingDTO> leaveFilingDTOGrid;
+    private Grid<EmployeeLeaveFilingDTO> leaveFilingDTOGrid;
     private TextField searchFilterTextField;
 
     private final String loggedInUser;
     private UserDTO userDTO;
 
-    public LeaveApprovalsListView(LeaveFilingService leaveFilingService,
-                                  LeaveBenefitsService leaveBenefitsService,
-                                  UserService userService) {
-        this.leaveFilingService = leaveFilingService;
+    public EmployeeLeaveApprovalsListView(EmployeeLeaveFilingService employeeLeaveFilingService,
+                                          LeaveBenefitsService leaveBenefitsService,
+                                          UserService userService) {
+        this.employeeLeaveFilingService = employeeLeaveFilingService;
         this.leaveBenefitsService = leaveBenefitsService;
         this.userService = userService;
 
@@ -87,55 +87,55 @@ public class LeaveApprovalsListView extends VerticalLayout {
         return headerToolbarLayout;
     }
 
-    private Grid<LeaveFilingDTO> buildLeaveFilingDTOGrid() {
-        leaveFilingDTOGrid = new Grid<>(LeaveFilingDTO.class, false);
+    private Grid<EmployeeLeaveFilingDTO> buildLeaveFilingDTOGrid() {
+        leaveFilingDTOGrid = new Grid<>(EmployeeLeaveFilingDTO.class, false);
 
-        leaveFilingDTOGrid.addColumn(leaveFilingDTO -> leaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getEmployeeNumber())
+        leaveFilingDTOGrid.addColumn(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getEmployeeNumber())
                           .setHeader("Employee No.")
                           .setSortable(true);
-        leaveFilingDTOGrid.addColumn(leaveFilingDTO -> leaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getFirstName()
+        leaveFilingDTOGrid.addColumn(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getFirstName()
                                                                                                                         .concat(" ")
-                                                                                                                        .concat(leaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getMiddleName())
+                                                                                                                        .concat(employeeLeaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getMiddleName())
                                                                                                                         .concat(" ")
-                                                                                                                        .concat(leaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getLastName())
-                                                                                                                        .concat(leaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getSuffix() != null ? leaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getSuffix() : ""))
+                                                                                                                        .concat(employeeLeaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getLastName())
+                                                                                                                        .concat(employeeLeaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getSuffix() != null ? employeeLeaveFilingDTO.getLeaveBenefitsDTO().getEmployeeDTO().getSuffix() : ""))
                           .setHeader("Employee Name")
                           .setSortable(true);
-        leaveFilingDTOGrid.addColumn(leaveFilingDTO -> leaveFilingDTO.getLeaveBenefitsDTO().getLeaveType())
+        leaveFilingDTOGrid.addColumn(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getLeaveBenefitsDTO().getLeaveType())
                            .setHeader("Leave Type")
                            .setSortable(true);
-        leaveFilingDTOGrid.addColumn(LeaveFilingDTO::getLeaveCount)
+        leaveFilingDTOGrid.addColumn(EmployeeLeaveFilingDTO::getLeaveCount)
                           .setHeader("No. of Leaves Filed")
                           .setSortable(true);
-        leaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(LeaveFilingDTO::getLeaveDateAndTimeFrom, "MMM dd, yyyy HH:mm"))
+        leaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(EmployeeLeaveFilingDTO::getLeaveDateAndTimeFrom, "MMM dd, yyyy HH:mm"))
                           .setHeader("Leave From")
                           .setSortable(true);
-        leaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(LeaveFilingDTO::getLeaveDateAndTimeTo, "MMM dd, yyyy HH:mm"))
+        leaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(EmployeeLeaveFilingDTO::getLeaveDateAndTimeTo, "MMM dd, yyyy HH:mm"))
                           .setHeader("Leave To")
                           .setSortable(true);
-        leaveFilingDTOGrid.addColumn(LeaveFilingDTO::getRemarks)
+        leaveFilingDTOGrid.addColumn(EmployeeLeaveFilingDTO::getRemarks)
                           .setHeader("Remarks")
                           .setSortable(true);
-        leaveFilingDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, leaveFilingDTO) -> {
-                                String theme = String.format("badge %s", leaveFilingDTO.getLeaveStatus().equalsIgnoreCase("PENDING") ? "contrast" : "success");
+        leaveFilingDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, employeeLeaveFilingDTO) -> {
+                                String theme = String.format("badge %s", employeeLeaveFilingDTO.getLeaveStatus().equalsIgnoreCase("PENDING") ? "contrast" : "success");
 
                                 Span activeSpan = new Span();
                                 activeSpan.getElement().setAttribute("theme", theme);
-                                activeSpan.setText(leaveFilingDTO.getLeaveStatus());
+                                activeSpan.setText(employeeLeaveFilingDTO.getLeaveStatus());
 
                                 layout.setJustifyContentMode(JustifyContentMode.CENTER);
                                 layout.add(activeSpan);
                             }))
                           .setHeader("Status")
                           .setSortable(true);
-        leaveFilingDTOGrid.addComponentColumn(leaveFilingDTO -> buildRowToolbar()).setHeader("Action");
+        leaveFilingDTOGrid.addComponentColumn(employeeLeaveFilingDTO -> buildRowToolbar()).setHeader("Action");
         leaveFilingDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,
                                             GridVariant.LUMO_COLUMN_BORDERS,
                                             GridVariant.LUMO_WRAP_CELL_CONTENT);
         leaveFilingDTOGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         leaveFilingDTOGrid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
         leaveFilingDTOGrid.setEmptyStateText("No pending leave approvals found.");
-        leaveFilingDTOGrid.setItems(leaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
+        leaveFilingDTOGrid.setItems(employeeLeaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
 
         return leaveFilingDTOGrid;
     }
@@ -150,7 +150,7 @@ public class LeaveApprovalsListView extends VerticalLayout {
         approveButton.addClickListener(buttonClickEvent -> approveButton.getUI().ifPresent(ui -> {
             if (leaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
                 if (leaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get().getLeaveStatus().equals("PENDING")) {
-                    LeaveFilingDTO employeeLeaveFilingDTO = leaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
+                    EmployeeLeaveFilingDTO employeeLeaveFilingDTO = leaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
                     LeaveBenefitsDTO leaveBenefitsDTO = employeeLeaveFilingDTO.getLeaveBenefitsDTO();
 
                     if (leaveBenefitsDTO.getLeaveType().contains("Unpaid")) {
@@ -158,10 +158,10 @@ public class LeaveApprovalsListView extends VerticalLayout {
                         employeeLeaveFilingDTO.setLeaveStatus("APPROVED");
                         employeeLeaveFilingDTO.setUpdatedBy(loggedInUser);
 
-                        leaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
+                        employeeLeaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
 
                         // Update the data grid.
-                        leaveFilingDTOGrid.setItems(leaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
+                        leaveFilingDTOGrid.setItems(employeeLeaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
 
                         // Show notification message.
                         Notification notification = Notification.show("You have successfully approved the leave request.",  5000, Notification.Position.TOP_CENTER);
@@ -173,7 +173,7 @@ public class LeaveApprovalsListView extends VerticalLayout {
                             employeeLeaveFilingDTO.setLeaveStatus("APPROVED");
                             employeeLeaveFilingDTO.setUpdatedBy(loggedInUser);
 
-                            leaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
+                            employeeLeaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
 
                             // Deduct the leave count of the selected leave benefit.
                             leaveBenefitsDTO.setLeaveCount(leaveBenefitsDTO.getLeaveCount() - employeeLeaveFilingDTO.getLeaveCount());
@@ -182,7 +182,7 @@ public class LeaveApprovalsListView extends VerticalLayout {
                             leaveBenefitsService.saveOrUpdate(leaveBenefitsDTO);
 
                             // Update the data grid.
-                            leaveFilingDTOGrid.setItems(leaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
+                            leaveFilingDTOGrid.setItems(employeeLeaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
 
                             // Show notification message.
                             Notification notification = Notification.show("You have successfully approved the leave request.",  5000, Notification.Position.TOP_CENTER);
@@ -213,11 +213,11 @@ public class LeaveApprovalsListView extends VerticalLayout {
                     confirmDialog.setConfirmText("Yes");
                     confirmDialog.addConfirmListener(confirmEvent -> {
                         // Set the status of leave filing to "REJECTED" and save.
-                        LeaveFilingDTO employeeLeaveFilingDTO = leaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
+                        EmployeeLeaveFilingDTO employeeLeaveFilingDTO = leaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
                         employeeLeaveFilingDTO.setLeaveStatus("REJECTED");
                         employeeLeaveFilingDTO.setUpdatedBy(loggedInUser);
 
-                        leaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
+                        employeeLeaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
 
                         // Show notification message.
                         Notification notification = Notification.show("You have successfully rejected the leave request.",  5000, Notification.Position.TOP_CENTER);
@@ -248,13 +248,13 @@ public class LeaveApprovalsListView extends VerticalLayout {
 
     private void updateLeaveFilingDTOGrid() {
         if (!searchFilterTextField.getValue().isEmpty()) {
-            leaveFilingDTOGrid.setItems(leaveFilingService.findByParameter(searchFilterTextField.getValue())
+            leaveFilingDTOGrid.setItems(employeeLeaveFilingService.findByParameter(searchFilterTextField.getValue())
                                                                                                 .stream()
-                                                                                                .filter(leaveFilingDTO -> leaveFilingDTO.getLeaveStatus().equalsIgnoreCase("PENDING"))
-                                                                                                .filter(leaveFilingDTO -> leaveFilingDTO.getAssignedApproverEmployeeDTO().equals(userDTO.getEmployeeDTO()))
+                                                                                                .filter(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getLeaveStatus().equalsIgnoreCase("PENDING"))
+                                                                                                .filter(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getAssignedApproverEmployeeDTO().equals(userDTO.getEmployeeDTO()))
                                                                                                 .toList());
         } else {
-            leaveFilingDTOGrid.setItems(leaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
+            leaveFilingDTOGrid.setItems(employeeLeaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()));
         }
     }
 

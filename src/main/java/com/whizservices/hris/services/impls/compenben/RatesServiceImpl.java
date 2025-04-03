@@ -1,7 +1,9 @@
 package com.whizservices.hris.services.impls.compenben;
 
 import com.whizservices.hris.dtos.compenben.RatesDTO;
+import com.whizservices.hris.dtos.profile.EmployeeDTO;
 import com.whizservices.hris.entities.compenben.Rates;
+import com.whizservices.hris.entities.profile.Employee;
 import com.whizservices.hris.repositories.compenben.RatesRepository;
 import com.whizservices.hris.repositories.profile.EmployeeRepository;
 import com.whizservices.hris.services.compenben.RatesService;
@@ -48,7 +50,7 @@ public class RatesServiceImpl implements RatesService {
 
         rates.setEmployee(employeeRepository.getReferenceById(object.getEmployeeDTO().getId()));
         rates.setRateType(object.getRateType());
-        rates.setMonthlyCompensationRate(object.getMonthlyCompensationRate());
+        rates.setBasicCompensationRate(object.getBasicCompensationRate());
         rates.setDailyCompensationRate(object.getDailyCompensationRate());
         rates.setHourlyCompensationRate(object.getHourlyCompensationRate());
         rates.setOvertimeHourlyCompensationRate(object.getOvertimeHourlyCompensationRate());
@@ -71,7 +73,7 @@ public class RatesServiceImpl implements RatesService {
         ratesDTO.setId(rates.getId());
         ratesDTO.setEmployeeDTO(new EmployeeServiceImpl(employeeRepository).getById(rates.getEmployee().getId()));
         ratesDTO.setRateType(rates.getRateType());
-        ratesDTO.setMonthlyCompensationRate(rates.getMonthlyCompensationRate());
+        ratesDTO.setBasicCompensationRate(rates.getBasicCompensationRate());
         ratesDTO.setDailyCompensationRate(rates.getDailyCompensationRate());
         ratesDTO.setHourlyCompensationRate(rates.getHourlyCompensationRate());
         ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
@@ -118,7 +120,7 @@ public class RatesServiceImpl implements RatesService {
                 ratesDTO.setId(rates.getId());
                 ratesDTO.setEmployeeDTO(employeeService.getById(rates.getEmployee().getId()));
                 ratesDTO.setRateType(rates.getRateType());
-                ratesDTO.setMonthlyCompensationRate(rates.getMonthlyCompensationRate());
+                ratesDTO.setBasicCompensationRate(rates.getBasicCompensationRate());
                 ratesDTO.setDailyCompensationRate(rates.getDailyCompensationRate());
                 ratesDTO.setHourlyCompensationRate(rates.getHourlyCompensationRate());
                 ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
@@ -157,7 +159,7 @@ public class RatesServiceImpl implements RatesService {
                 ratesDTO.setId(rates.getId());
                 ratesDTO.setEmployeeDTO(employeeService.getById(rates.getEmployee().getId()));
                 ratesDTO.setRateType(rates.getRateType());
-                ratesDTO.setMonthlyCompensationRate(rates.getMonthlyCompensationRate());
+                ratesDTO.setBasicCompensationRate(rates.getBasicCompensationRate());
                 ratesDTO.setDailyCompensationRate(rates.getDailyCompensationRate());
                 ratesDTO.setHourlyCompensationRate(rates.getHourlyCompensationRate());
                 ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
@@ -176,5 +178,32 @@ public class RatesServiceImpl implements RatesService {
         }
 
         return ratesDTOList;
+    }
+
+    @Override
+    public RatesDTO findByEmployeeDTO(EmployeeDTO employeeDTO) {
+        logger.info("Retrieving employee's rates record.");
+
+        Rates rates = ratesRepository.findByEmployee(employeeRepository.getReferenceById(employeeDTO.getId()));
+        RatesDTO ratesDTO = new RatesDTO();
+
+        ratesDTO.setId(rates.getId());
+        ratesDTO.setEmployeeDTO(employeeDTO);
+        ratesDTO.setRateType(rates.getRateType());
+        ratesDTO.setBasicCompensationRate(rates.getBasicCompensationRate());
+        ratesDTO.setDailyCompensationRate(rates.getDailyCompensationRate());
+        ratesDTO.setHourlyCompensationRate(rates.getHourlyCompensationRate());
+        ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
+        ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
+        ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
+        ratesDTO.setUpdatedBy(rates.getUpdatedBy());
+        ratesDTO.setCreatedBy(rates.getCreatedBy());
+        ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());
+        ratesDTO.setUpdatedBy(rates.getUpdatedBy());
+        ratesDTO.setDateAndTimeUpdated(rates.getDateAndTimeUpdated());
+
+        logger.info("Employee's rates record with id has successfully retrieved.");
+
+        return ratesDTO;
     }
 }

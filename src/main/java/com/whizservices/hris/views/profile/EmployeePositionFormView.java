@@ -5,6 +5,8 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.Query;
@@ -139,5 +141,9 @@ public class EmployeePositionFormView extends VerticalLayout implements HasUrlPa
         employeePositionDTO.setUpdatedBy(loggedInUser);
 
         employeePositionService.saveOrUpdate(employeePositionDTO);
+
+        // Show notification message.
+        Notification notification = Notification.show("You have successfully saved an employee position.",  5000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }

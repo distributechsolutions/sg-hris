@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "wsi_ref_municipality")
+@Table(name = "sg_hris_ref_municipality")
 public class Municipality implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

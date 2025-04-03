@@ -3,7 +3,6 @@ package com.whizservices.hris.services.impls.profile;
 import com.whizservices.hris.dtos.profile.EmployeeDTO;
 import com.whizservices.hris.entities.profile.Employee;
 import com.whizservices.hris.repositories.profile.EmployeeRepository;
-import com.whizservices.hris.services.impls.admin.UserServiceImpl;
 import com.whizservices.hris.services.profile.EmployeeService;
 
 import org.slf4j.Logger;
@@ -19,7 +18,7 @@ import java.util.UUID;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-    private final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
     private final EmployeeRepository employeeRepository;
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
@@ -45,14 +44,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         employee.setEmployeeNumber(object.getEmployeeNumber());
-        employee.setBiometricsNumber(object.getBiometricsNumber());
         employee.setLastName(object.getLastName());
         employee.setFirstName(object.getFirstName());
         employee.setMiddleName(object.getMiddleName());
         employee.setSuffix(object.getSuffix());
         employee.setGender(object.getGender());
         employee.setDateHired(object.getDateHired());
-        employee.setAtmAccountNumber(object.getAtmAccountNumber());
         employee.setUpdatedBy(object.getUpdatedBy());
         employee.setDateAndTimeUpdated(LocalDateTime.now(ZoneId.of("Asia/Manila")));
 
@@ -123,18 +120,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO getEmployeeByBiometricId(String biometricId) {
-        logger.info("Getting employee record with biometrics ID ".concat(biometricId).concat(" from the database."));
-        Employee employee = employeeRepository.findByBiometricsNumber(biometricId);
-
-        logger.info("Employee record with biometrics ID ".concat(biometricId.toString()).concat(" has successfully retrieved."));
-        EmployeeDTO employeeDTO = getEmployeeDTO(employee);
-
-        logger.info("Employee data transfer object has successfully returned.");
-        return employeeDTO;
-    }
-
-    @Override
     public List<EmployeeDTO> getEmployeesWhoAreApprovers() {
         logger.info("Retrieving employees who are approvers from the database.");
         List<Employee> employeeList = employeeRepository.findEmployeesWhoAreApprovers();
@@ -164,14 +149,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeDTO.setId(employee.getId());
         employeeDTO.setEmployeeNumber(employee.getEmployeeNumber());
-        employeeDTO.setBiometricsNumber(employee.getBiometricsNumber());
         employeeDTO.setLastName(employee.getLastName());
         employeeDTO.setFirstName(employee.getFirstName());
         employeeDTO.setMiddleName(employee.getMiddleName());
         employeeDTO.setSuffix(employee.getSuffix());
         employeeDTO.setGender(employee.getGender());
         employeeDTO.setDateHired(employee.getDateHired());
-        employeeDTO.setAtmAccountNumber(employee.getAtmAccountNumber());
         employeeDTO.setCreatedBy(employee.getCreatedBy());
         employeeDTO.setDateAndTimeCreated(employee.getDateAndTimeCreated());
         employeeDTO.setUpdatedBy(employee.getUpdatedBy());

@@ -14,6 +14,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.icon.SvgIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -303,6 +305,10 @@ public class EmployeeDocumentFormView extends Div implements HasUrlParameter<Str
         employeeDocumentDTO.setUpdatedBy(loggedInUser);
 
         employeeDocumentService.saveOrUpdate(employeeDocumentDTO);
+
+        // Show notification message.
+        Notification notification = Notification.show("You have successfully saved an employee document.",  5000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
     private void clearFields() {

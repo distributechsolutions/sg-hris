@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "wsi_position")
+@Table(name = "sg_hris_position")
 public class Position extends BaseEntity {
     @Column(name = "position_code", length = 10, nullable = false, unique = true)
     private String code;

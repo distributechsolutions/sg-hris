@@ -6,7 +6,7 @@ import com.whizservices.hris.dtos.profile.EmployeeDTO;
 
 import java.time.LocalDateTime;
 
-public class LeaveFilingDTO extends BaseDTO {
+public class EmployeeLeaveFilingDTO extends BaseDTO {
     private LeaveBenefitsDTO leaveBenefitsDTO;
     private EmployeeDTO assignedApproverEmployeeDTO;
     private LocalDateTime leaveDateAndTimeFrom;

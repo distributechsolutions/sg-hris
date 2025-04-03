@@ -5,7 +5,7 @@ import com.whizservices.hris.entities.admin.Department;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "wsi_employee_department")
+@Table(name = "sg_hris_employee_department")
 public class EmployeeDepartment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
