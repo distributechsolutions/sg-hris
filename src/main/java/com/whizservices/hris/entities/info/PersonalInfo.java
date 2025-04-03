@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "wsi_personal_information")
+@Table(name = "sg_hris_personal_information")
 public class PersonalInfo extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false, unique = true)

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "wsi_calendar_holidays")
+@Table(name = "sg_hris_calendar_holidays")
 public class CalendarHolidays extends BaseEntity {
 
     @Column(name = "holiday_description", length = 150, nullable = false)

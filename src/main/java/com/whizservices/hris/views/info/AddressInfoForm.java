@@ -302,6 +302,10 @@ public class AddressInfoForm extends VerticalLayout {
         addressInfoDTO.setUpdatedBy(loggedInUser);
 
         addressInfoService.saveOrUpdate(addressInfoDTO);
+
+        // Show notification message.
+        Notification notification = Notification.show("You have successfully saved your address information.",  5000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
     private void clearFields() {

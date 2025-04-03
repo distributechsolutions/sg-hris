@@ -5,7 +5,7 @@ import com.whizservices.hris.entities.profile.Employee;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "wsi_leave_benefits")
+@Table(name = "sg_hris_leave_benefits")
 public class LeaveBenefits extends BaseEntity {
     @Column(name = "leave_code", length = 50, nullable = false, unique = true)
     private String leaveCode;

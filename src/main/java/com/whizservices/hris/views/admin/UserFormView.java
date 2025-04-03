@@ -182,7 +182,7 @@ public class UserFormView extends VerticalLayout implements HasUrlParameter<Stri
         }
 
         // Show notification message.
-        Notification notification = Notification.show("You have successfully saved the user account.",  5000, Notification.Position.TOP_CENTER);
+        Notification notification = Notification.show("You have successfully saved a user account.",  5000, Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }

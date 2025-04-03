@@ -27,11 +27,11 @@ import com.vaadin.flow.router.Route;
 
 import com.whizservices.hris.dtos.admin.UserDTO;
 import com.whizservices.hris.dtos.compenben.LeaveBenefitsDTO;
-import com.whizservices.hris.dtos.attendance.LeaveFilingDTO;
+import com.whizservices.hris.dtos.attendance.EmployeeLeaveFilingDTO;
 import com.whizservices.hris.dtos.profile.EmployeeDTO;
 import com.whizservices.hris.services.admin.UserService;
 import com.whizservices.hris.services.compenben.LeaveBenefitsService;
-import com.whizservices.hris.services.attendance.LeaveFilingService;
+import com.whizservices.hris.services.attendance.EmployeeLeaveFilingService;
 import com.whizservices.hris.services.profile.EmployeeService;
 import com.whizservices.hris.utils.SecurityUtil;
 import com.whizservices.hris.views.MainLayout;
@@ -49,22 +49,22 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 @PageTitle("Leave Filing")
 @Route(value = "leave-filing-view", layout = MainLayout.class)
 public class LeaveFilingView extends VerticalLayout {
-    @Resource private final LeaveFilingService leaveFilingService;
+    @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
     @Resource private final LeaveBenefitsService leaveBenefitsService;
     @Resource private final EmployeeService employeeService;
     @Resource private final UserService userService;
 
     private UserDTO userDTO;
     private EmployeeDTO employeeDTO;
-    private LeaveFilingDTO leaveFilingDTO;
+    private EmployeeLeaveFilingDTO employeeLeaveFilingDTO;
 
-    private List<LeaveFilingDTO> leaveFilingDTOList;
+    private List<EmployeeLeaveFilingDTO> employeeLeaveFilingDTOList;
     private List<LeaveBenefitsDTO> leaveBenefitsDTOList;
     private List<EmployeeDTO> approverEmployeeDTOList;
 
     private String loggedInUser;
 
-    private Grid<LeaveFilingDTO> employeeLeaveFilingDTOGrid;
+    private Grid<EmployeeLeaveFilingDTO> employeeLeaveFilingDTOGrid;
     private FormLayout leaveFilingLayout;
     private ComboBox<LeaveBenefitsDTO> leaveBenefitsDTOComboBox;
     private ComboBox<EmployeeDTO> employeeApproverDTOComboBox;
@@ -73,11 +73,11 @@ public class LeaveFilingView extends VerticalLayout {
     private TextField leaveRemarks;
     private Button saveButton, cancelButton;
 
-    public LeaveFilingView(LeaveFilingService leaveFilingService,
+    public LeaveFilingView(EmployeeLeaveFilingService employeeLeaveFilingService,
                            LeaveBenefitsService leaveBenefitsService,
                            EmployeeService employeeService,
                            UserService userService) {
-        this.leaveFilingService = leaveFilingService;
+        this.employeeLeaveFilingService = employeeLeaveFilingService;
         this.leaveBenefitsService = leaveBenefitsService;
         this.employeeService = employeeService;
         this.userService = userService;
@@ -93,10 +93,10 @@ public class LeaveFilingView extends VerticalLayout {
         }
 
         if (employeeDTO != null) {
-            leaveFilingDTOList = leaveFilingService.getByEmployeeDTO(employeeDTO);
+            employeeLeaveFilingDTOList = employeeLeaveFilingService.getByEmployeeDTO(employeeDTO);
         }
 
-        employeeLeaveFilingDTOGrid = new Grid<>(LeaveFilingDTO.class, false);
+        employeeLeaveFilingDTOGrid = new Grid<>(EmployeeLeaveFilingDTO.class, false);
         leaveFilingLayout = new FormLayout();
 
         this.buildLeaveFilingLayout();
@@ -149,21 +149,21 @@ public class LeaveFilingView extends VerticalLayout {
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         saveButton.addClickListener(buttonClickEvent -> {
             // Save the leave filing.
-            if (leaveFilingDTO == null) {
-                leaveFilingDTO = new LeaveFilingDTO();
-                leaveFilingDTO.setCreatedBy(loggedInUser);
+            if (employeeLeaveFilingDTO == null) {
+                employeeLeaveFilingDTO = new EmployeeLeaveFilingDTO();
+                employeeLeaveFilingDTO.setCreatedBy(loggedInUser);
             }
 
-            leaveFilingDTO.setLeaveBenefitsDTO(leaveBenefitsDTOComboBox.getValue());
-            leaveFilingDTO.setAssignedApproverEmployeeDTO(employeeApproverDTOComboBox.getValue());
-            leaveFilingDTO.setLeaveDateAndTimeFrom(leaveFromDateTimePicker.getValue());
-            leaveFilingDTO.setLeaveDateAndTimeTo(leaveToDateTimePicker.getValue());
-            leaveFilingDTO.setLeaveCount(leaveCountField.getValue());
-            leaveFilingDTO.setRemarks(leaveRemarks.getValue());
-            leaveFilingDTO.setLeaveStatus("PENDING");
-            leaveFilingDTO.setUpdatedBy(loggedInUser);
+            employeeLeaveFilingDTO.setLeaveBenefitsDTO(leaveBenefitsDTOComboBox.getValue());
+            employeeLeaveFilingDTO.setAssignedApproverEmployeeDTO(employeeApproverDTOComboBox.getValue());
+            employeeLeaveFilingDTO.setLeaveDateAndTimeFrom(leaveFromDateTimePicker.getValue());
+            employeeLeaveFilingDTO.setLeaveDateAndTimeTo(leaveToDateTimePicker.getValue());
+            employeeLeaveFilingDTO.setLeaveCount(leaveCountField.getValue());
+            employeeLeaveFilingDTO.setRemarks(leaveRemarks.getValue());
+            employeeLeaveFilingDTO.setLeaveStatus("PENDING");
+            employeeLeaveFilingDTO.setUpdatedBy(loggedInUser);
 
-            leaveFilingService.saveOrUpdate(leaveFilingDTO);
+            employeeLeaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
 
             // Clear the fields.
             this.clearFields();
@@ -197,21 +197,21 @@ public class LeaveFilingView extends VerticalLayout {
     }
 
     private void buildEmployeeLeaveFilingDTOGrid() {
-        employeeLeaveFilingDTOGrid.addColumn(leaveFilingDTO -> leaveFilingDTO.getLeaveBenefitsDTO().getLeaveType())
+        employeeLeaveFilingDTOGrid.addColumn(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getLeaveBenefitsDTO().getLeaveType())
                                   .setHeader("Leave Type");
-        employeeLeaveFilingDTOGrid.addColumn(leaveFilingDTO -> leaveFilingDTO.getAssignedApproverEmployeeDTO().getFirstName()
+        employeeLeaveFilingDTOGrid.addColumn(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getAssignedApproverEmployeeDTO().getFirstName()
                                                                + " "
-                                                               + leaveFilingDTO.getAssignedApproverEmployeeDTO().getLastName())
+                                                               + employeeLeaveFilingDTO.getAssignedApproverEmployeeDTO().getLastName())
                                   .setHeader("Approver");
-        employeeLeaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(LeaveFilingDTO::getLeaveDateAndTimeFrom, "MMM dd, yyyy HH:mm"))
+        employeeLeaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(EmployeeLeaveFilingDTO::getLeaveDateAndTimeFrom, "MMM dd, yyyy HH:mm"))
                                   .setHeader("Leave From");
-        employeeLeaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(LeaveFilingDTO::getLeaveDateAndTimeTo, "MMM dd, yyyy HH:mm"))
+        employeeLeaveFilingDTOGrid.addColumn(new LocalDateTimeRenderer<>(EmployeeLeaveFilingDTO::getLeaveDateAndTimeTo, "MMM dd, yyyy HH:mm"))
                                   .setHeader("Leave To");
-        employeeLeaveFilingDTOGrid.addColumn(LeaveFilingDTO::getRemarks).setHeader("Remarks");
-        employeeLeaveFilingDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, leaveFilingDTO) -> {
+        employeeLeaveFilingDTOGrid.addColumn(EmployeeLeaveFilingDTO::getRemarks).setHeader("Remarks");
+        employeeLeaveFilingDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, employeeLeaveFilingDTO) -> {
             Icon statusIcon = null;
             String theme = "";
-            String leaveStatus = leaveFilingDTO.getLeaveStatus();
+            String leaveStatus = employeeLeaveFilingDTO.getLeaveStatus();
 
             if (leaveStatus.equals("APPROVED")) {
                 statusIcon = VaadinIcon.CHECK.create();
@@ -235,7 +235,7 @@ public class LeaveFilingView extends VerticalLayout {
             layout.setJustifyContentMode(JustifyContentMode.CENTER);
             layout.add(statusSpan);
         })).setHeader("Status");
-        employeeLeaveFilingDTOGrid.addComponentColumn(leaveFilingDTO -> leaveFilingDTO.getLeaveStatus().equalsIgnoreCase("PENDING") ? this.buildRowToolbar() : new Span()).setHeader("Action");
+        employeeLeaveFilingDTOGrid.addComponentColumn(employeeLeaveFilingDTO -> employeeLeaveFilingDTO.getLeaveStatus().equalsIgnoreCase("PENDING") ? this.buildRowToolbar() : new Span()).setHeader("Action");
         employeeLeaveFilingDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,
                                                     GridVariant.LUMO_COLUMN_BORDERS,
                                                     GridVariant.LUMO_WRAP_CELL_CONTENT);
@@ -246,7 +246,7 @@ public class LeaveFilingView extends VerticalLayout {
         employeeLeaveFilingDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,
                                                     GridVariant.LUMO_COLUMN_BORDERS,
                                                     GridVariant.LUMO_WRAP_CELL_CONTENT);
-        employeeLeaveFilingDTOGrid.setItems(leaveFilingDTOList);
+        employeeLeaveFilingDTOGrid.setItems(employeeLeaveFilingDTOList);
     }
 
     public Component buildRowToolbar() {
@@ -266,11 +266,11 @@ public class LeaveFilingView extends VerticalLayout {
                     confirmDialog.setConfirmText("Yes");
                     confirmDialog.addConfirmListener(confirmEvent -> {
                         // Set the status of leave filing to "CANCELLED" and save.
-                        LeaveFilingDTO employeeLeaveFilingDTO = employeeLeaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
+                        EmployeeLeaveFilingDTO employeeLeaveFilingDTO = employeeLeaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
                         employeeLeaveFilingDTO.setLeaveStatus("CANCELLED");
                         employeeLeaveFilingDTO.setUpdatedBy(loggedInUser);
 
-                        leaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
+                        employeeLeaveFilingService.saveOrUpdate(employeeLeaveFilingDTO);
 
                         // Show notification message.
                         Notification notification = Notification.show("You have successfully cancelled your leave request.",  5000, Notification.Position.TOP_CENTER);
@@ -299,14 +299,14 @@ public class LeaveFilingView extends VerticalLayout {
         editLeaveFilingButton.addClickListener(buttonClickEvent -> editLeaveFilingButton.getUI().ifPresent(ui -> {
             if (employeeLeaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
                 if (employeeLeaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get().getLeaveStatus().equals("PENDING")) {
-                    leaveFilingDTO = employeeLeaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
+                    employeeLeaveFilingDTO = employeeLeaveFilingDTOGrid.getSelectionModel().getFirstSelectedItem().get();
 
-                    leaveBenefitsDTOComboBox.setValue(leaveFilingDTO.getLeaveBenefitsDTO());
-                    employeeApproverDTOComboBox.setValue(leaveFilingDTO.getAssignedApproverEmployeeDTO());
-                    leaveFromDateTimePicker.setValue(leaveFilingDTO.getLeaveDateAndTimeFrom());
-                    leaveToDateTimePicker.setValue(leaveFilingDTO.getLeaveDateAndTimeTo());
-                    leaveCountField.setValue(leaveFilingDTO.getLeaveCount());
-                    leaveRemarks.setValue(leaveFilingDTO.getRemarks());
+                    leaveBenefitsDTOComboBox.setValue(employeeLeaveFilingDTO.getLeaveBenefitsDTO());
+                    employeeApproverDTOComboBox.setValue(employeeLeaveFilingDTO.getAssignedApproverEmployeeDTO());
+                    leaveFromDateTimePicker.setValue(employeeLeaveFilingDTO.getLeaveDateAndTimeFrom());
+                    leaveToDateTimePicker.setValue(employeeLeaveFilingDTO.getLeaveDateAndTimeTo());
+                    leaveCountField.setValue(employeeLeaveFilingDTO.getLeaveCount());
+                    leaveRemarks.setValue(employeeLeaveFilingDTO.getRemarks());
                 } else {
                     Notification notification = Notification.show("You cannot edit a leave request that is already approved, rejected or cancelled.",  5000, Notification.Position.TOP_CENTER);
                     notification.addThemeVariants(NotificationVariant.LUMO_ERROR, NotificationVariant.LUMO_PRIMARY);
@@ -331,7 +331,7 @@ public class LeaveFilingView extends VerticalLayout {
     }
 
     private void updateLeaveFilingDataGrid() {
-        leaveFilingDTOList = leaveFilingService.getByEmployeeDTO(employeeDTO);
-        employeeLeaveFilingDTOGrid.setItems(leaveFilingDTOList);
+        employeeLeaveFilingDTOList = employeeLeaveFilingService.getByEmployeeDTO(employeeDTO);
+        employeeLeaveFilingDTOGrid.setItems(employeeLeaveFilingDTOList);
     }
 }

@@ -23,7 +23,7 @@ public class SecurityConfig extends VaadinWebSecurity {
     public DataSource configureDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/whiz-services-hris");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/sg-hris");
         dataSource.setUsername("postgres");
         dataSource.setPassword("p@$$w0rd");
 
@@ -32,8 +32,8 @@ public class SecurityConfig extends VaadinWebSecurity {
 
     @Bean
     public UserDetailsService jdbcUserDetailsService() {
-        String usersByUsernameQuery = "SELECT username, password, is_account_active FROM wsi_user_account WHERE username = ? AND is_account_active = true";
-        String rolesByUsernameQuery = "SELECT username, role FROM wsi_user_account WHERE username = ? AND is_account_active = true";
+        String usersByUsernameQuery = "SELECT username, password, is_account_active FROM sg_hris_user_account WHERE username = ? AND is_account_active = true";
+        String rolesByUsernameQuery = "SELECT username, role FROM sg_hris_user_account WHERE username = ? AND is_account_active = true";
 
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager();
         jdbcUserDetailsManager.setDataSource(this.configureDataSource());

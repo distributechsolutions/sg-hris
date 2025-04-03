@@ -6,36 +6,30 @@ import java.time.LocalDate;
 
 public class EmployeeDTO extends BaseDTO {
     private String employeeNumber;
-    private String biometricsNumber;
     private String lastName;
     private String firstName;
     private String middleName;
     private String suffix;
     private String gender;
     private LocalDate dateHired;
-    private String atmAccountNumber;
 
     public EmployeeDTO() {
     }
 
     public EmployeeDTO(String employeeNumber,
-                    String biometricsNumber,
                     String lastName,
                     String firstName,
                     String middleName,
                     String suffix,
                     String gender,
-                    LocalDate dateHired,
-                    String atmAccountNumber) {
+                    LocalDate dateHired) {
         this.employeeNumber = employeeNumber;
-        this.biometricsNumber = biometricsNumber;
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
         this.suffix = suffix;
         this.gender = gender;
         this.dateHired = dateHired;
-        this.atmAccountNumber = atmAccountNumber;
     }
 
     public String getEmployeeNumber() {
@@ -44,14 +38,6 @@ public class EmployeeDTO extends BaseDTO {
 
     public void setEmployeeNumber(String employeeNumber) {
         this.employeeNumber = employeeNumber;
-    }
-
-    public String getBiometricsNumber() {
-        return biometricsNumber;
-    }
-
-    public void setBiometricsNumber(String biometricsNumber) {
-        this.biometricsNumber = biometricsNumber;
     }
 
     public String getLastName() {
@@ -100,14 +86,6 @@ public class EmployeeDTO extends BaseDTO {
 
     public void setDateHired(LocalDate dateHired) {
         this.dateHired = dateHired;
-    }
-
-    public String getAtmAccountNumber() {
-        return atmAccountNumber;
-    }
-
-    public void setAtmAccountNumber(String atmAccountNumber) {
-        this.atmAccountNumber = atmAccountNumber;
     }
 
     public String getEmployeeFullName() {

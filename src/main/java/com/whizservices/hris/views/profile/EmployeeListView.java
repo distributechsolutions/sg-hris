@@ -70,9 +70,6 @@ public class EmployeeListView extends VerticalLayout {
         employeeDTOGrid.addColumn(EmployeeDTO::getEmployeeNumber)
                        .setHeader("Employee No.")
                        .setSortable(true);
-        employeeDTOGrid.addColumn(EmployeeDTO::getBiometricsNumber)
-                       .setHeader("Biometric No.")
-                       .setSortable(true);
         employeeDTOGrid.addColumn(employeeDTO -> employeeDTO.getFirstName().concat(" ")
                                                                            .concat(employeeDTO.getMiddleName())
                                                                            .concat(" ")

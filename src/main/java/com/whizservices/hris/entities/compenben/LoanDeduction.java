@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "wsi_loan_deduction")
+@Table(name = "sg_hris_loan_deduction")
 public class LoanDeduction extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)

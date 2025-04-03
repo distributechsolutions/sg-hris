@@ -146,5 +146,9 @@ public class GovernmentContributionsFormView extends VerticalLayout implements H
         governmentContributionsDTO.setUpdatedBy(loggedInUser);
 
         governmentContributionsService.saveOrUpdate(governmentContributionsDTO);
+
+        // Show notification message.
+        Notification notification = Notification.show("You have successfully saved a government contribution record.",  5000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }

@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "wsi_rates")
+@Table(name = "sg_hris_rates")
 public class Rates extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
@@ -17,8 +17,8 @@ public class Rates extends BaseEntity {
     @Column(name = "rate_type", length = 50, nullable = false)
     private String rateType;
 
-    @Column(name = "monthly_compensation_rate", nullable = false)
-    private BigDecimal monthlyCompensationRate;
+    @Column(name = "basic_compensation_rate", nullable = false)
+    private BigDecimal basicCompensationRate;
 
     @Column(name = "daily_compensation_rate", nullable = false)
     private BigDecimal dailyCompensationRate;
@@ -51,12 +51,12 @@ public class Rates extends BaseEntity {
         this.rateType = rateType;
     }
 
-    public BigDecimal getMonthlyCompensationRate() {
-        return monthlyCompensationRate;
+    public BigDecimal getBasicCompensationRate() {
+        return basicCompensationRate;
     }
 
-    public void setMonthlyCompensationRate(BigDecimal monthlyCompensationRate) {
-        this.monthlyCompensationRate = monthlyCompensationRate;
+    public void setBasicCompensationRate(BigDecimal basicCompensationRate) {
+        this.basicCompensationRate = basicCompensationRate;
     }
 
     public BigDecimal getDailyCompensationRate() {

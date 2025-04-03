@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "wsi_government_contributions")
+@Table(name = "sg_hris_government_contributions")
 public class GovernmentContributions extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false, unique = true)

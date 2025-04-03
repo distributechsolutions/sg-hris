@@ -15,17 +15,20 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import com.whizservices.hris.dtos.admin.UserDTO;
 import com.whizservices.hris.services.admin.UserService;
-import com.whizservices.hris.services.attendance.LeaveFilingService;
+import com.whizservices.hris.services.attendance.EmployeeLeaveFilingService;
 import com.whizservices.hris.utils.SecurityUtil;
 import com.whizservices.hris.views.admin.DepartmentListView;
 import com.whizservices.hris.views.admin.PositionListView;
 import com.whizservices.hris.views.admin.UserListView;
-import com.whizservices.hris.views.attendance.LeaveApprovalsListView;
+import com.whizservices.hris.views.attendance.EmployeeShiftListView;
+import com.whizservices.hris.views.attendance.EmployeeLeaveApprovalsListView;
 import com.whizservices.hris.views.common.DashboardView;
 import com.whizservices.hris.views.common.LeaveFilingView;
+import com.whizservices.hris.views.common.TimeAttendanceView;
 import com.whizservices.hris.views.compenben.*;
 import com.whizservices.hris.views.common.EmployeeInfoView;
-import com.whizservices.hris.views.attendance.TimesheetListView;
+import com.whizservices.hris.views.attendance.EmployeeTimesheetListView;
+import com.whizservices.hris.views.payroll.PayrollGeneratorView;
 import com.whizservices.hris.views.profile.EmployeeDepartmentListView;
 import com.whizservices.hris.views.profile.EmployeeListView;
 import com.whizservices.hris.views.profile.EmployeePositionListView;
@@ -39,14 +42,14 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
  * The main view is a top-level placeholder for other views.
  */
 public class MainLayout extends AppLayout {
-    @Resource private final LeaveFilingService leaveFilingService;
+    @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
 
     private UserDTO userDTO;
     private H1 viewTitle;
 
     public MainLayout(UserService userService,
-                      LeaveFilingService leaveFilingService) {
-        this.leaveFilingService = leaveFilingService;
+                      EmployeeLeaveFilingService employeeLeaveFilingService) {
+        this.employeeLeaveFilingService = employeeLeaveFilingService;
 
         // Gets the user data transfer object based from the logged in user.
         if (SecurityUtil.getAuthenticatedUser() != null) {
@@ -102,6 +105,7 @@ public class MainLayout extends AppLayout {
         nav.addItem(new SideNavItem("My Dashboard", DashboardView.class, LineAwesomeIcon.CHART_BAR_SOLID.create()));
         nav.addItem(new SideNavItem("My Profile", EmployeeInfoView.class, LineAwesomeIcon.USER_TIE_SOLID.create()));
         nav.addItem(new SideNavItem("My Leave Filings", LeaveFilingView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
+        nav.addItem(new SideNavItem("My Time Attendance", TimeAttendanceView.class, LineAwesomeIcon.CLOCK.create()));
 
         return nav;
     }
@@ -131,9 +135,15 @@ public class MainLayout extends AppLayout {
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
+                userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
+            nav.addItem(new SideNavItem("Employee Shift", EmployeeShiftListView.class, LineAwesomeIcon.CALENDAR_DAY_SOLID.create()));
+        }
+
+        if (userDTO.getRole().equals("ROLE_ADMIN") ||
+                userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
                 userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
-            nav.addItem(new SideNavItem("Timesheets", TimesheetListView.class, LineAwesomeIcon.CALENDAR_WEEK_SOLID.create()));
+            nav.addItem(new SideNavItem("Timesheets", EmployeeTimesheetListView.class, LineAwesomeIcon.CALENDAR_WEEK_SOLID.create()));
         }
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
@@ -142,7 +152,7 @@ public class MainLayout extends AppLayout {
                 userDTO.getRole().equals("ROLE_MANAGER") ||
                 userDTO.getRole().equals("ROLE_SUPERVISOR")) {
             // Get the count of pending leaves to approved. Check every 5 seconds.
-            int pendingLeaveCounts = leaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()).size();
+            int pendingLeaveCounts = employeeLeaveFilingService.getByLeaveStatusAndAssignedApproverEmployeeDTO("PENDING", userDTO.getEmployeeDTO()).size();
 
             // Show a notification badge that displays the count of leaves to be approved.
             Span counter = new Span(String.valueOf(pendingLeaveCounts));
@@ -150,7 +160,7 @@ public class MainLayout extends AppLayout {
             counter.getStyle().set("margin-inline-start", "var(--lumo-space-s)");
 
             // Create the navigation item for leave approvals.
-            SideNavItem leaveApprovalNavItem = new SideNavItem("Leave Approvals", LeaveApprovalsListView.class, LineAwesomeIcon.CALENDAR_CHECK.create());
+            SideNavItem leaveApprovalNavItem = new SideNavItem("Leave Approvals", EmployeeLeaveApprovalsListView.class, LineAwesomeIcon.CALENDAR_CHECK.create());
             if (pendingLeaveCounts > 0) leaveApprovalNavItem.setSuffixComponent(counter);
 
             nav.addItem(leaveApprovalNavItem);
@@ -168,7 +178,7 @@ public class MainLayout extends AppLayout {
             nav.setLabel("Compensation and Benefits");
             nav.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
             nav.addItem(new SideNavItem("Allowances", AllowanceListView.class, LineAwesomeIcon.COINS_SOLID.create()));
-            nav.addItem(new SideNavItem("Government Contributions", GovernmentContributionsListView.class, LineAwesomeIcon.HAND_HOLDING_USD_SOLID.create()));
+            nav.addItem(new SideNavItem("Contributions", GovernmentContributionsListView.class, LineAwesomeIcon.HAND_HOLDING_USD_SOLID.create()));
             nav.addItem(new SideNavItem("Loan Deductions", LoanDeductionListView.class, LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
             nav.addItem(new SideNavItem("Leave Benefits", LeaveBenefitsListView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
         }
@@ -176,13 +186,27 @@ public class MainLayout extends AppLayout {
         return nav;
     }
 
+    private SideNav createPayrollNavigation() {
+        SideNav nav = new SideNav();
+        if (userDTO.getRole().equals("ROLE_ADMIN") ||
+                userDTO.getRole().equals("ROLE_HR_MANAGER") ||
+                userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
+                userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
+            nav.setLabel("Payroll");
+
+            nav.addItem(new SideNavItem("Payroll Generator", PayrollGeneratorView.class, LineAwesomeIcon.FILE_INVOICE_DOLLAR_SOLID.create()));
+        }
+
+        return nav;
+    }
+
     private SideNav createReferenceNavigation() {
         SideNav nav = new SideNav();
-        nav.setLabel("Reference");
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
+            nav.setLabel("Reference");
             nav.addItem(new SideNavItem("Calendar Holidays", CalendarHolidaysListView.class, LineAwesomeIcon.CALENDAR.create()));
             nav.addItem(new SideNavItem("Positions", PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
             nav.addItem(new SideNavItem("Departments", DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
@@ -193,10 +217,10 @@ public class MainLayout extends AppLayout {
 
     private SideNav createAdminNavigation() {
         SideNav nav = new SideNav();
-        nav.setLabel("Administration");
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER")) {
+            nav.setLabel("Administration");
             nav.addItem(new SideNavItem("Users", UserListView.class, LineAwesomeIcon.USER_LOCK_SOLID.create()));
         }
 
@@ -210,6 +234,7 @@ public class MainLayout extends AppLayout {
                              this.createEmployeeNavigation(),
                              this.createAttendanceNavigation(),
                              this.createCompenbenNavigation(),
+                             this.createPayrollNavigation(),
                              this.createReferenceNavigation(),
                              this.createAdminNavigation());
         navigationLayout.setSpacing(true);
