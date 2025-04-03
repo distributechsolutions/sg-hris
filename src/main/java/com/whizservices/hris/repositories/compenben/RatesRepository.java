@@ -2,6 +2,7 @@ package com.whizservices.hris.repositories.compenben;
 
 import com.whizservices.hris.entities.compenben.Rates;
 
+import com.whizservices.hris.entities.profile.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,7 @@ public interface RatesRepository extends JpaRepository<Rates, UUID> {
            OR LOWER(r.rateType) LIKE LOWER(CONCAT('%', :param, '%'))
            """)
     List<Rates> findByStringParameter(@Param("param") String param);
+
+    @Query("SELECT r FROM Rates r WHERE r.employee = :employee")
+    Rates findByEmployee(@Param("employee") Employee employee);
 }

@@ -79,8 +79,8 @@ public class RatesListView extends VerticalLayout {
         ratesDTOGrid.addColumn(RatesDTO::getRateType)
                     .setHeader("Rate Type")
                     .setSortable(true);
-        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getMonthlyCompensationRate())))
-                    .setHeader("Monthly Rate")
+        ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getBasicCompensationRate())))
+                    .setHeader("Basic Rate")
                     .setSortable(true);
         ratesDTOGrid.addColumn(ratesDTO -> "PHP ".concat(String.valueOf(ratesDTO.getDailyCompensationRate())))
                     .setHeader("Daily Rate")

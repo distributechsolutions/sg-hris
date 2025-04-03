@@ -105,6 +105,18 @@
             <artifactId>opencsv</artifactId>
             <version>5.9</version>
         </dependency>
+        <!-- Toggle Button -->
+        <dependency>
+            <groupId>com.vaadin.componentfactory</groupId>
+            <artifactId>togglebutton</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <!-- VCamera -->
+        <dependency>
+            <groupId>org.vaadin.addons.parttio</groupId>
+            <artifactId>vcamera</artifactId>
+            <version>4.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class RatesDTO extends BaseDTO {
     private EmployeeDTO employeeDTO;
     private String rateType;
-    private BigDecimal monthlyCompensationRate;
+    private BigDecimal basicCompensationRate;
     private BigDecimal dailyCompensationRate;
     private BigDecimal hourlyCompensationRate;
     private BigDecimal overtimeHourlyCompensationRate;
@@ -31,12 +31,12 @@ public class RatesDTO extends BaseDTO {
         this.rateType = rateType;
     }
 
-    public BigDecimal getMonthlyCompensationRate() {
-        return monthlyCompensationRate;
+    public BigDecimal getBasicCompensationRate() {
+        return basicCompensationRate;
     }
 
-    public void setMonthlyCompensationRate(BigDecimal monthlyCompensationRate) {
-        this.monthlyCompensationRate = monthlyCompensationRate;
+    public void setBasicCompensationRate(BigDecimal basicCompensationRate) {
+        this.basicCompensationRate = basicCompensationRate;
     }
 
     public BigDecimal getDailyCompensationRate() {

@@ -5,6 +5,8 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -163,5 +165,9 @@ public class LeaveBenefitsFormView extends VerticalLayout implements HasUrlParam
         leaveBenefitsDTO.setUpdatedBy(loggedInUser);
 
         leaveBenefitsService.saveOrUpdate(leaveBenefitsDTO);
+
+        // Show notification message.
+        Notification notification = Notification.show("You have successfully saved a leave benefit record.",  5000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }

@@ -83,11 +83,11 @@ public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<
         Span monthlyAllowanceRateValueSpan = new Span("PHP ".concat(String.valueOf(allowanceService.getSumOfAllowanceByEmployeeDTO(ratesDTO.getEmployeeDTO()))));
         monthlyAllowanceRateValueSpan.getStyle().setFontWeight("bold");
 
-        Span monthlyRateLabelSpan = new Span("Monthly Rate");
-        monthlyRateLabelSpan.getStyle().set("text-align", "right");
+        Span basicRateLabelSpan = new Span("Basic Rate");
+        basicRateLabelSpan.getStyle().set("text-align", "right");
 
-        Span monthlyRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getMonthlyCompensationRate())));
-        monthlyRateValueSpan.getStyle().setFontWeight("bold");
+        Span basicRateValueSpan = new Span("PHP ".concat(String.valueOf(ratesDTO.getBasicCompensationRate())));
+        basicRateValueSpan.getStyle().setFontWeight("bold");
 
         Span dailyRateLabelSpan = new Span("Daily Rate");
         dailyRateLabelSpan.getStyle().set("text-align", "right");
@@ -125,8 +125,8 @@ public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<
                             employeeNameValueSpan,
                             monthlyAllowanceRateLabelSpan,
                             monthlyAllowanceRateValueSpan,
-                            monthlyRateLabelSpan,
-                            monthlyRateValueSpan,
+                            basicRateLabelSpan,
+                            basicRateValueSpan,
                             dailyRateLabelSpan,
                             dailyRateValueSpan,
                             hourlyRateLabelSpan,

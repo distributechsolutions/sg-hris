@@ -10,7 +10,7 @@ import com.whizservices.hris.entities.reference.Region;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "wsi_address_information")
+@Table(name = "sg_hris_address_information")
 public class AddressInfo extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)

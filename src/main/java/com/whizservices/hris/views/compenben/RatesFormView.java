@@ -5,6 +5,8 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -49,7 +51,7 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
     private ComboBox<EmployeeDTO> employeeDTOComboBox;
     private RadioButtonGroup<String> rateTypeRadioButtonGroup;
     private BigDecimalField totalMonthlyAllowanceDecimalField,
-                            monthlyRateDecimalField,
+                            basicRateDecimalField,
                             dailyRateDecimalField,
                             hourlyRateDecimalField,
                             overtimeHourlyRateDecimalField,
@@ -106,13 +108,13 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
         totalMonthlyAllowanceDecimalField.setReadOnly(true);
         if (ratesDTO != null) totalMonthlyAllowanceDecimalField.setValue(allowanceService.getSumOfAllowanceByEmployeeDTO(employeeDTOComboBox.getValue()));
 
-        monthlyRateDecimalField = new BigDecimalField("Monthly Rate");
-        monthlyRateDecimalField.setPlaceholder("0.00");
-        monthlyRateDecimalField.setRequired(true);
-        monthlyRateDecimalField.setRequiredIndicatorVisible(true);
-        monthlyRateDecimalField.setHelperText("Provide the monthly salary rate.");
-        monthlyRateDecimalField.setPrefixComponent(new Span("PHP"));
-        if (ratesDTO != null) monthlyRateDecimalField.setValue(ratesDTO.getMonthlyCompensationRate());
+        basicRateDecimalField = new BigDecimalField("Basic Rate");
+        basicRateDecimalField.setPlaceholder("0.00");
+        basicRateDecimalField.setRequired(true);
+        basicRateDecimalField.setRequiredIndicatorVisible(true);
+        basicRateDecimalField.setHelperText("Provide the monthly salary rate.");
+        basicRateDecimalField.setPrefixComponent(new Span("PHP"));
+        if (ratesDTO != null) basicRateDecimalField.setValue(ratesDTO.getBasicCompensationRate());
 
         dailyRateDecimalField = new BigDecimalField("Daily Rate");
         dailyRateDecimalField.setPlaceholder("0.00");
@@ -160,7 +162,7 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
             }
         });
 
-        monthlyRateDecimalField.addValueChangeListener(event -> {
+        basicRateDecimalField.addValueChangeListener(event -> {
             BigDecimal monthlySalaryRate = event.getValue();
 
             // Populate the computed values in each field.
@@ -205,7 +207,7 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
         ratesDTOFormLayout.add(employeeDTOComboBox,
                                rateTypeRadioButtonGroup,
                                totalMonthlyAllowanceDecimalField,
-                               monthlyRateDecimalField,
+                               basicRateDecimalField,
                                dailyRateDecimalField,
                                hourlyRateDecimalField,
                                overtimeHourlyRateDecimalField,
@@ -227,7 +229,7 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
 
         ratesDTO.setEmployeeDTO(employeeDTOComboBox.getValue());
         ratesDTO.setRateType(rateTypeRadioButtonGroup.getValue());
-        ratesDTO.setMonthlyCompensationRate(monthlyRateDecimalField.getValue());
+        ratesDTO.setBasicCompensationRate(basicRateDecimalField.getValue());
         ratesDTO.setDailyCompensationRate(dailyRateDecimalField.getValue());
         ratesDTO.setHourlyCompensationRate(hourlyRateDecimalField.getValue());
         ratesDTO.setOvertimeHourlyCompensationRate(overtimeHourlyRateDecimalField.getValue());
@@ -236,5 +238,9 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
         ratesDTO.setUpdatedBy(loggedInUser);
 
         ratesService.saveOrUpdate(ratesDTO);
+
+        // Show notification message.
+        Notification notification = Notification.show("You have successfully saved a salary rate record.",  5000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }

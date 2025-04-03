@@ -8,13 +8,10 @@ import jakarta.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "wsi_employee")
+@Table(name = "sg_hris_employee")
 public class Employee extends BaseEntity {
     @Column(name = "employee_number", length = 10, nullable = false, unique = true)
     private String employeeNumber;
-
-    @Column(name = "biometrics_number", length = 10, nullable = false, unique = true)
-    private String biometricsNumber;
 
     @Column(name = "last_name", length = 35, nullable = false)
     private String lastName;
@@ -34,30 +31,23 @@ public class Employee extends BaseEntity {
     @Column(name = "date_hired", nullable = false)
     private LocalDate dateHired;
 
-    @Column(name = "atm_account_number", length = 15, nullable = false)
-    private String atmAccountNumber;
-
     public Employee() {
     }
 
     public Employee(String employeeNumber,
-                    String biometricsNumber,
                     String lastName,
                     String firstName,
                     String middleName,
                     String suffix,
                     String gender,
-                    LocalDate dateHired,
-                    String atmAccountNumber) {
+                    LocalDate dateHired) {
         this.employeeNumber = employeeNumber;
-        this.biometricsNumber = biometricsNumber;
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
         this.suffix = suffix;
         this.gender = gender;
         this.dateHired = dateHired;
-        this.atmAccountNumber = atmAccountNumber;
     }
 
     public String getEmployeeNumber() {
@@ -66,14 +56,6 @@ public class Employee extends BaseEntity {
 
     public void setEmployeeNumber(String employeeNumber) {
         this.employeeNumber = employeeNumber;
-    }
-
-    public String getBiometricsNumber() {
-        return biometricsNumber;
-    }
-
-    public void setBiometricsNumber(String biometricsNumber) {
-        this.biometricsNumber = biometricsNumber;
     }
 
     public String getLastName() {
@@ -122,13 +104,5 @@ public class Employee extends BaseEntity {
 
     public void setDateHired(LocalDate dateHired) {
         this.dateHired = dateHired;
-    }
-
-    public String getAtmAccountNumber() {
-        return atmAccountNumber;
-    }
-
-    public void setAtmAccountNumber(String atmAccountNumber) {
-        this.atmAccountNumber = atmAccountNumber;
     }
 }

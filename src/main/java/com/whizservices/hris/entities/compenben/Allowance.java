@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "wsi_allowance_benefits")
+@Table(name = "sg_hris_allowance_benefits")
 public class Allowance extends BaseEntity {
     @Column(name = "allowance_code", length = 50, nullable = false, unique = true)
     private String allowanceCode;

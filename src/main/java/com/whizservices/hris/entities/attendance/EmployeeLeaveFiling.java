@@ -8,8 +8,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "wsi_leave_filing")
-public class LeaveFiling extends BaseEntity {
+@Table(name = "sg_hris_employee_leave_filing")
+public class EmployeeLeaveFiling extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leave_benefits_id", referencedColumnName = "id", nullable = false)
     private LeaveBenefits leaveBenefits;

@@ -126,12 +126,6 @@ public class EmployeeDetailsView extends Div implements HasUrlParameter<String> 
         Span employeeNoValueSpan = new Span(employeeDTO.getEmployeeNumber());
         employeeNoValueSpan.getStyle().setFontWeight("bold");
 
-        Span biometricNoLabelSpan = new Span("Biometric No");
-        biometricNoLabelSpan.getStyle().set("text-align", "right");
-
-        Span biometricNoValueSpan = new Span(employeeDTO.getBiometricsNumber());
-        biometricNoValueSpan.getStyle().setFontWeight("bold");
-
         Span fullNameLabelSpan = new Span("Full Name");
         fullNameLabelSpan.getStyle().set("text-align", "right");
 
@@ -159,26 +153,16 @@ public class EmployeeDetailsView extends Div implements HasUrlParameter<String> 
         Span dateHiredValueSpan = new Span(dateHired);
         dateHiredValueSpan.getStyle().setFontWeight("bold");
 
-        Span atmAccountNoLabelSpan = new Span("ATM Account Number");
-        atmAccountNoLabelSpan.getStyle().set("text-align", "right");
-
-        Span atmAccountNoValueSpan = new Span(employeeDTO.getAtmAccountNumber());
-        atmAccountNoValueSpan.getStyle().setFontWeight("bold");
-
         employeeDetailsLayout.add(recordIdLabelSpan,
                                   recordIdValueSpan,
                                   employeeNoLabelSpan,
                                   employeeNoValueSpan,
-                                  biometricNoLabelSpan,
-                                  biometricNoValueSpan,
                                   fullNameLabelSpan,
                                   fullNameValueSpan,
                                   genderLabelSpan,
                                   genderValueSpan,
                                   dateHiredLabelSpan,
-                                  dateHiredValueSpan,
-                                  atmAccountNoLabelSpan,
-                                  atmAccountNoValueSpan);
+                                  dateHiredValueSpan);
         employeeDetailsLayout.setWidth("768px");
     }
 

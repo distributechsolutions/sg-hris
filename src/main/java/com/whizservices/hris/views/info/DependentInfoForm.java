@@ -218,6 +218,10 @@ public class DependentInfoForm extends VerticalLayout {
         dependentInfoDTO.setUpdatedBy(loggedInUser);
 
         dependentInfoService.saveOrUpdate(dependentInfoDTO);
+
+        // Show notification message.
+        Notification notification = Notification.show("You have successfully saved your dependent.",  5000, Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
     private void clearFields() {
