@@ -1,4 +1,4 @@
-package com.whizservices.hris.views.admin;
+package com.whizservices.hris.views.reference;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -12,8 +12,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import com.whizservices.hris.dtos.admin.DepartmentDTO;
-import com.whizservices.hris.services.admin.DepartmentService;
+import com.whizservices.hris.dtos.reference.DepartmentDTO;
+import com.whizservices.hris.services.reference.DepartmentService;
 import com.whizservices.hris.views.MainLayout;
 
 import jakarta.annotation.Resource;

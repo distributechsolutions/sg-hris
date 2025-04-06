@@ -1,11 +1,12 @@
-package com.whizservices.hris.views.admin;
+package com.whizservices.hris.views.reference;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
-import com.whizservices.hris.dtos.admin.DepartmentDTO;
-import com.whizservices.hris.services.admin.DepartmentService;
+import com.whizservices.hris.dtos.reference.DepartmentDTO;
+import com.whizservices.hris.services.reference.DepartmentService;
 import com.whizservices.hris.views.MainLayout;
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
@@ -25,10 +26,12 @@ public class DepartmentDetailsView extends VerticalLayout implements HasUrlParam
     public DepartmentDetailsView(DepartmentService departmentService) {
         this.departmentService = departmentService;
 
+        add(departmentDetailsLayout);
+
         setSizeFull();
         setMargin(true);
-        setAlignItems(Alignment.CENTER);
-        add(departmentDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, departmentDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -47,9 +48,12 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
     public EmployeeFormView(EmployeeService employeeService) {
         this.employeeService = employeeService;
 
+        add(employeeDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(employeeDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, employeeDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -127,7 +131,7 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.add(cancelButton, saveButton);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
-        buttonLayout.setMaxWidth("768px");
+        buttonLayout.setMaxWidth("720px");
         buttonLayout.setPadding(true);
 
         employeeDTOFormLayout.add(employeeNoTextField,
@@ -140,7 +144,7 @@ public class EmployeeFormView extends VerticalLayout implements HasUrlParameter<
                                   buttonLayout);
         employeeDTOFormLayout.setColspan(employeeNoTextField, 2);
         employeeDTOFormLayout.setColspan(buttonLayout, 2);
-        employeeDTOFormLayout.setMaxWidth("768px");
+        employeeDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateEmployeeDTO() {

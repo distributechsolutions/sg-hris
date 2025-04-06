@@ -2,6 +2,7 @@ package com.whizservices.hris.views.profile;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -33,9 +34,12 @@ public class EmployeePositionDetailsView extends VerticalLayout implements HasUr
     public EmployeePositionDetailsView(EmployeePositionService employeePositionService) {
         this.employeePositionService = employeePositionService;
 
+        add(employeePositionDetailsLayout);
+
         setSizeFull();
         setMargin(true);
-        add(employeePositionDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, employeePositionDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override

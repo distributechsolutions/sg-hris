@@ -1,12 +1,13 @@
-package com.whizservices.hris.views.admin;
+package com.whizservices.hris.views.reference;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 
-import com.whizservices.hris.dtos.admin.PositionDTO;
-import com.whizservices.hris.services.admin.PositionService;
+import com.whizservices.hris.dtos.reference.PositionDTO;
+import com.whizservices.hris.services.reference.PositionService;
 import com.whizservices.hris.views.MainLayout;
 
 import jakarta.annotation.Resource;
@@ -27,10 +28,13 @@ public class PositionDetailsView extends VerticalLayout implements HasUrlParamet
     public PositionDetailsView(PositionService positionService) {
         this.positionService = positionService;
 
+        add(positionDetailsLayout);
+
         setSizeFull();
         setMargin(true);
         setAlignItems(Alignment.CENTER);
-        add(positionDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, positionDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override

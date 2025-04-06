@@ -8,6 +8,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -58,9 +59,12 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
 
         loggedInUser = Objects.requireNonNull(SecurityUtil.getAuthenticatedUser()).getUsername();
 
+        add(employeeShiftDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(employeeShiftDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, employeeShiftDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -150,7 +154,7 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
         employeeShiftDTOFormLayout.setColspan(shiftScheduledDaysCheckboxGroup, 2);
         employeeShiftDTOFormLayout.setColspan(activeShiftToggleButton, 2);
         employeeShiftDTOFormLayout.setColspan(buttonLayout, 2);
-        employeeShiftDTOFormLayout.setMaxWidth("768px");
+        employeeShiftDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateEmployeeShiftDTO() {

@@ -7,6 +7,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
@@ -49,9 +50,12 @@ public class AllowanceFormView extends VerticalLayout implements HasUrlParameter
         this.allowanceService = allowanceService;
         this.employeeService = employeeService;
 
+        add(allowanceDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(allowanceDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, allowanceDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -123,7 +127,7 @@ public class AllowanceFormView extends VerticalLayout implements HasUrlParameter
                 buttonLayout);
         allowanceDTOFormLayout.setColspan(employeeDTOComboBox, 2);
         allowanceDTOFormLayout.setColspan(buttonLayout, 2);
-        allowanceDTOFormLayout.setMaxWidth("768px");
+        allowanceDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateAllowanceDTO() {

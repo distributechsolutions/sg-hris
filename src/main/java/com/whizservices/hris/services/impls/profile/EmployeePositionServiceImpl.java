@@ -2,11 +2,11 @@ package com.whizservices.hris.services.impls.profile;
 
 import com.whizservices.hris.dtos.profile.EmployeePositionDTO;
 import com.whizservices.hris.entities.profile.EmployeePosition;
-import com.whizservices.hris.repositories.admin.PositionRepository;
+import com.whizservices.hris.repositories.reference.PositionRepository;
 import com.whizservices.hris.repositories.profile.EmployeePositionRepository;
 import com.whizservices.hris.repositories.profile.EmployeeRepository;
-import com.whizservices.hris.services.admin.PositionService;
-import com.whizservices.hris.services.impls.admin.PositionServiceImpl;
+import com.whizservices.hris.services.reference.PositionService;
+import com.whizservices.hris.services.impls.reference.PositionServiceImpl;
 import com.whizservices.hris.services.profile.EmployeePositionService;
 import com.whizservices.hris.services.profile.EmployeeService;
 

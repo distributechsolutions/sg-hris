@@ -7,6 +7,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
@@ -46,9 +47,12 @@ public class GovernmentContributionsFormView extends VerticalLayout implements H
         this.governmentContributionsService = governmentContributionsService;
         this.employeeService = employeeService;
 
+        add(governmentContributionsDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(governmentContributionsDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, governmentContributionsDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -126,7 +130,7 @@ public class GovernmentContributionsFormView extends VerticalLayout implements H
                                                  buttonLayout);
         governmentContributionsDTOFormLayout.setColspan(employeeDTOComboBox, 3);
         governmentContributionsDTOFormLayout.setColspan(buttonLayout, 3);
-        governmentContributionsDTOFormLayout.setMaxWidth("768px");
+        governmentContributionsDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateGovernmentContributionsDTO() {

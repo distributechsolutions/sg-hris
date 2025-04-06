@@ -2,11 +2,13 @@ package com.whizservices.hris.views.reference;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+
 import com.whizservices.hris.dtos.reference.CalendarHolidaysDTO;
 import com.whizservices.hris.services.reference.CalendarHolidaysService;
 import com.whizservices.hris.views.MainLayout;
@@ -32,10 +34,13 @@ public class CalendarHolidaysDetailsView extends VerticalLayout implements HasUr
     public CalendarHolidaysDetailsView(CalendarHolidaysService calendarHolidaysService) {
         this.calendarHolidaysService = calendarHolidaysService;
 
+        add(calendarHolidaysDetailsLayout);
+
         setSizeFull();
         setMargin(true);
         setAlignItems(Alignment.CENTER);
-        add(calendarHolidaysDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, calendarHolidaysDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
