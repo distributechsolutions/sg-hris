@@ -2,6 +2,7 @@ package com.whizservices.hris.views.compenben;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -32,9 +33,12 @@ public class GovernmentContributionsDetailsView extends VerticalLayout implement
     public GovernmentContributionsDetailsView(GovernmentContributionsService governmentContributionsService) {
         this.governmentContributionsService = governmentContributionsService;
 
+        add(governmentContributionsDetailsLayout);
+
         setSizeFull();
         setMargin(true);
-        add(governmentContributionsDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, governmentContributionsDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -95,6 +99,6 @@ public class GovernmentContributionsDetailsView extends VerticalLayout implement
                 hdmfAmountValueSpan,
                 philhealthAmountLabelSpan,
                 philhealthAmountValueSpan);
-        governmentContributionsDetailsLayout.setWidth("768px");
+        governmentContributionsDetailsLayout.setWidth("720px");
     }
 }

@@ -17,8 +17,8 @@ import com.whizservices.hris.dtos.admin.UserDTO;
 import com.whizservices.hris.services.admin.UserService;
 import com.whizservices.hris.services.attendance.EmployeeLeaveFilingService;
 import com.whizservices.hris.utils.SecurityUtil;
-import com.whizservices.hris.views.admin.DepartmentListView;
-import com.whizservices.hris.views.admin.PositionListView;
+import com.whizservices.hris.views.reference.DepartmentListView;
+import com.whizservices.hris.views.reference.PositionListView;
 import com.whizservices.hris.views.admin.UserListView;
 import com.whizservices.hris.views.attendance.EmployeeShiftListView;
 import com.whizservices.hris.views.attendance.EmployeeLeaveApprovalsListView;
@@ -99,7 +99,7 @@ public class MainLayout extends AppLayout {
         addToDrawer(header, scroller, createFooter());
     }
 
-    private SideNav createProfileNavigation() {
+    private SideNav createNavigation() {
         SideNav nav = new SideNav();
 
         nav.addItem(new SideNavItem("My Dashboard", DashboardView.class, LineAwesomeIcon.CHART_BAR_SOLID.create()));
@@ -107,43 +107,49 @@ public class MainLayout extends AppLayout {
         nav.addItem(new SideNavItem("My Leave Filings", LeaveFilingView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
         nav.addItem(new SideNavItem("My Time Attendance", TimeAttendanceView.class, LineAwesomeIcon.CLOCK.create()));
 
+        if (!userDTO.getRole().equals("ROLE_EMPLOYEE")) {
+            nav.addItem(this.createEmployeeNavigation(),
+                        this.createAttendanceNavigation(),
+                        this.createCompenbenNavigation(),
+                        this.createPayrollNavigation(),
+                        this.createReferenceNavigation(),
+                        this.createAdminNavigation());
+        }
+
         return nav;
     }
 
-    private SideNav createEmployeeNavigation() {
-        SideNav nav = new SideNav();
+    private SideNavItem createEmployeeNavigation() {
+        SideNavItem navItem = new SideNavItem("Employee Details");
+        navItem.setExpanded(false);
+
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
                 userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
-            nav.setLabel("Employee Details");
-
-            nav.addItem(new SideNavItem("Employees", EmployeeListView.class, LineAwesomeIcon.ID_BADGE_SOLID.create()));
-            nav.addItem(new SideNavItem("Employee Position", EmployeePositionListView.class, LineAwesomeIcon.USER_CHECK_SOLID.create()));
-            nav.addItem(new SideNavItem("Employee Department", EmployeeDepartmentListView.class, LineAwesomeIcon.USER_CIRCLE_SOLID.create()));
+            navItem.addItem(new SideNavItem("Employees", EmployeeListView.class, LineAwesomeIcon.ID_BADGE_SOLID.create()));
+            navItem.addItem(new SideNavItem("Employee Position", EmployeePositionListView.class, LineAwesomeIcon.USER_CHECK_SOLID.create()));
+            navItem.addItem(new SideNavItem("Employee Department", EmployeeDepartmentListView.class, LineAwesomeIcon.USER_CIRCLE_SOLID.create()));
         }
 
-        return nav;
+        return navItem;
     }
 
-    private SideNav createAttendanceNavigation() {
-        SideNav nav = new SideNav();
-
-        if (!userDTO.getRole().equals("ROLE_EMPLOYEE")) {
-            nav.setLabel("Attendance");
-        }
+    private SideNavItem createAttendanceNavigation() {
+        SideNavItem navItem = new SideNavItem("Attendance");
+        navItem.setExpanded(false);
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
-            nav.addItem(new SideNavItem("Employee Shift", EmployeeShiftListView.class, LineAwesomeIcon.CALENDAR_DAY_SOLID.create()));
+            navItem.addItem(new SideNavItem("Employee Shift", EmployeeShiftListView.class, LineAwesomeIcon.CALENDAR_DAY_SOLID.create()));
         }
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
                 userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
-            nav.addItem(new SideNavItem("Timesheets", EmployeeTimesheetListView.class, LineAwesomeIcon.CALENDAR_WEEK_SOLID.create()));
+            navItem.addItem(new SideNavItem("Timesheets", EmployeeTimesheetListView.class, LineAwesomeIcon.CALENDAR_WEEK_SOLID.create()));
         }
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
@@ -163,89 +169,75 @@ public class MainLayout extends AppLayout {
             SideNavItem leaveApprovalNavItem = new SideNavItem("Leave Approvals", EmployeeLeaveApprovalsListView.class, LineAwesomeIcon.CALENDAR_CHECK.create());
             if (pendingLeaveCounts > 0) leaveApprovalNavItem.setSuffixComponent(counter);
 
-            nav.addItem(leaveApprovalNavItem);
+            navItem.addItem(leaveApprovalNavItem);
         }
 
-        return nav;
+        return navItem;
     }
 
-    private SideNav createCompenbenNavigation() {
-        SideNav nav = new SideNav();
+    private SideNavItem createCompenbenNavigation() {
+        SideNavItem navItem = new SideNavItem("Compensation and Benefits");
+        navItem.setExpanded(false);
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
-            nav.setLabel("Compensation and Benefits");
-            nav.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
-            nav.addItem(new SideNavItem("Allowances", AllowanceListView.class, LineAwesomeIcon.COINS_SOLID.create()));
-            nav.addItem(new SideNavItem("Contributions", GovernmentContributionsListView.class, LineAwesomeIcon.HAND_HOLDING_USD_SOLID.create()));
-            nav.addItem(new SideNavItem("Loan Deductions", LoanDeductionListView.class, LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
-            nav.addItem(new SideNavItem("Leave Benefits", LeaveBenefitsListView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
+            navItem.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
+            navItem.addItem(new SideNavItem("Allowances", AllowanceListView.class, LineAwesomeIcon.COINS_SOLID.create()));
+            navItem.addItem(new SideNavItem("Contributions", GovernmentContributionsListView.class, LineAwesomeIcon.HAND_HOLDING_USD_SOLID.create()));
+            navItem.addItem(new SideNavItem("Loan Deductions", LoanDeductionListView.class, LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
+            navItem.addItem(new SideNavItem("Leave Benefits", LeaveBenefitsListView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
         }
 
-        return nav;
+        return navItem;
     }
 
-    private SideNav createPayrollNavigation() {
-        SideNav nav = new SideNav();
+    private SideNavItem createPayrollNavigation() {
+        SideNavItem navItem = new SideNavItem("Payroll");
+        navItem.setExpanded(false);
+
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
                 userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
-            nav.setLabel("Payroll");
-
-            nav.addItem(new SideNavItem("Payroll Generator", PayrollGeneratorView.class, LineAwesomeIcon.FILE_INVOICE_DOLLAR_SOLID.create()));
+            navItem.addItem(new SideNavItem("Payroll Generator", PayrollGeneratorView.class, LineAwesomeIcon.FILE_INVOICE_DOLLAR_SOLID.create()));
         }
 
-        return nav;
+        return navItem;
     }
 
-    private SideNav createReferenceNavigation() {
-        SideNav nav = new SideNav();
+    private SideNavItem createReferenceNavigation() {
+        SideNavItem navItem = new SideNavItem("Reference");
+        navItem.setExpanded(false);
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
-            nav.setLabel("Reference");
-            nav.addItem(new SideNavItem("Calendar Holidays", CalendarHolidaysListView.class, LineAwesomeIcon.CALENDAR.create()));
-            nav.addItem(new SideNavItem("Positions", PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
-            nav.addItem(new SideNavItem("Departments", DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
+            navItem.addItem(new SideNavItem("Calendar Holidays", CalendarHolidaysListView.class, LineAwesomeIcon.CALENDAR.create()));
+            navItem.addItem(new SideNavItem("Positions", PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
+            navItem.addItem(new SideNavItem("Departments", DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
         }
 
-        return nav;
+        return navItem;
     }
 
-    private SideNav createAdminNavigation() {
-        SideNav nav = new SideNav();
+    private SideNavItem createAdminNavigation() {
+        SideNavItem navItem = new SideNavItem("Administration");
+        navItem.setExpanded(false);
 
-        if (userDTO.getRole().equals("ROLE_ADMIN") ||
-                userDTO.getRole().equals("ROLE_HR_MANAGER")) {
-            nav.setLabel("Administration");
-            nav.addItem(new SideNavItem("Users", UserListView.class, LineAwesomeIcon.USER_LOCK_SOLID.create()));
+        if (userDTO.getRole().equals("ROLE_ADMIN") || userDTO.getRole().equals("ROLE_HR_MANAGER")) {
+            navItem.addItem(new SideNavItem("Users", UserListView.class, LineAwesomeIcon.USER_LOCK_SOLID.create()));
         }
 
-        return nav;
+        return navItem;
     }
 
     private VerticalLayout createNavigationLayout() {
         VerticalLayout navigationLayout = new VerticalLayout();
 
-        navigationLayout.add(this.createProfileNavigation(),
-                             this.createEmployeeNavigation(),
-                             this.createAttendanceNavigation(),
-                             this.createCompenbenNavigation(),
-                             this.createPayrollNavigation(),
-                             this.createReferenceNavigation(),
-                             this.createAdminNavigation());
+        navigationLayout.add(this.createNavigation());
         navigationLayout.setSpacing(true);
         navigationLayout.setSizeUndefined();
-
-        this.createProfileNavigation().setWidthFull();
-        this.createEmployeeNavigation().setWidthFull();
-        this.createAttendanceNavigation().setWidthFull();
-        this.createCompenbenNavigation().setWidthFull();
-        this.createReferenceNavigation().setWidthFull();
-        this.createAdminNavigation().setWidthFull();
 
         return navigationLayout;
     }

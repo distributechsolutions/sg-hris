@@ -163,7 +163,7 @@ public class EmployeeDetailsView extends Div implements HasUrlParameter<String> 
                                   genderValueSpan,
                                   dateHiredLabelSpan,
                                   dateHiredValueSpan);
-        employeeDetailsLayout.setWidth("768px");
+        employeeDetailsLayout.setWidth("720px");
     }
 
     private void buildEmployeeInformationTabSheets() {
@@ -259,7 +259,7 @@ public class EmployeeDetailsView extends Div implements HasUrlParameter<String> 
                                        hdmfValueSpan,
                                        philhealthLabelSpan,
                                        philhealthValueSpan);
-            personalInfoFormLayout.setWidth("768px");
+            personalInfoFormLayout.setWidth("720px");
 
             personalInfoDiv.add(personalInfoFormLayout);
         } else {

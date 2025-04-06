@@ -1,4 +1,4 @@
-package com.whizservices.hris.dtos.admin;
+package com.whizservices.hris.dtos.reference;
 
 import com.whizservices.hris.dtos.BaseDTO;
 

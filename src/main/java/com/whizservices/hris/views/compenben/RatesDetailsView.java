@@ -2,6 +2,7 @@ package com.whizservices.hris.views.compenben;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -36,9 +37,12 @@ public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<
         this.ratesService = ratesService;
         this.allowanceService = allowanceService;
 
+        add(ratesDetailsLayout);
+
         setSizeFull();
         setMargin(true);
-        add(ratesDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, ratesDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -139,6 +143,6 @@ public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<
                             absentDailyRateValueSpan,
                             isCurrentRatesLabelSpan,
                             isCurrentRatesValueSpan);
-        ratesDetailsLayout.setWidth("768px");
+        ratesDetailsLayout.setWidth("720px");
     }
 }

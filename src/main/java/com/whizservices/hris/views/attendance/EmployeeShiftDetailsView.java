@@ -2,6 +2,7 @@ package com.whizservices.hris.views.attendance;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -33,9 +34,12 @@ public class EmployeeShiftDetailsView extends VerticalLayout implements HasUrlPa
     public EmployeeShiftDetailsView(EmployeeShiftScheduleService employeeShiftScheduleService) {
         this.employeeShiftScheduleService = employeeShiftScheduleService;
 
+        add(employeeShiftDetailsLayout);
+
         setSizeFull();
         setMargin(true);
-        add(employeeShiftDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, employeeShiftDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -113,6 +117,6 @@ public class EmployeeShiftDetailsView extends VerticalLayout implements HasUrlPa
                                        shiftScheduledDaysValueSpan,
                                        activeShiftLabelSpan,
                                        activeShiftValueSpan);
-        employeeShiftDetailsLayout.setWidth("768px");
+        employeeShiftDetailsLayout.setWidth("720px");
     }
 }

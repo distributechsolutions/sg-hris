@@ -1,9 +1,9 @@
-package com.whizservices.hris.services.impls.admin;
+package com.whizservices.hris.services.impls.reference;
 
-import com.whizservices.hris.dtos.admin.DepartmentDTO;
-import com.whizservices.hris.entities.admin.Department;
-import com.whizservices.hris.repositories.admin.DepartmentRepository;
-import com.whizservices.hris.services.admin.DepartmentService;
+import com.whizservices.hris.dtos.reference.DepartmentDTO;
+import com.whizservices.hris.entities.reference.Department;
+import com.whizservices.hris.repositories.reference.DepartmentRepository;
+import com.whizservices.hris.services.reference.DepartmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;

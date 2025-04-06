@@ -1,7 +1,7 @@
 package com.whizservices.hris.dtos.profile;
 
 import com.whizservices.hris.dtos.BaseDTO;
-import com.whizservices.hris.dtos.admin.DepartmentDTO;
+import com.whizservices.hris.dtos.reference.DepartmentDTO;
 
 public class EmployeeDepartmentDTO extends BaseDTO {
     private EmployeeDTO employeeDTO;

@@ -1,7 +1,7 @@
 package com.whizservices.hris.dtos.profile;
 
 import com.whizservices.hris.dtos.BaseDTO;
-import com.whizservices.hris.dtos.admin.PositionDTO;
+import com.whizservices.hris.dtos.reference.PositionDTO;
 
 public class EmployeePositionDTO extends BaseDTO {
     private EmployeeDTO employeeDTO;

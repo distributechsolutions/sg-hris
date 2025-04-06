@@ -2,6 +2,7 @@ package com.whizservices.hris.views.compenben;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -34,9 +35,12 @@ public class LoanDeductionDetailsView extends VerticalLayout implements HasUrlPa
     public LoanDeductionDetailsView(LoanDeductionService loanDeductionService) {
         this.loanDeductionService = loanDeductionService;
 
+        add(loanDeductionDetailsLayout);
+
         setSizeFull();
         setMargin(true);
-        add(loanDeductionDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, loanDeductionDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -126,6 +130,6 @@ public class LoanDeductionDetailsView extends VerticalLayout implements HasUrlPa
                                         loanAmountValueSpan,
                                         monthlyDeductionLabelSpan,
                                         monthlyDeductionValueSpan);
-        loanDeductionDetailsLayout.setWidth("768px");
+        loanDeductionDetailsLayout.setWidth("720px");
     }
 }

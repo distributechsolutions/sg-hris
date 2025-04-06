@@ -1,7 +1,7 @@
 package com.whizservices.hris.entities.profile;
 
 import com.whizservices.hris.entities.BaseEntity;
-import com.whizservices.hris.entities.admin.Department;
+import com.whizservices.hris.entities.reference.Department;
 import jakarta.persistence.*;
 
 @Entity

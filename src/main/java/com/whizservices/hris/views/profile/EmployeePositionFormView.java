@@ -7,15 +7,16 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.*;
 
-import com.whizservices.hris.dtos.admin.PositionDTO;
+import com.whizservices.hris.dtos.reference.PositionDTO;
 import com.whizservices.hris.dtos.profile.EmployeeDTO;
 import com.whizservices.hris.dtos.profile.EmployeePositionDTO;
-import com.whizservices.hris.services.admin.PositionService;
+import com.whizservices.hris.services.reference.PositionService;
 import com.whizservices.hris.services.profile.EmployeePositionService;
 import com.whizservices.hris.services.profile.EmployeeService;
 import com.whizservices.hris.utils.SecurityUtil;
@@ -56,9 +57,12 @@ public class EmployeePositionFormView extends VerticalLayout implements HasUrlPa
         this.employeeService = employeeService;
         this.positionService = positionService;
 
+        add(employeePositionDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(employeePositionDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, employeePositionDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override

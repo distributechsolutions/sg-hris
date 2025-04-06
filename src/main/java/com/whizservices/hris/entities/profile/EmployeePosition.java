@@ -1,7 +1,7 @@
 package com.whizservices.hris.entities.profile;
 
 import com.whizservices.hris.entities.BaseEntity;
-import com.whizservices.hris.entities.admin.Position;
+import com.whizservices.hris.entities.reference.Position;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

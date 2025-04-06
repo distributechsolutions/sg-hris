@@ -2,11 +2,11 @@ package com.whizservices.hris.services.impls.profile;
 
 import com.whizservices.hris.dtos.profile.EmployeeDepartmentDTO;
 import com.whizservices.hris.entities.profile.EmployeeDepartment;
-import com.whizservices.hris.repositories.admin.DepartmentRepository;
+import com.whizservices.hris.repositories.reference.DepartmentRepository;
 import com.whizservices.hris.repositories.profile.EmployeeDepartmentRepository;
 import com.whizservices.hris.repositories.profile.EmployeeRepository;
-import com.whizservices.hris.services.admin.DepartmentService;
-import com.whizservices.hris.services.impls.admin.DepartmentServiceImpl;
+import com.whizservices.hris.services.reference.DepartmentService;
+import com.whizservices.hris.services.impls.reference.DepartmentServiceImpl;
 import com.whizservices.hris.services.profile.EmployeeDepartmentService;
 import com.whizservices.hris.services.profile.EmployeeService;
 
