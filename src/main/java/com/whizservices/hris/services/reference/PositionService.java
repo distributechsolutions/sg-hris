@@ -1,6 +1,6 @@
-package com.whizservices.hris.services.admin;
+package com.whizservices.hris.services.reference;
 
-import com.whizservices.hris.dtos.admin.PositionDTO;
+import com.whizservices.hris.dtos.reference.PositionDTO;
 import com.whizservices.hris.services.BaseService;
 
 public interface PositionService extends BaseService<PositionDTO> {

@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.BigDecimalField;
@@ -53,9 +54,12 @@ public class LoanDeductionFormView extends VerticalLayout implements HasUrlParam
         this.loanDeductionService = loanDeductionService;
         this.employeeService = employeeService;
 
+        add(loanDeductionsDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(loanDeductionsDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, loanDeductionsDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -151,7 +155,7 @@ public class LoanDeductionFormView extends VerticalLayout implements HasUrlParam
                                         buttonLayout);
         loanDeductionsDTOFormLayout.setColspan(employeeDTOComboBox, 2);
         loanDeductionsDTOFormLayout.setColspan(buttonLayout, 2);
-        loanDeductionsDTOFormLayout.setMaxWidth("768px");
+        loanDeductionsDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateLoanDeductionsDTO() {

@@ -7,6 +7,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.Query;
@@ -16,10 +17,10 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import com.whizservices.hris.dtos.admin.DepartmentDTO;
+import com.whizservices.hris.dtos.reference.DepartmentDTO;
 import com.whizservices.hris.dtos.profile.EmployeeDTO;
 import com.whizservices.hris.dtos.profile.EmployeeDepartmentDTO;
-import com.whizservices.hris.services.admin.DepartmentService;
+import com.whizservices.hris.services.reference.DepartmentService;
 import com.whizservices.hris.services.profile.EmployeeDepartmentService;
 import com.whizservices.hris.services.profile.EmployeeService;
 import com.whizservices.hris.utils.SecurityUtil;
@@ -60,9 +61,12 @@ public class EmployeeDepartmentFormView extends VerticalLayout implements HasUrl
         this.employeeService = employeeService;
         this.departmentService = departmentService;
 
+        add(employeeDepartmentDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(employeeDepartmentDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, employeeDepartmentDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -117,7 +121,7 @@ public class EmployeeDepartmentFormView extends VerticalLayout implements HasUrl
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.add(cancelButton, saveButton);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
-        buttonLayout.setMaxWidth("768px");
+        buttonLayout.setMaxWidth("720px");
         buttonLayout.setPadding(true);
 
         employeeDepartmentDTOFormLayout.add(employeeDTOComboBox,

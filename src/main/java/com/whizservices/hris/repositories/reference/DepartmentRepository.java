@@ -1,6 +1,6 @@
-package com.whizservices.hris.repositories.admin;
+package com.whizservices.hris.repositories.reference;
 
-import com.whizservices.hris.entities.admin.Department;
+import com.whizservices.hris.entities.reference.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

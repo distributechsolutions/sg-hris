@@ -2,6 +2,7 @@ package com.whizservices.hris.views.compenben;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -32,9 +33,12 @@ public class AllowanceDetailsView extends VerticalLayout implements HasUrlParame
     public AllowanceDetailsView(AllowanceService allowanceService) {
         this.allowanceService = allowanceService;
 
+        add(allowanceDetailsLayout);
+
         setSizeFull();
         setMargin(true);
-        add(allowanceDetailsLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, allowanceDetailsLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -95,6 +99,6 @@ public class AllowanceDetailsView extends VerticalLayout implements HasUrlParame
                 allowanceTypeValueSpan,
                 allowanceAmountLabelSpan,
                 allowanceAmountValueSpan);
-        allowanceDetailsLayout.setWidth("768px");
+        allowanceDetailsLayout.setWidth("720px");
     }
 }

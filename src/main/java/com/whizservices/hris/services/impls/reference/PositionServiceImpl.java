@@ -1,9 +1,9 @@
-package com.whizservices.hris.services.impls.admin;
+package com.whizservices.hris.services.impls.reference;
 
-import com.whizservices.hris.dtos.admin.PositionDTO;
-import com.whizservices.hris.entities.admin.Position;
-import com.whizservices.hris.repositories.admin.PositionRepository;
-import com.whizservices.hris.services.admin.PositionService;
+import com.whizservices.hris.dtos.reference.PositionDTO;
+import com.whizservices.hris.entities.reference.Position;
+import com.whizservices.hris.repositories.reference.PositionRepository;
+import com.whizservices.hris.services.reference.PositionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;

@@ -1,4 +1,4 @@
-package com.whizservices.hris.entities.admin;
+package com.whizservices.hris.entities.reference;
 
 import com.whizservices.hris.entities.BaseEntity;
 import jakarta.persistence.Column;

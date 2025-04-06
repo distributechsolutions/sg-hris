@@ -7,6 +7,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
@@ -52,9 +53,12 @@ public class LeaveBenefitsFormView extends VerticalLayout implements HasUrlParam
         this.leaveBenefitsService = leaveBenefitsService;
         this.employeeService = employeeService;
 
+        add(leaveBenefitsDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(leaveBenefitsDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, leaveBenefitsDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -141,7 +145,7 @@ public class LeaveBenefitsFormView extends VerticalLayout implements HasUrlParam
                                        buttonLayout);
         leaveBenefitsDTOFormLayout.setColspan(employeeDTOComboBox, 2);
         leaveBenefitsDTOFormLayout.setColspan(buttonLayout, 2);
-        leaveBenefitsDTOFormLayout.setMaxWidth("768px");
+        leaveBenefitsDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateLeaveBenefitsDTO() {

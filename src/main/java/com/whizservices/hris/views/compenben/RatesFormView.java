@@ -7,6 +7,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
@@ -67,9 +68,12 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
 
         loggedInUser = Objects.requireNonNull(SecurityUtil.getAuthenticatedUser()).getUsername();
 
+        add(ratesDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(ratesDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, ratesDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -216,7 +220,7 @@ public class RatesFormView extends VerticalLayout implements HasUrlParameter<Str
                                buttonLayout);
         ratesDTOFormLayout.setColspan(employeeDTOComboBox, 2);
         ratesDTOFormLayout.setColspan(buttonLayout, 2);
-        ratesDTOFormLayout.setMaxWidth("768px");
+        ratesDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateRatesDTO() {

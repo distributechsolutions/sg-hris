@@ -7,6 +7,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -56,9 +57,12 @@ public class UserFormView extends VerticalLayout implements HasUrlParameter<Stri
         this.employeeService = employeeService;
         this.emailService = emailService;
 
+        add(userDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(userDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, userDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -137,7 +141,7 @@ public class UserFormView extends VerticalLayout implements HasUrlParameter<Stri
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.add(cancelButton, saveButton);
         buttonLayout.setJustifyContentMode(JustifyContentMode.END);
-        buttonLayout.setMaxWidth("768px");
+        buttonLayout.setMaxWidth("720px");
         buttonLayout.setPadding(true);
 
         userDTOFormLayout.add(employeeDTOComboBox,

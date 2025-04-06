@@ -7,6 +7,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -16,7 +17,6 @@ import com.whizservices.hris.dtos.reference.CalendarHolidaysDTO;
 import com.whizservices.hris.services.reference.CalendarHolidaysService;
 import com.whizservices.hris.utils.SecurityUtil;
 import com.whizservices.hris.views.MainLayout;
-import com.whizservices.hris.views.admin.PositionListView;
 
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
@@ -45,9 +45,12 @@ public class CalendarHolidaysFormView extends VerticalLayout implements HasUrlPa
     public CalendarHolidaysFormView(CalendarHolidaysService calendarHolidaysService) {
         this.calendarHolidaysService = calendarHolidaysService;
 
+        add(calendarHolidaysDTOFormLayout);
+
         setSizeFull();
         setMargin(true);
-        add(calendarHolidaysDTOFormLayout);
+        setHorizontalComponentAlignment(FlexComponent.Alignment.CENTER, calendarHolidaysDTOFormLayout);
+        setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
     }
 
     @Override
@@ -112,7 +115,7 @@ public class CalendarHolidaysFormView extends VerticalLayout implements HasUrlPa
                                           holidayDatePicker,
                                           buttonLayout);
         calendarHolidaysDTOFormLayout.setColspan(buttonLayout, 2);
-        calendarHolidaysDTOFormLayout.setMaxWidth("768px");
+        calendarHolidaysDTOFormLayout.setMaxWidth("720px");
     }
 
     private void saveOrUpdateCalendarHolidaysDTO() {
