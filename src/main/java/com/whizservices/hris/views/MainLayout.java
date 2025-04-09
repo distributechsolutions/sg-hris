@@ -2,9 +2,13 @@ package com.whizservices.hris.views;
 
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.avatar.AvatarVariant;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -46,6 +50,7 @@ public class MainLayout extends AppLayout {
 
     private UserDTO userDTO;
     private H1 viewTitle;
+    private String fullName;
 
     public MainLayout(UserService userService,
                       EmployeeLeaveFilingService employeeLeaveFilingService) {
@@ -54,6 +59,7 @@ public class MainLayout extends AppLayout {
         // Gets the user data transfer object based from the logged in user.
         if (SecurityUtil.getAuthenticatedUser() != null) {
             userDTO = userService.getByUsername(SecurityUtil.getAuthenticatedUser().getUsername());
+            fullName = userDTO.getEmployeeDTO().getFirstName() + " " + userDTO.getEmployeeDTO().getLastName();
         }
 
         setPrimarySection(Section.DRAWER);
@@ -69,19 +75,27 @@ public class MainLayout extends AppLayout {
         viewTitle.addClassNames(LumoUtility.FontSize.MEDIUM, LumoUtility.Margin.NONE);
         viewTitle.getStyle().setWidth("50%");
 
-        // This will show the logout button if the user is logged in the application.
+        // This will show the user's avatar if logged in the application.
         if (userDTO != null) {
-            Button logoutButton = new Button("Logout", click -> SecurityUtil.logout());
-            logoutButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            Avatar userAvatar = new Avatar(fullName);
+            userAvatar.addThemeVariants(AvatarVariant.LUMO_LARGE);
+            userAvatar.setColorIndex((int) (Math.random() * 7) + 1);
 
-            Span loggedUserSpan = new Span("Welcome " + userDTO.getEmployeeDTO().getFirstName().concat("!"));
-            loggedUserSpan.getStyle().set("padding-right", "10px");
+            ContextMenu contextMenu = new ContextMenu();
+            contextMenu.setTarget(userAvatar);
+            contextMenu.setOpenOnClick(true);
+            contextMenu.add(this.createProfileDiv());
+            contextMenu.add(new Hr());
 
-            Div logInfoDiv = new Div(loggedUserSpan, logoutButton);
+            MenuItem changePasswordMenuItem = contextMenu.addItem("Change Password");
+            changePasswordMenuItem.add(new Icon(VaadinIcon.PASSWORD));
+
+            contextMenu.add(new Hr());
+            contextMenu.addItem("Logout", menuItemClickEvent -> SecurityUtil.logout());
 
             VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.add(logInfoDiv);
-            verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, logInfoDiv);
+            verticalLayout.add(userAvatar);
+            verticalLayout.setHorizontalComponentAlignment(FlexComponent.Alignment.END, userAvatar);
 
             addToNavbar(true, toggle, viewTitle, verticalLayout);
         } else {
@@ -97,6 +111,20 @@ public class MainLayout extends AppLayout {
         Scroller scroller = new Scroller(this.createNavigationLayout());
 
         addToDrawer(header, scroller, createFooter());
+    }
+
+    private Div createProfileDiv() {
+        Span profileGreetingsSpan = new Span("Welcome ".concat(fullName).concat("!"));
+        profileGreetingsSpan.addClassNames(LumoUtility.FontWeight.SEMIBOLD, LumoUtility.FontSize.LARGE);
+
+        Div profileDiv = new Div();
+        profileDiv.add(profileGreetingsSpan);
+        profileDiv.getStyle().setPaddingLeft("15px");
+        profileDiv.getStyle().setPaddingRight("15px");
+        profileDiv.getStyle().setPaddingTop("5px");
+        profileDiv.getStyle().setPaddingBottom("5px");
+
+        return profileDiv;
     }
 
     private SideNav createNavigation() {
@@ -128,8 +156,8 @@ public class MainLayout extends AppLayout {
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
                 userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
             navItem.addItem(new SideNavItem("Employees", EmployeeListView.class, LineAwesomeIcon.ID_BADGE_SOLID.create()));
-            navItem.addItem(new SideNavItem("Employee Position", EmployeePositionListView.class, LineAwesomeIcon.USER_CHECK_SOLID.create()));
-            navItem.addItem(new SideNavItem("Employee Department", EmployeeDepartmentListView.class, LineAwesomeIcon.USER_CIRCLE_SOLID.create()));
+            navItem.addItem(new SideNavItem("Assign Position", EmployeePositionListView.class, LineAwesomeIcon.USER_CHECK_SOLID.create()));
+            navItem.addItem(new SideNavItem("Assign Department", EmployeeDepartmentListView.class, LineAwesomeIcon.USER_CIRCLE_SOLID.create()));
         }
 
         return navItem;
@@ -176,7 +204,7 @@ public class MainLayout extends AppLayout {
     }
 
     private SideNavItem createCompenbenNavigation() {
-        SideNavItem navItem = new SideNavItem("Compensation and Benefits");
+        SideNavItem navItem = new SideNavItem("Compenben");
         navItem.setExpanded(false);
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
