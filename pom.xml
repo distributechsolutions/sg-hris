@@ -3,8 +3,8 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/project/2f1cd94f-2aca-4c8a-bdc5-68c3da278386 -->
-    <groupId>com.victorylimited.hris</groupId>
-    <artifactId>sg-hris</artifactId>
+    <groupId>io.distributechsolutions.hris</groupId>
+    <artifactId>ds-hris</artifactId>
     <name>victory-ltd-hris</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
