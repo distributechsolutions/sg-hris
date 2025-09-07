@@ -15,12 +15,12 @@ import jakarta.annotation.security.PermitAll;
 import org.vaadin.vcamera.VCamera;
 
 @PermitAll
-@PageTitle("Time Attendance")
-@Route(value = "time-attendance", layout = MainLayout.class)
+@PageTitle("Time Clock")
+@Route(value = "time-clock", layout = MainLayout.class)
 @JsModule("clockAndDate.js")
-public class TimeAttendanceView extends VerticalLayout {
+public class TimeClockView extends VerticalLayout {
 
-    public TimeAttendanceView() {
+    public TimeClockView() {
         this.setSizeFull();
         this.setAlignItems(Alignment.CENTER);
         this.setJustifyContentMode(JustifyContentMode.CENTER);
