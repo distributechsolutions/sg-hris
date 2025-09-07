@@ -126,15 +126,13 @@ public class MainLayout extends AppLayout {
 
         nav.addItem(new SideNavItem("My Dashboard", DashboardView.class, LineAwesomeIcon.CHART_BAR_SOLID.create()));
         nav.addItem(new SideNavItem("My Profile", EmployeeInfoView.class, LineAwesomeIcon.USER_TIE_SOLID.create()));
+        nav.addItem(new SideNavItem("My Time Clock", TimeClockView.class, LineAwesomeIcon.CLOCK.create()));
         nav.addItem(new SideNavItem("My Leave Filings", LeaveFilingView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
-        nav.addItem(new SideNavItem("My Time Attendance", TimeAttendanceView.class, LineAwesomeIcon.CLOCK.create()));
 
         if (!userDTO.getRole().equals("ROLE_EMPLOYEE")) {
             nav.addItem(this.createEmployeeNavigation(),
                         this.createAttendanceNavigation(),
                         this.createCompenbenNavigation(),
-                        this.createPayrollNavigation(),
-                        this.createReferenceNavigation(),
                         this.createAdminNavigation());
         }
 
@@ -228,26 +226,14 @@ public class MainLayout extends AppLayout {
         return navItem;
     }
 
-    private SideNavItem createReferenceNavigation() {
-        SideNavItem navItem = new SideNavItem("Reference");
-        navItem.setExpanded(false);
-
-        if (userDTO.getRole().equals("ROLE_ADMIN") ||
-                userDTO.getRole().equals("ROLE_HR_MANAGER") ||
-                userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
-            navItem.addItem(new SideNavItem("Calendar Holidays", CalendarHolidaysListView.class, LineAwesomeIcon.CALENDAR.create()));
-            navItem.addItem(new SideNavItem("Positions", io.softwaregarage.hris.admin.views.PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
-            navItem.addItem(new SideNavItem("Departments", io.softwaregarage.hris.admin.views.DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
-        }
-
-        return navItem;
-    }
-
     private SideNavItem createAdminNavigation() {
         SideNavItem navItem = new SideNavItem("Administration");
         navItem.setExpanded(false);
 
         if (userDTO.getRole().equals("ROLE_ADMIN") || userDTO.getRole().equals("ROLE_HR_MANAGER")) {
+            navItem.addItem(new SideNavItem("Calendar Holidays", CalendarHolidaysListView.class, LineAwesomeIcon.CALENDAR.create()));
+            navItem.addItem(new SideNavItem("Positions", io.softwaregarage.hris.admin.views.PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
+            navItem.addItem(new SideNavItem("Departments", io.softwaregarage.hris.admin.views.DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
             navItem.addItem(new SideNavItem("Users", UserListView.class, LineAwesomeIcon.USER_LOCK_SOLID.create()));
         }
 
