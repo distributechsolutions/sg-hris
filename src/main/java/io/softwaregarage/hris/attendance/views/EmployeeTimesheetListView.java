@@ -16,6 +16,7 @@ import com.vaadin.flow.component.textfield.TextField;
 //import com.vaadin.flow.component.timepicker.TimePicker;
 //import com.vaadin.flow.component.upload.Upload;
 //import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
@@ -23,6 +24,7 @@ import com.vaadin.flow.router.Route;
 
 import io.softwaregarage.hris.attendance.dtos.EmployeeTimesheetDTO;
 import io.softwaregarage.hris.attendance.services.EmployeeTimesheetService;
+import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.services.EmployeeProfileService;
 //import io.distributechsolutions.hris.utils.CSVUtil;
 import io.softwaregarage.hris.utils.SecurityUtil;
@@ -37,7 +39,10 @@ import jakarta.annotation.security.RolesAllowed;
 //import java.time.format.DateTimeFormatter;
 //import java.util.List;
 //import java.util.Locale;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
@@ -93,6 +98,7 @@ public class EmployeeTimesheetListView extends VerticalLayout {
     }
 
     private Grid<EmployeeTimesheetDTO> buildTimesheetDTOGrid() {
+
         timesheetDTOGrid = new Grid<>(EmployeeTimesheetDTO.class, false);
 
         timesheetDTOGrid.addColumn(employeeTimesheetDTO -> employeeTimesheetDTO.getEmployeeDTO().getEmployeeNumber())
@@ -106,13 +112,13 @@ public class EmployeeTimesheetListView extends VerticalLayout {
                                                                             .concat(employeeTimesheetDTO.getEmployeeDTO().getSuffix() != null ? employeeTimesheetDTO.getEmployeeDTO().getSuffix() : ""))
                         .setHeader("Employee Name")
                         .setSortable(true);
-        timesheetDTOGrid.addColumn(EmployeeTimesheetDTO::getLogDate)
+        timesheetDTOGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("MMM dd, yyyy").format(employeeTimesheetDTO.getLogDate()))
                         .setHeader("Log Date")
                         .setSortable(true);
         timesheetDTOGrid.addColumn(employeeTimesheetDTO -> employeeTimesheetDTO.getShiftScheduleDTO().getShiftSchedule())
                         .setHeader("Shift Schedule")
                         .setSortable(true);
-        timesheetDTOGrid.addColumn(EmployeeTimesheetDTO::getLogTime)
+        timesheetDTOGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("HH:mm:ss a").format(employeeTimesheetDTO.getLogTime()))
                         .setHeader("Log Time")
                         .setSortable(true);
         timesheetDTOGrid.addColumn(EmployeeTimesheetDTO::getLogDetail)
@@ -137,7 +143,11 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         timesheetDTOGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         timesheetDTOGrid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
         timesheetDTOGrid.setEmptyStateText("No pending timesheet records found.");
-        timesheetDTOGrid.setItems((query -> employeeTimesheetService.getAll(query.getPage(), query.getPageSize()).stream().filter(employeeTimesheetDTO -> employeeTimesheetDTO.getStatus().equalsIgnoreCase("PENDING"))));
+        timesheetDTOGrid.setItems(query ->
+                employeeTimesheetService.getAll(query.getPage(), query.getPageSize())
+                        .stream()
+                        .filter(employeeTimesheetDTO -> "PENDING".equals(employeeTimesheetDTO.getStatus()))
+        );
 
         return timesheetDTOGrid;
     }
@@ -195,9 +205,17 @@ public class EmployeeTimesheetListView extends VerticalLayout {
 
     private void updateTimesheetDTOGrid() {
         if (!searchFilterTextField.getValue().isEmpty()) {
-            timesheetDTOGrid.setItems(employeeTimesheetService.findByParameter(searchFilterTextField.getValue()).stream().filter(employeeTimesheetDTO -> employeeTimesheetDTO.getStatus().equalsIgnoreCase("PENDING")).toList());
+            timesheetDTOGrid.setItems(employeeTimesheetService.findByParameter(searchFilterTextField.getValue())
+                    .stream()
+                    .filter(employeeTimesheetDTO -> "PENDING".equals(employeeTimesheetDTO.getStatus()))
+                    .toList()
+            );
         } else {
-            timesheetDTOGrid.setItems(query -> employeeTimesheetService.getAll(query.getPage(), query.getPageSize()).stream().filter(employeeTimesheetDTO -> employeeTimesheetDTO.getStatus().equalsIgnoreCase("PENDING")));
+            timesheetDTOGrid.setItems(query ->
+                    employeeTimesheetService.getAll(query.getPage(), query.getPageSize())
+                            .stream()
+                            .filter(employeeTimesheetDTO -> "PENDING".equals(employeeTimesheetDTO.getStatus()))
+            );
         }
     }
 
