@@ -3,6 +3,7 @@ package io.softwaregarage.hris.attendance.services.impls;
 import io.softwaregarage.hris.attendance.dtos.EmployeeShiftScheduleDTO;
 import io.softwaregarage.hris.attendance.entities.EmployeeShiftSchedule;
 import io.softwaregarage.hris.attendance.repositories.EmployeeShiftScheduleRepository;
+import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.repositories.EmployeeProfileRepository;
 import io.softwaregarage.hris.attendance.services.EmployeeShiftScheduleService;
 import io.softwaregarage.hris.profile.services.impls.EmployeeProfileServiceImpl;
@@ -136,5 +137,41 @@ public class EmployeeShiftScheduleServiceImpl implements EmployeeShiftScheduleSe
     @Override
     public List<EmployeeShiftScheduleDTO> findByParameter(String param) {
         return List.of();
+    }
+
+    @Override
+    public List<EmployeeShiftScheduleDTO> getEmployeeShiftScheduleByEmployeeDTO(EmployeeProfileDTO employeeProfileDTO) {
+        logger.info("Retrieving employee shift from the database.");
+        List<EmployeeShiftSchedule> employeeShiftScheduleList = employeeShiftScheduleRepository.findByEmployee(employeeProfileRepository.getReferenceById(employeeProfileDTO.getId()));
+
+        logger.info("Employee shift successfully retrieved.");
+        List<EmployeeShiftScheduleDTO> employeeShiftScheduleDTOList = new ArrayList<>();
+
+        if (!employeeShiftScheduleList.isEmpty()) {
+            EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
+
+            for (EmployeeShiftSchedule employeeShiftSchedule : employeeShiftScheduleList) {
+                EmployeeShiftScheduleDTO employeeShiftScheduleDTO = new EmployeeShiftScheduleDTO();
+
+                employeeShiftScheduleDTO.setId(employeeShiftSchedule.getId());
+                employeeShiftScheduleDTO.setEmployeeDTO(employeeProfileService.getById(employeeProfileDTO.getId()));
+                employeeShiftScheduleDTO.setShiftSchedule(employeeShiftSchedule.getShiftSchedule());
+                employeeShiftScheduleDTO.setShiftHours(employeeShiftSchedule.getShiftHours());
+                employeeShiftScheduleDTO.setShiftScheduledDays(employeeShiftSchedule.getShiftScheduledDays());
+                employeeShiftScheduleDTO.setShiftStartTime(employeeShiftSchedule.getShiftStartTime());
+                employeeShiftScheduleDTO.setShiftEndTime(employeeShiftSchedule.getShiftEndTime());
+                employeeShiftScheduleDTO.setActiveShift(employeeShiftSchedule.isActiveShift());
+                employeeShiftScheduleDTO.setCreatedBy(employeeShiftSchedule.getCreatedBy());
+                employeeShiftScheduleDTO.setDateAndTimeCreated(employeeShiftSchedule.getDateAndTimeCreated());
+                employeeShiftScheduleDTO.setUpdatedBy(employeeShiftSchedule.getUpdatedBy());
+                employeeShiftScheduleDTO.setDateAndTimeUpdated(employeeShiftSchedule.getDateAndTimeUpdated());
+
+                employeeShiftScheduleDTOList.add(employeeShiftScheduleDTO);
+            }
+
+            logger.info(String.valueOf(employeeShiftScheduleList.size()).concat(" record(s) found."));
+        }
+
+        return employeeShiftScheduleDTOList;
     }
 }
