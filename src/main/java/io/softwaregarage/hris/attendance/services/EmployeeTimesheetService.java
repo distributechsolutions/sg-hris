@@ -14,5 +14,10 @@ public interface EmployeeTimesheetService extends BaseService<EmployeeTimesheetD
     List<EmployeeTimesheetDTO> findByEmployeeDTO(EmployeeProfileDTO employeeProfileDTO);
 
     @Transactional
+    List<EmployeeTimesheetDTO> findTimesheetByEmployeeAndLogDate(EmployeeProfileDTO employeeProfileDTO,
+                                                                 LocalDate startDate,
+                                                                 LocalDate endDate);
+
+    @Transactional
     List<EmployeeTimesheetDTO> findByLogDateRange(LocalDate startDate, LocalDate endDate);
 }
