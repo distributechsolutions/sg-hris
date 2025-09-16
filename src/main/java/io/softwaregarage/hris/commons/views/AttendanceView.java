@@ -215,9 +215,9 @@ public class AttendanceView extends VerticalLayout {
         employeeTimesheetDTO.setEmployeeDTO(employeeProfileDTO);
         employeeTimesheetDTO.setLogDate(LocalDate.now(ZoneId.of("Asia/Manila")));
         employeeTimesheetDTO.setLogTime(LocalTime.now(ZoneId.of("Asia/Manila")));
-        employeeTimesheetDTO.setLogDetail(statusRadioGroup.getValue().concat(" at ").concat(LocalDateTime.now(ZoneId.of("Asia/Manila")).toString()));
+        employeeTimesheetDTO.setLogDetail(statusRadioGroup.getValue());
         employeeTimesheetDTO.setLogImage(this.imageBytes);
-        employeeTimesheetDTO.setStatus(statusRadioGroup.getValue());
+        employeeTimesheetDTO.setStatus("PENDING");
         employeeTimesheetDTO.setShiftScheduleDTO(employeeShiftScheduleDTO);
         employeeTimesheetDTO.setCreatedBy(loggedInUser);
         employeeTimesheetDTO.setUpdatedBy(loggedInUser);
