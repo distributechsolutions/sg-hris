@@ -127,7 +127,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
             for (EmployeeTimesheet employeeTimesheet : employeeTimesheets) {
                 EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
 
-                employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getId()));
+                employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                 employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                 employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
                 employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
@@ -165,7 +165,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 for (EmployeeTimesheet employeeTimesheet : employeeTimesheetList) {
                     EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
 
-                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getId()));
+                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                     employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                     employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
                     employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
@@ -206,7 +206,50 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 for (EmployeeTimesheet employeeTimesheet : employeeTimesheetLinkedList) {
                     EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
 
-                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getId()));
+                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
+                    employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
+                    employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
+                    employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
+                    employeeTimesheetDTO.setLogImage(employeeTimesheet.getLogImage());
+                    employeeTimesheetDTO.setShiftScheduleDTO(employeeShiftScheduleService.getById(employeeTimesheet.getShiftSchedule().getId()));
+                    employeeTimesheetDTO.setStatus(employeeTimesheet.getStatus());
+                    employeeTimesheetDTO.setCreatedBy(employeeTimesheet.getCreatedBy());
+                    employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
+                    employeeTimesheetDTO.setUpdatedBy(employeeTimesheet.getUpdatedBy());
+                    employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
+
+                    employeeTimesheetDTOLinkedList.add(employeeTimesheetDTO);
+                }
+
+                logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOLinkedList.size()));
+            }
+        }
+
+        return employeeTimesheetDTOLinkedList;
+    }
+
+    @Override
+    public List<EmployeeTimesheetDTO> findTimesheetByEmployeeAndLogDate(EmployeeProfileDTO employeeProfileDTO, LocalDate startDate, LocalDate endDate) {
+        List<EmployeeTimesheetDTO> employeeTimesheetDTOLinkedList = new LinkedList<>();
+        List<EmployeeTimesheet> employeeTimesheetList = null;
+
+        if (employeeProfileDTO != null) {
+            logger.info("Retrieving employee's timesheet records from the database.");
+            employeeTimesheetList = employeeTimesheetRepository.findTimesheetByEmployeeAndLogDateRange(employeeProfileRepository.getById(employeeProfileDTO.getId()),
+                    startDate,
+                    endDate);
+
+            if (!employeeTimesheetList.isEmpty()) {
+                // Convert list to linked list to retain the order of the result.
+                LinkedList<EmployeeTimesheet> employeeTimesheetLinkedList = new LinkedList<>(employeeTimesheetList);
+
+                logger.info("Employee's timesheet records has successfully retrieved.");
+                EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
+
+                for (EmployeeTimesheet employeeTimesheet : employeeTimesheetLinkedList) {
+                    EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
+
+                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                     employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                     employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
                     employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
@@ -230,8 +273,8 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
 
     @Override
     public List<EmployeeTimesheetDTO> findByLogDateRange(LocalDate startDate, LocalDate endDate) {
-        List<EmployeeTimesheetDTO> employeeTimesheetDTOList = new ArrayList<>();
-        List<EmployeeTimesheet> employeeTimesheetList = null;
+            List<EmployeeTimesheetDTO> employeeTimesheetDTOLinkedList = new LinkedList<>();
+            List<EmployeeTimesheet> employeeTimesheetList = null;
 
         if (startDate != null && endDate != null) {
             logger.info("Retrieving employee's timesheet records from the database.");
@@ -244,7 +287,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 for (EmployeeTimesheet employeeTimesheet : employeeTimesheetList) {
                     EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
 
-                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getId()));
+                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                     employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                     employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
                     employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
@@ -256,13 +299,13 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                     employeeTimesheetDTO.setUpdatedBy(employeeTimesheet.getUpdatedBy());
                     employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
 
-                    employeeTimesheetDTOList.add(employeeTimesheetDTO);
+                    employeeTimesheetDTOLinkedList.add(employeeTimesheetDTO);
                 }
 
-                logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOList.size()));
+                logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOLinkedList.size()));
             }
         }
 
-        return employeeTimesheetDTOList;
+        return employeeTimesheetDTOLinkedList;
     }
 }

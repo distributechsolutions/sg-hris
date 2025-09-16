@@ -126,7 +126,7 @@ public class MainLayout extends AppLayout {
 
         nav.addItem(new SideNavItem("My Dashboard", DashboardView.class, LineAwesomeIcon.CHART_BAR_SOLID.create()));
         nav.addItem(new SideNavItem("My Profile", EmployeeInfoView.class, LineAwesomeIcon.USER_TIE_SOLID.create()));
-        nav.addItem(new SideNavItem("My Time Clock", TimeClockView.class, LineAwesomeIcon.CLOCK.create()));
+        nav.addItem(new SideNavItem("My Attendance", AttendanceView.class, LineAwesomeIcon.CLOCK.create()));
         nav.addItem(new SideNavItem("My Leave Filings", LeaveFilingView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
 
         if (!userDTO.getRole().equals("ROLE_EMPLOYEE")) {
