@@ -107,9 +107,6 @@ public class EmployeeShiftListView extends VerticalLayout {
         employeeShiftDTOGrid.addColumn(employeeShiftDTO -> employeeShiftDTO.getShiftEndTime().format(DateTimeFormatter.ofPattern("hh:mm a")))
                             .setHeader("End Shift")
                             .setSortable(true);
-        employeeShiftDTOGrid.addColumn(EmployeeShiftScheduleDTO::getShiftHours)
-                            .setHeader("Remarks")
-                            .setSortable(true);
         employeeShiftDTOGrid.addComponentColumn(leaveFilingDTO -> buildRowToolbar()).setHeader("Action");
         employeeShiftDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,
                                             GridVariant.LUMO_COLUMN_BORDERS,
