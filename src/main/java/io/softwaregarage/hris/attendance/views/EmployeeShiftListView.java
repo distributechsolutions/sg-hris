@@ -4,9 +4,11 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -86,8 +88,6 @@ public class EmployeeShiftListView extends VerticalLayout {
                             .setSortable(true);
         employeeShiftDTOGrid.addColumn(employeeShiftDTO -> employeeShiftDTO.getEmployeeDTO().getFirstName()
                                     .concat(" ")
-                                    .concat(employeeShiftDTO.getEmployeeDTO().getMiddleName())
-                                    .concat(" ")
                                     .concat(employeeShiftDTO.getEmployeeDTO().getLastName())
                                     .concat(employeeShiftDTO.getEmployeeDTO().getSuffix() != null ? employeeShiftDTO.getEmployeeDTO().getSuffix() : ""))
                             .setHeader("Employee Name")
@@ -106,6 +106,18 @@ public class EmployeeShiftListView extends VerticalLayout {
                             .setSortable(true);
         employeeShiftDTOGrid.addColumn(employeeShiftDTO -> employeeShiftDTO.getShiftEndTime().format(DateTimeFormatter.ofPattern("hh:mm a")))
                             .setHeader("End Shift")
+                            .setSortable(true);
+        employeeShiftDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, employeeShiftDTO) -> {
+                                            String theme = String.format("badge %s", employeeShiftDTO.isActiveShift() ? "success" : "contrast");
+
+                                            Span activeSpan = new Span();
+                                            activeSpan.getElement().setAttribute("theme", theme);
+                                            activeSpan.setText(employeeShiftDTO.isActiveShift() ? "YES" : "NO");
+
+                                            layout.setJustifyContentMode(JustifyContentMode.CENTER);
+                                            layout.add(activeSpan);
+                                        }))
+                            .setHeader("Is Active Shift?")
                             .setSortable(true);
         employeeShiftDTOGrid.addComponentColumn(leaveFilingDTO -> buildRowToolbar()).setHeader("Action");
         employeeShiftDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,

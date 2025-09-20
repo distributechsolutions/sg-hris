@@ -110,7 +110,7 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
         endShiftTimePicker = new TimePicker("End Time");
         endShiftTimePicker.setRequired(true);
         endShiftTimePicker.setRequiredIndicatorVisible(true);
-        if (employeeShiftScheduleDTO != null) endShiftTimePicker.setValue(employeeShiftScheduleDTO.getShiftStartTime());
+        if (employeeShiftScheduleDTO != null) endShiftTimePicker.setValue(employeeShiftScheduleDTO.getShiftEndTime());
 
         shiftScheduledDaysCheckboxGroup = new CheckboxGroup<>("Scheduled Days");
         shiftScheduledDaysCheckboxGroup.setItems("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
