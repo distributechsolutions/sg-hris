@@ -94,7 +94,7 @@ public class AttendanceView extends VerticalLayout {
         }
 
         if (listOfEmployeeShiftScheduleDTO != null && !listOfEmployeeShiftScheduleDTO.isEmpty()) {
-            employeeShiftScheduleDTO = listOfEmployeeShiftScheduleDTO.get(0);
+            employeeShiftScheduleDTO = listOfEmployeeShiftScheduleDTO.stream().filter(employeeShiftSchedule -> employeeShiftSchedule.isActiveShift()).findFirst().get();
         } else {
             Dialog addShiftScheduleDialog = new Dialog("Add Shift Schedule");
             addShiftScheduleDialog.add(new Span("There is no assigned shift schedule to you. Ask your HR to assign you a shift."));
@@ -252,6 +252,12 @@ public class AttendanceView extends VerticalLayout {
         searchLayout.add(startDatePicker, endDatePicker, searchButton);
 
         employeeTimesheetGrid = new Grid<>(EmployeeTimesheetDTO.class, false);
+        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("MMM dd, yyyy").format(employeeTimesheetDTO.getLogDate())).setHeader("Date");
+        employeeTimesheetGrid.addColumn(EmployeeTimesheetDTO::getLogDetail).setHeader("Log Detail");
+        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("hh:mm:ss a").format(employeeTimesheetDTO.getLogTime())).setHeader("Time");
+        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> employeeTimesheetDTO.getShiftScheduleDTO().getShiftSchedule()).setHeader("Shift Schedule");
+        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("hh:mm:ss a").format(employeeTimesheetDTO.getShiftScheduleDTO().getShiftStartTime())).setHeader("Shift Start Time");
+        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("hh:mm:ss a").format(employeeTimesheetDTO.getShiftScheduleDTO().getShiftEndTime())).setHeader("Shift End Time");
         employeeTimesheetGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, employeeTimesheetDTO) -> {
                                             String theme = String.format("badge %s", employeeTimesheetDTO.getStatus().equalsIgnoreCase("PENDING") ? "contrast" : "success");
 
@@ -262,11 +268,6 @@ public class AttendanceView extends VerticalLayout {
                                             layout.setJustifyContentMode(JustifyContentMode.CENTER);
                                             layout.add(activeSpan);
                                         })).setHeader("Status");
-        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("MMM dd, yyyy").format(employeeTimesheetDTO.getLogDate())).setHeader("Date");
-        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("HH:mm:ss a").format(employeeTimesheetDTO.getLogTime())).setHeader("Time");
-        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> employeeTimesheetDTO.getShiftScheduleDTO().getShiftSchedule()).setHeader("Shift Schedule");
-        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> employeeTimesheetDTO.getShiftScheduleDTO().getShiftStartTime()).setHeader("Shift Start Time");
-        employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> employeeTimesheetDTO.getShiftScheduleDTO().getShiftEndTime()).setHeader("Shift End Time");
         employeeTimesheetGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,
                                                GridVariant.LUMO_COLUMN_BORDERS,
                                                GridVariant.LUMO_WRAP_CELL_CONTENT);

@@ -3,7 +3,6 @@ package io.softwaregarage.hris.attendance.services.impls;
 import io.softwaregarage.hris.attendance.dtos.EmployeeTimesheetDTO;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.attendance.entities.EmployeeTimesheet;
-import io.softwaregarage.hris.profile.entities.EmployeeProfile;
 import io.softwaregarage.hris.attendance.repositories.EmployeeShiftScheduleRepository;
 import io.softwaregarage.hris.attendance.repositories.EmployeeTimesheetRepository;
 import io.softwaregarage.hris.profile.repositories.EmployeeProfileRepository;
@@ -80,11 +79,10 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
         logger.info(String.format("Retrieving employee's timesheet record with UUID %s", id));
 
         EmployeeTimesheet employeeTimesheet = employeeTimesheetRepository.getReferenceById(id);
-        EmployeeProfile employeeProfile = employeeProfileRepository.getReferenceById(employeeTimesheet.getEmployee().getId());
 
         EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
-
-        employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getId()));
+        employeeTimesheetDTO.setId(employeeTimesheet.getId());
+        employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
         employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
         employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
         employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
@@ -124,9 +122,9 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
         if (!employeeTimesheets.isEmpty()) {
             EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
 
-            for (EmployeeTimesheet employeeTimesheet : employeeTimesheets) {
+            employeeTimesheets.forEach(employeeTimesheet -> {
                 EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
-
+                employeeTimesheetDTO.setId(employeeTimesheet.getId());
                 employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                 employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                 employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
@@ -140,7 +138,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
 
                 employeeTimesheetDTOList.add(employeeTimesheetDTO);
-            }
+            });
 
             logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOList.size()));
         }
@@ -162,9 +160,9 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
 
                 EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
 
-                for (EmployeeTimesheet employeeTimesheet : employeeTimesheetList) {
+                employeeTimesheetList.forEach(employeeTimesheet -> {
                     EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
-
+                    employeeTimesheetDTO.setId(employeeTimesheet.getId());
                     employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                     employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                     employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
@@ -178,7 +176,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                     employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
 
                     employeeTimesheetDTOList.add(employeeTimesheetDTO);
-                }
+                });
 
                 logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOList.size()));
             }
@@ -203,9 +201,9 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 logger.info("Employee's timesheet records has successfully retrieved.");
                 EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
 
-                for (EmployeeTimesheet employeeTimesheet : employeeTimesheetLinkedList) {
+                employeeTimesheetLinkedList.forEach(employeeTimesheet -> {
                     EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
-
+                    employeeTimesheetDTO.setId(employeeTimesheet.getId());
                     employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                     employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                     employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
@@ -219,7 +217,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                     employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
 
                     employeeTimesheetDTOLinkedList.add(employeeTimesheetDTO);
-                }
+                });
 
                 logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOLinkedList.size()));
             }
