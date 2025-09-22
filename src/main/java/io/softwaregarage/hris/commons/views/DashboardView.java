@@ -3,6 +3,7 @@ package io.softwaregarage.hris.commons.views;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.*;
@@ -232,10 +233,15 @@ public class DashboardView extends VerticalLayout {
         if (!leaveBenefitsDTOList.isEmpty()) {
             for (LeaveBenefitsDTO leaveBenefitsDTO : filteredLeaveBenefitsDTOList) {
                 H1 leaveCountHeader = new H1(String.valueOf(leaveBenefitsDTO.getLeaveCount()));
-                Span leaveTypeSpan = new Span(leaveBenefitsDTO.getLeaveType());
 
-                Div leaveDiv = new Div(leaveCountHeader, leaveTypeSpan);
-                leaveDiv.getStyle().set("text-align", "center");
+                Button applyLeaveButton = new Button("Apply");
+                applyLeaveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                applyLeaveButton.addClickListener(event -> applyLeaveButton.getUI().ifPresent(ui -> ui.navigate(LeaveFilingView.class)));
+
+                Card leaveCard = new Card();
+                leaveCard.setHeader(leaveCountHeader);
+                leaveCard.addToFooter(applyLeaveButton);
+                leaveCard.add(new Paragraph(leaveBenefitsDTO.getLeaveType()));
 
                 // Change the colors of leave count headers.
                 if (leaveBenefitsDTO.getLeaveCount() == 3 && leaveBenefitsDTO.getLeaveCount() == 2) {
@@ -248,7 +254,7 @@ public class DashboardView extends VerticalLayout {
                     leaveCountHeader.getStyle().set("color", "#adb5bd");
                 }
 
-                leaveBenefitsLayout.add(leaveDiv);
+                leaveBenefitsLayout.add(leaveCard);
             }
 
             leaveBenefitsSection.add(leaveBenefitsLayout);
