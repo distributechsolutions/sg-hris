@@ -18,6 +18,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.TabSheet;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -251,7 +252,16 @@ public class AttendanceView extends VerticalLayout {
         searchLayout.add(startDatePicker, endDatePicker, searchButton);
 
         employeeTimesheetGrid = new Grid<>(EmployeeTimesheetDTO.class, false);
-        employeeTimesheetGrid.addColumn(EmployeeTimesheetDTO::getStatus).setHeader("Status");
+        employeeTimesheetGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, employeeTimesheetDTO) -> {
+                                            String theme = String.format("badge %s", employeeTimesheetDTO.getStatus().equalsIgnoreCase("PENDING") ? "contrast" : "success");
+
+                                            Span activeSpan = new Span();
+                                            activeSpan.getElement().setAttribute("theme", theme);
+                                            activeSpan.setText(employeeTimesheetDTO.getStatus());
+
+                                            layout.setJustifyContentMode(JustifyContentMode.CENTER);
+                                            layout.add(activeSpan);
+                                        })).setHeader("Status");
         employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("MMM dd, yyyy").format(employeeTimesheetDTO.getLogDate())).setHeader("Date");
         employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> DateTimeFormatter.ofPattern("HH:mm:ss a").format(employeeTimesheetDTO.getLogTime())).setHeader("Time");
         employeeTimesheetGrid.addColumn(employeeTimesheetDTO -> employeeTimesheetDTO.getShiftScheduleDTO().getShiftSchedule()).setHeader("Shift Schedule");

@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
  * @author Gerald Paguio
  */
 public class SecurityUtil {
-    private static final String LOGOUT_SUCCESS_URL = "/whizhris";
+    private static final String LOGOUT_SUCCESS_URL = "/sghris";
     private static SecurityUtil INSTANCE;
 
     private SecurityUtil() {
