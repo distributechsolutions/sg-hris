@@ -4,9 +4,11 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
@@ -70,15 +72,55 @@ public class EmployeeProfileListView extends VerticalLayout {
         employeeDTOGrid.addColumn(EmployeeProfileDTO::getEmployeeNumber)
                        .setHeader("Employee No.")
                        .setSortable(true);
-        employeeDTOGrid.addColumn(employeeDTO -> employeeDTO.getFirstName().concat(" ")
-                                                                           .concat(employeeDTO.getMiddleName())
-                                                                           .concat(" ")
-                                                                           .concat(employeeDTO.getLastName())
-                                                                           .concat(employeeDTO.getSuffix() != null ? employeeDTO.getSuffix() : ""))
+        employeeDTOGrid.addColumn(employeeDTO -> employeeDTO.getEmployeeFullName())
                        .setHeader("Employee Name")
                        .setSortable(true);
         employeeDTOGrid.addColumn(new LocalDateRenderer<>(EmployeeProfileDTO::getDateHired, "MMM dd, yyyy"))
                        .setHeader("Date Hired")
+                       .setSortable(true);
+        employeeDTOGrid.addColumn(EmployeeProfileDTO::getEmploymentType)
+                       .setHeader("Employment Type")
+                       .setSortable(true);
+        employeeDTOGrid.addColumn(EmployeeProfileDTO::getContractDuration)
+                       .setHeader("Contract Duration")
+                       .setSortable(true);
+        employeeDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, employeeProfileDTO) -> {
+                                      String theme;
+
+                                      switch (employeeProfileDTO.getStatus()) {
+                                          case "ONBOARDING":
+                                              theme = String.format("badge %s", "primary");
+                                              break;
+                                          case "ACTIVE":
+                                              theme = String.format("badge %s", "success primary");
+                                              break;
+                                          case "ON LEAVE":
+                                              theme = String.format("badge %s", "success");
+                                              break;
+                                          case "SUSPENDED":
+                                              theme = String.format("badge %s", "badge warning primary");
+                                              break;
+                                          case "TERMINATED":
+                                              theme = String.format("badge %s", "badge error primary");
+                                              break;
+                                          case "RETIRED":
+                                              theme = String.format("badge %s", "badge contrast");
+                                              break;
+                                          case "DECEASED":
+                                              theme = String.format("badge %s", "badge contrast primary");
+                                              break;
+                                          default:
+                                              theme = "badge";
+                                      }
+
+                                      Span activeSpan = new Span();
+                                      activeSpan.getElement().setAttribute("theme", theme);
+                                      activeSpan.setText(employeeProfileDTO.getStatus());
+
+                                      layout.setJustifyContentMode(JustifyContentMode.CENTER);
+                                      layout.add(activeSpan);
+                                  }))
+                       .setHeader("Status")
                        .setSortable(true);
         employeeDTOGrid.addComponentColumn(userDTO -> buildRowToolbar()).setHeader("Action");
         employeeDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,

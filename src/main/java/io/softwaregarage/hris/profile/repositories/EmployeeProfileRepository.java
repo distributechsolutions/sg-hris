@@ -17,14 +17,17 @@ public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile
            LOWER(ep.lastName) LIKE LOWER(CONCAT('%', :param, '%')) OR
            LOWER(ep.firstName) LIKE LOWER(CONCAT('%', :param, '%')) OR
            LOWER(ep.middleName) LIKE LOWER(CONCAT('%', :param, '%')) OR
-           LOWER(ep.gender) LIKE LOWER(CONCAT('%', :param, '%'))
+           LOWER(ep.gender) LIKE LOWER(CONCAT('%', :param, '%')) OR
+           LOWER(ep.employmentType) LIKE LOWER(CONCAT('%', :param, '%')) OR
+           LOWER(ep.contractDuration) LIKE LOWER(CONCAT('%', :param, '%')) OR
+           LOWER(ep.status) LIKE LOWER(CONCAT('%', :param, '%'))
            """)
     List<EmployeeProfile> findEmployeesByParameter(@Param("param") String param);
 
     @Query(value = """
-            SELECT shep.* FROM sg_hris_employee_profile shep
-            RIGHT JOIN sg_hris_user_account sgua
-            ON shep.id = sgua.employee_id
+            SELECT shep.* 
+            FROM sg_hris_employee_profile shep
+            RIGHT JOIN sg_hris_user_account sgua ON shep.id = sgua.employee_id
             WHERE sgua.role IN ('ROLE_HR_MANAGER', 'ROLE_MANAGER', 'ROLE_HR_SUPERVISOR', 'ROLE_SUPERVISOR')
             """, nativeQuery = true)
     List<EmployeeProfile> findEmployeesWhoAreApprovers();

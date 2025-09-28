@@ -12,6 +12,11 @@ public class EmployeeProfileDTO extends BaseDTO {
     private String suffix;
     private String gender;
     private LocalDate dateHired;
+    private String employmentType;
+    private String contractDuration;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String status;
 
     public EmployeeProfileDTO() {
     }
@@ -22,7 +27,12 @@ public class EmployeeProfileDTO extends BaseDTO {
                               String middleName,
                               String suffix,
                               String gender,
-                              LocalDate dateHired) {
+                              LocalDate dateHired,
+                              String employmentType,
+                              String contractDuration,
+                              LocalDate startDate,
+                              LocalDate endDate,
+                              String status) {
         this.employeeNumber = employeeNumber;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -30,6 +40,11 @@ public class EmployeeProfileDTO extends BaseDTO {
         this.suffix = suffix;
         this.gender = gender;
         this.dateHired = dateHired;
+        this.employmentType = employmentType;
+        this.contractDuration = contractDuration;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
     }
 
     public String getEmployeeNumber() {
@@ -86,6 +101,46 @@ public class EmployeeProfileDTO extends BaseDTO {
 
     public void setDateHired(LocalDate dateHired) {
         this.dateHired = dateHired;
+    }
+
+    public String getEmploymentType() {
+        return employmentType;
+    }
+
+    public void setEmploymentType(String employmentType) {
+        this.employmentType = employmentType;
+    }
+
+    public String getContractDuration() {
+        return contractDuration;
+    }
+
+    public void setContractDuration(String contractDuration) {
+        this.contractDuration = contractDuration;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getEmployeeFullName() {

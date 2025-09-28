@@ -176,4 +176,29 @@ public class DocumentProfileServiceImpl implements DocumentProfileService {
 
         return documentProfileDTOList;
     }
+
+    @Override
+    public DocumentProfileDTO getIDPictureByEmployeeDTO(EmployeeProfileDTO employeeProfileDTO) {
+        DocumentProfile documentProfile = documentProfileRepository.getIDPictureByEmployeeProfile(employeeProfileRepository.getReferenceById(employeeProfileDTO.getId()));
+        DocumentProfileDTO documentProfileDTO;
+
+        if (documentProfile != null) {
+            documentProfileDTO = new  DocumentProfileDTO();
+            documentProfileDTO.setId(documentProfile.getId());
+            documentProfileDTO.setDocumentType(documentProfile.getDocumentType());
+            documentProfileDTO.setFileName(documentProfile.getFileName());
+            documentProfileDTO.setFileData(documentProfile.getFileData());
+            documentProfileDTO.setFileType(documentProfile.getFileType());
+            documentProfileDTO.setRemarks(documentProfile.getRemarks());
+            documentProfileDTO.setExpirationDate(documentProfile.getExpirationDate());
+            documentProfileDTO.setCreatedBy(documentProfile.getCreatedBy());
+            documentProfileDTO.setDateAndTimeCreated(documentProfile.getDateAndTimeCreated());
+            documentProfileDTO.setUpdatedBy(documentProfile.getUpdatedBy());
+            documentProfileDTO.setDateAndTimeUpdated(documentProfile.getDateAndTimeUpdated());
+        } else {
+            documentProfileDTO = null;
+        }
+
+        return documentProfileDTO;
+    }
 }

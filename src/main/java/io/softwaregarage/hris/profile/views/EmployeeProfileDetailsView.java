@@ -114,6 +114,8 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
     }
 
     public void buildEmployeeDetailsLayout() {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH);
+
         Span recordIdLabelSpan = new Span("Record ID");
         recordIdLabelSpan.getStyle().set("text-align", "right");
 
@@ -126,16 +128,16 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         Span employeeNoValueSpan = new Span(employeeProfileDTO.getEmployeeNumber());
         employeeNoValueSpan.getStyle().setFontWeight("bold");
 
+        Span dateHiredLabelSpan = new Span("Date Hired");
+        dateHiredLabelSpan.getStyle().set("text-align", "right");
+
+        Span dateHiredValueSpan = new Span(df.format(employeeProfileDTO.getDateHired()));
+        dateHiredValueSpan.getStyle().setFontWeight("bold");
+
         Span fullNameLabelSpan = new Span("Full Name");
         fullNameLabelSpan.getStyle().set("text-align", "right");
 
-        String fullName = employeeProfileDTO.getFirstName().concat(" ")
-                .concat(employeeProfileDTO.getMiddleName())
-                .concat(" ")
-                .concat(employeeProfileDTO.getLastName())
-                .concat(employeeProfileDTO.getSuffix() != null ? " ".concat(employeeProfileDTO.getSuffix()) : "");
-
-        Span fullNameValueSpan = new Span(fullName);
+        Span fullNameValueSpan = new Span(employeeProfileDTO.getEmployeeFullName());
         fullNameValueSpan.getStyle().setFontWeight("bold");
 
         Span genderLabelSpan = new Span("Gender");
@@ -144,25 +146,56 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         Span genderValueSpan = new Span(employeeProfileDTO.getGender());
         genderValueSpan.getStyle().setFontWeight("bold");
 
-        Span dateHiredLabelSpan = new Span("Date Hired");
-        dateHiredLabelSpan.getStyle().set("text-align", "right");
+        Span employmentTypeLabelSpan = new Span("Employment Type");
+        employmentTypeLabelSpan.getStyle().set("text-align", "right");
 
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH);
-        String dateHired = df.format(employeeProfileDTO.getDateHired());
+        Span employmentTypeValueSpan = new Span(employeeProfileDTO.getEmploymentType());
+        employmentTypeValueSpan.getStyle().setFontWeight("bold");
 
-        Span dateHiredValueSpan = new Span(dateHired);
-        dateHiredValueSpan.getStyle().setFontWeight("bold");
+        Span contractDurationLabelSpan = new Span("Contract Duration");
+        contractDurationLabelSpan.getStyle().set("text-align", "right");
+
+        Span contractDurationValueSpan = new Span(employeeProfileDTO.getContractDuration());
+        contractDurationValueSpan.getStyle().setFontWeight("bold");
+
+        Span startDateLabelSpan = new Span("Start Date");
+        startDateLabelSpan.getStyle().set("text-align", "right");
+
+        Span startDateValueSpan = new Span(df.format(employeeProfileDTO.getStartDate()));
+        startDateValueSpan.getStyle().setFontWeight("bold");
+
+        Span endDateLabelSpan = new Span("End Date");
+        endDateLabelSpan.getStyle().set("text-align", "right");
+
+        Span endDateValueSpan = new Span(df.format(employeeProfileDTO.getEndDate()));
+        endDateValueSpan.getStyle().setFontWeight("bold");
+
+        Span statusLabelSpan = new Span("Status");
+        statusLabelSpan.getStyle().set("text-align", "right");
+
+        Span statusValueSpan = new Span(employeeProfileDTO.getStatus());
+        statusValueSpan.getStyle().setFontWeight("bold");
 
         employeeDetailsLayout.add(recordIdLabelSpan,
                                   recordIdValueSpan,
                                   employeeNoLabelSpan,
                                   employeeNoValueSpan,
+                                  dateHiredLabelSpan,
+                                  dateHiredValueSpan,
                                   fullNameLabelSpan,
                                   fullNameValueSpan,
                                   genderLabelSpan,
                                   genderValueSpan,
-                                  dateHiredLabelSpan,
-                                  dateHiredValueSpan);
+                                  employmentTypeLabelSpan,
+                                  employmentTypeValueSpan,
+                                  contractDurationLabelSpan,
+                                  contractDurationValueSpan,
+                                  startDateLabelSpan,
+                                  startDateValueSpan,
+                                  endDateLabelSpan,
+                                  endDateValueSpan,
+                                  statusLabelSpan,
+                                  statusValueSpan);
         employeeDetailsLayout.setWidth("720px");
     }
 

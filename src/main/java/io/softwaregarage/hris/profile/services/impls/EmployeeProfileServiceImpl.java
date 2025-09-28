@@ -50,6 +50,11 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         employeeProfile.setSuffix(object.getSuffix());
         employeeProfile.setGender(object.getGender());
         employeeProfile.setDateHired(object.getDateHired());
+        employeeProfile.setEmploymentType(object.getEmploymentType());
+        employeeProfile.setContractDuration(object.getContractDuration());
+        employeeProfile.setStartDate(object.getStartDate());
+        employeeProfile.setEndDate(object.getEndDate());
+        employeeProfile.setStatus(object.getStatus());
         employeeProfile.setUpdatedBy(object.getUpdatedBy());
         employeeProfile.setDateAndTimeUpdated(LocalDateTime.now(ZoneId.of("Asia/Manila")));
 
@@ -155,6 +160,11 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         employeeProfileDTO.setSuffix(employeeProfile.getSuffix());
         employeeProfileDTO.setGender(employeeProfile.getGender());
         employeeProfileDTO.setDateHired(employeeProfile.getDateHired());
+        employeeProfileDTO.setEmploymentType(employeeProfile.getEmploymentType());
+        employeeProfileDTO.setContractDuration(employeeProfile.getContractDuration());
+        employeeProfileDTO.setStartDate(employeeProfile.getStartDate());
+        employeeProfileDTO.setEndDate(employeeProfile.getEndDate());
+        employeeProfileDTO.setStatus(employeeProfile.getStatus());
         employeeProfileDTO.setCreatedBy(employeeProfile.getCreatedBy());
         employeeProfileDTO.setDateAndTimeCreated(employeeProfile.getDateAndTimeCreated());
         employeeProfileDTO.setUpdatedBy(employeeProfile.getUpdatedBy());

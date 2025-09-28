@@ -32,6 +32,21 @@ public class EmployeeProfile extends BaseEntity {
     @Column(name = "date_hired", nullable = false)
     private LocalDate dateHired;
 
+    @Column(name = "employment_type", length = 25, nullable = false)
+    private String employmentType;
+
+    @Column(name = "contract_duration", length = 25, nullable = false)
+    private String contractDuration;
+
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Column(name = "end_date", nullable = false)
+    private LocalDate endDate;
+
+    @Column(name = "status", length = 25, nullable = false)
+    private String status;
+
     public EmployeeProfile() {
     }
 
@@ -41,7 +56,12 @@ public class EmployeeProfile extends BaseEntity {
                            String middleName,
                            String suffix,
                            String gender,
-                           LocalDate dateHired) {
+                           LocalDate dateHired,
+                           String employmentType,
+                           String contractDuration,
+                           LocalDate startDate,
+                           LocalDate endDate,
+                           String status) {
         this.employeeNumber = employeeNumber;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -49,6 +69,11 @@ public class EmployeeProfile extends BaseEntity {
         this.suffix = suffix;
         this.gender = gender;
         this.dateHired = dateHired;
+        this.employmentType = employmentType;
+        this.contractDuration = contractDuration;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.status = status;
     }
 
     public String getEmployeeNumber() {
@@ -105,5 +130,45 @@ public class EmployeeProfile extends BaseEntity {
 
     public void setDateHired(LocalDate dateHired) {
         this.dateHired = dateHired;
+    }
+
+    public String getEmploymentType() {
+        return employmentType;
+    }
+
+    public void setEmploymentType(String employmentType) {
+        this.employmentType = employmentType;
+    }
+
+    public String getContractDuration() {
+        return contractDuration;
+    }
+
+    public void setContractDuration(String contractDuration) {
+        this.contractDuration = contractDuration;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
