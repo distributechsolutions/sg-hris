@@ -31,4 +31,17 @@ public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile
             WHERE sgua.role IN ('ROLE_HR_MANAGER', 'ROLE_MANAGER', 'ROLE_HR_SUPERVISOR', 'ROLE_SUPERVISOR')
             """, nativeQuery = true)
     List<EmployeeProfile> findEmployeesWhoAreApprovers();
+
+    @Query(value = """
+            SELECT shep.* 
+            FROM sg_hris_employee_profile shep 
+            WHERE shep.end_date BETWEEN CURRENT_DATE 
+            AND CURRENT_DATE + INTERVAL '2 weeks' 
+            AND shep.status IN ('ONBOARDING', 'ACTIVE', 'ON LEAVE', 'SUSPENDED')""",
+            nativeQuery = true)
+    List<EmployeeProfile> findEmployeesWhoseContractIsNearlyExpired();
+
+    @Query(value = "SELECT shep.* FROM sg_hris_employee_profile shep WHERE shep.end_date < CURRENT_DATE AND shep.status IN ('ONBOARDING', 'ACTIVE', 'ON LEAVE', 'SUSPENDED')",
+           nativeQuery = true)
+    List<EmployeeProfile> findEmployeesWhoseContractIsExpired();
 }

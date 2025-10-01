@@ -144,6 +144,46 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         return employeeProfileDTOList;
     }
 
+    @Override
+    public List<EmployeeProfileDTO> findEmployeesWhoseContractIsNearlyExpired() {
+        logger.info("Retrieving contracts that are nearly expire from the database.");
+        List<EmployeeProfile> employeeProfileList = employeeProfileRepository.findEmployeesWhoseContractIsNearlyExpired();
+
+        logger.info("Contracts that are nearly expire were successfully retrieved.");
+        List<EmployeeProfileDTO> employeeProfileDTOList = new ArrayList<>();
+
+        if (!employeeProfileList.isEmpty()) {
+            for (EmployeeProfile employeeProfile : employeeProfileList) {
+                EmployeeProfileDTO employeeProfileDTO = getEmployeeDTO(employeeProfile);
+                employeeProfileDTOList.add(employeeProfileDTO);
+            }
+
+            logger.info(String.valueOf(employeeProfileList.size()).concat(" record(s) found."));
+        }
+
+        return employeeProfileDTOList;
+    }
+
+    @Override
+    public List<EmployeeProfileDTO> findEmployeesWhoseContractIsExpired() {
+        logger.info("Retrieving contracts that are expired from the database.");
+        List<EmployeeProfile> employeeProfileList = employeeProfileRepository.findEmployeesWhoseContractIsExpired();
+
+        logger.info("Contracts that are expired were successfully retrieved.");
+        List<EmployeeProfileDTO> employeeProfileDTOList = new ArrayList<>();
+
+        if (!employeeProfileList.isEmpty()) {
+            for (EmployeeProfile employeeProfile : employeeProfileList) {
+                EmployeeProfileDTO employeeProfileDTO = getEmployeeDTO(employeeProfile);
+                employeeProfileDTOList.add(employeeProfileDTO);
+            }
+
+            logger.info(String.valueOf(employeeProfileList.size()).concat(" record(s) found."));
+        }
+
+        return employeeProfileDTOList;
+    }
+
     /**
      * Returns the employee data transfer object where values comes from the employee object.
      * @param employeeProfile - The employee object that contains values from the database.

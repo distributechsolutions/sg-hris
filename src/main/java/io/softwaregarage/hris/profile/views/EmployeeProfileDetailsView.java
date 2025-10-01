@@ -19,8 +19,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 
-import com.vaadin.flow.server.StreamResource;
 import io.softwaregarage.hris.profile.dtos.AddressProfileDTO;
 import io.softwaregarage.hris.profile.dtos.DependentProfileDTO;
 import io.softwaregarage.hris.profile.dtos.PersonalProfileDTO;
@@ -37,9 +38,13 @@ import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.vaadin.lineawesome.LineAwesomeIcon;
@@ -64,6 +69,8 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
     private List<DocumentProfileDTO> documentProfileDTOList;
 
     private final FormLayout employeeDetailsLayout = new FormLayout();
+    private final HorizontalLayout employeeDetailsWithImageLayout = new HorizontalLayout();
+
     private final Div personalInfoDiv = new Div();
     private final Div addressInfoDiv = new Div();
     private final Div dependentInfoDiv = new Div();
@@ -95,7 +102,7 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         this.documentProfileService = documentProfileService;
 
         setSizeFull();
-        add(employeeDetailsLayout, employeeInformationTabSheets);
+        add(employeeDetailsWithImageLayout, employeeInformationTabSheets);
     }
 
     @Override
@@ -114,6 +121,31 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
     }
 
     public void buildEmployeeDetailsLayout() {
+        documentProfileDTOList = documentProfileService.getByEmployeeDTO(employeeProfileDTO);
+        Optional<DocumentProfileDTO> optionalDTO = documentProfileDTOList.stream()
+                                                                         .filter(dto -> "ID Picture".equals(dto.getDocumentType()))
+                                                                         .findFirst();
+        DocumentProfileDTO documentProfileDTO = optionalDTO.orElse(null);
+        Image imageViewer = new Image();
+
+        if (documentProfileDTO != null) {
+            byte[] fileData = documentProfileDTO.getFileData();
+            String fileName = documentProfileDTO.getFileName();
+            String mimeType = documentProfileDTO.getFileType();
+
+            imageViewer.setSrc(downloadHandler -> {
+                try (OutputStream out = downloadHandler.getOutputStream()) {
+                    out.write(fileData);
+                    downloadHandler.setFileName(fileName);
+                    downloadHandler.setContentType(mimeType);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+            imageViewer.setAlt(fileName);
+            imageViewer.setHeight("260px");
+        }
+
         DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH);
 
         Span recordIdLabelSpan = new Span("Record ID");
@@ -196,7 +228,10 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
                                   endDateValueSpan,
                                   statusLabelSpan,
                                   statusValueSpan);
-        employeeDetailsLayout.setWidth("720px");
+        employeeDetailsLayout.setWidth("80%");
+
+        employeeDetailsWithImageLayout.add(imageViewer, employeeDetailsLayout);
+        employeeDetailsWithImageLayout.setWrap(true);
     }
 
     private void buildEmployeeInformationTabSheets() {
@@ -413,9 +448,9 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         viewButton.addClickListener(buttonClickEvent -> {
             if (employeeDocumentDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
                 DocumentProfileDTO documentProfileDTO = employeeDocumentDTOGrid.getSelectionModel().getFirstSelectedItem().get();
-
-                // Get the PDF or image data from the selected data row.
-                StreamResource dataStreamResource = new StreamResource(documentProfileDTO.getFileName(), () -> new ByteArrayInputStream(documentProfileDTO.getFileData()));
+                byte[] fileData = documentProfileDTO.getFileData();
+                String fileName = documentProfileDTO.getFileName();
+                String mimeType = documentProfileDTO.getFileType();
 
                 // Create a PDF viewer component.
                 PdfViewer pdfViewer;
@@ -431,10 +466,25 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
 
                 if (documentProfileDTO.getFileType().equals("application/pdf")) {
                     pdfViewer = new PdfViewer();
-                    pdfViewer.setSrc(dataStreamResource);
+                    pdfViewer.setSrc(DownloadHandler.fromInputStream(downloadEvent -> {
+                        try {
+                            return new DownloadResponse(new ByteArrayInputStream(fileData), fileName, mimeType, fileData.length);
+                        } catch (Exception e) {
+                            return DownloadResponse.error(500);
+                        }
+                    }));
                     dialogLayout.add(pdfViewer);
                 } else {
-                    imageViewer = new Image(dataStreamResource, documentProfileDTO.getFileName());
+                    imageViewer = new Image();
+                    imageViewer.setSrc(downloadHandler -> {
+                        try (OutputStream out = downloadHandler.getOutputStream()) {
+                            out.write(fileData);
+                            downloadHandler.setFileName(fileName);
+                            downloadHandler.setContentType(mimeType);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
                     dialogLayout.add(imageViewer);
                 }
 
