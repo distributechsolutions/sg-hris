@@ -21,8 +21,10 @@ import io.softwaregarage.hris.commons.views.MainLayout;
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @RolesAllowed({"ROLE_ADMIN",
                "ROLE_HR_MANAGER",
@@ -42,8 +44,14 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
                       firstNameTextField,
                       middleNameTextField,
                       suffixTextField;
-    private ComboBox<String> genderComboBox;
-    private DatePicker dateHiredDatePicker;
+    private ComboBox<String> genderComboBox,
+                             employmentTypeComboBox,
+                             contractDurationComboBox,
+                             statusComboBox;
+    private DatePicker dateHiredDatePicker,
+                       dateResignedDatePicker,
+                       startDatePicker,
+                       endDatePicker;
 
     public EmployeeProfileFormView(EmployeeProfileService employeeProfileService) {
         this.employeeProfileService = employeeProfileService;
@@ -104,7 +112,7 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
         suffixTextField.setAllowedCharPattern("[a-zA-Z]*");
         suffixTextField.setWidth("25%");
         suffixTextField.setClearButtonVisible(true);
-        if (employeeProfileDTO != null) suffixTextField.setValue(employeeProfileDTO.getSuffix());
+        if (employeeProfileDTO != null && employeeProfileDTO.getSuffix() != null) suffixTextField.setValue(employeeProfileDTO.getSuffix());
 
         genderComboBox = new ComboBox<>("Gender");
         genderComboBox.setRequired(true);
@@ -116,6 +124,68 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
         dateHiredDatePicker.setRequired(true);
         dateHiredDatePicker.setClearButtonVisible(true);
         if (employeeProfileDTO != null) dateHiredDatePicker.setValue(employeeProfileDTO.getDateHired());
+
+        dateResignedDatePicker = new DatePicker("Date Resigned");
+        dateResignedDatePicker.setClearButtonVisible(true);
+        if (employeeProfileDTO != null && employeeProfileDTO.getDateResigned() != null) dateResignedDatePicker.setValue(employeeProfileDTO.getDateResigned());
+
+        employmentTypeComboBox = new ComboBox<>("Employment Type");
+        employmentTypeComboBox.setRequired(true);
+        employmentTypeComboBox.setItems("REGULAR", "PROBATIONARY", "CONTRACTUAL");
+        employmentTypeComboBox.setClearButtonVisible(true);
+        if (employeeProfileDTO != null) employmentTypeComboBox.setValue(employeeProfileDTO.getEmploymentType());
+
+        // Contract duration list value.
+        String[] contractDurations = {"12 months",
+                                      "11 months",
+                                      "10 months",
+                                      "9 months",
+                                      "8 months",
+                                      "7 months",
+                                      "6 months",
+                                      "5 months",
+                                      "4 months",
+                                      "3 months",
+                                      "2 months",
+                                      "1 months",
+                                      "NONE"};
+
+        contractDurationComboBox = new ComboBox<>("Contract Duration");
+        contractDurationComboBox.setRequired(true);
+        contractDurationComboBox.setClearButtonVisible(true);
+        contractDurationComboBox.setItems(contractDurations);
+        if (employeeProfileDTO != null) contractDurationComboBox.setValue(employeeProfileDTO.getContractDuration());
+
+        employmentTypeComboBox.addValueChangeListener(event -> {
+            String selectedType = event.getValue();
+
+            Stream<String> filteredStream = Arrays.stream(contractDurations);
+
+            if ("PROBATIONARY".equalsIgnoreCase(selectedType)) {
+                filteredStream = filteredStream.filter(duration -> "6 months".equalsIgnoreCase(duration));
+            } else if ("REGULAR".equalsIgnoreCase(selectedType)) {
+                filteredStream = filteredStream.filter(duration -> "NONE".equalsIgnoreCase(duration));
+            } else {
+                filteredStream = filteredStream.filter(duration -> !"NONE".equalsIgnoreCase(duration));
+            }
+
+            contractDurationComboBox.setItems(filteredStream.toList());
+        });
+
+        startDatePicker = new DatePicker("Start Date");
+        startDatePicker.setRequired(true);
+        startDatePicker.setClearButtonVisible(true);
+        if (employeeProfileDTO != null) startDatePicker.setValue(employeeProfileDTO.getStartDate());
+
+        endDatePicker = new DatePicker("End Date");
+        endDatePicker.setClearButtonVisible(true);
+        if (employeeProfileDTO != null && employeeProfileDTO.getEndDate() != null) endDatePicker.setValue(employeeProfileDTO.getEndDate());
+
+        statusComboBox =  new ComboBox<>("Status");
+        statusComboBox.setRequired(true);
+        statusComboBox.setItems("ONBOARDING", "ACTIVE", "ON LEAVE", "SUSPENDED", "TERMINATED", "RESIGNED", "RETIRED", "DECEASED");
+        statusComboBox.setClearButtonVisible(true);
+        if (employeeProfileDTO != null) statusComboBox.setValue(employeeProfileDTO.getStatus());
 
         Button saveButton = new Button("Save");
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -140,7 +210,13 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
                                   firstNameTextField,
                                   middleNameTextField,
                                   genderComboBox,
+                                  employmentTypeComboBox,
+                                  contractDurationComboBox,
                                   dateHiredDatePicker,
+                                  startDatePicker,
+                                  dateResignedDatePicker,
+                                  endDatePicker,
+                                  statusComboBox,
                                   buttonLayout);
         employeeDTOFormLayout.setColspan(employeeNoTextField, 2);
         employeeDTOFormLayout.setColspan(buttonLayout, 2);
@@ -164,6 +240,12 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
         employeeProfileDTO.setMiddleName(middleNameTextField.getValue());
         employeeProfileDTO.setGender(genderComboBox.getValue());
         employeeProfileDTO.setDateHired(dateHiredDatePicker.getValue());
+        employeeProfileDTO.setDateResigned(dateResignedDatePicker.getValue());
+        employeeProfileDTO.setEmploymentType(employmentTypeComboBox.getValue());
+        employeeProfileDTO.setContractDuration(contractDurationComboBox.getValue());
+        employeeProfileDTO.setStartDate(startDatePicker.getValue());
+        employeeProfileDTO.setEndDate(endDatePicker.getValue());
+        employeeProfileDTO.setStatus(statusComboBox.getValue());
         employeeProfileDTO.setUpdatedBy(loggedInUser);
 
         employeeProfileService.saveOrUpdate(employeeProfileDTO);

@@ -10,4 +10,7 @@ import java.util.List;
 public interface DocumentProfileService extends BaseService<DocumentProfileDTO> {
     @Transactional
     List<DocumentProfileDTO> getByEmployeeDTO(EmployeeProfileDTO employeeProfileDTO);
+
+    @Transactional
+    DocumentProfileDTO getIDPictureByEmployeeDTO(EmployeeProfileDTO employeeProfileDTO);
 }

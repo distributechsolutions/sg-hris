@@ -50,6 +50,12 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         employeeProfile.setSuffix(object.getSuffix());
         employeeProfile.setGender(object.getGender());
         employeeProfile.setDateHired(object.getDateHired());
+        employeeProfile.setDateResigned(object.getDateResigned());
+        employeeProfile.setEmploymentType(object.getEmploymentType());
+        employeeProfile.setContractDuration(object.getContractDuration());
+        employeeProfile.setStartDate(object.getStartDate());
+        employeeProfile.setEndDate(object.getEndDate());
+        employeeProfile.setStatus(object.getStatus());
         employeeProfile.setUpdatedBy(object.getUpdatedBy());
         employeeProfile.setDateAndTimeUpdated(LocalDateTime.now(ZoneId.of("Asia/Manila")));
 
@@ -139,6 +145,46 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         return employeeProfileDTOList;
     }
 
+    @Override
+    public List<EmployeeProfileDTO> findEmployeesWhoseContractIsNearlyExpired() {
+        logger.info("Retrieving contracts that are nearly expire from the database.");
+        List<EmployeeProfile> employeeProfileList = employeeProfileRepository.findEmployeesWhoseContractIsNearlyExpired();
+
+        logger.info("Contracts that are nearly expire were successfully retrieved.");
+        List<EmployeeProfileDTO> employeeProfileDTOList = new ArrayList<>();
+
+        if (!employeeProfileList.isEmpty()) {
+            for (EmployeeProfile employeeProfile : employeeProfileList) {
+                EmployeeProfileDTO employeeProfileDTO = getEmployeeDTO(employeeProfile);
+                employeeProfileDTOList.add(employeeProfileDTO);
+            }
+
+            logger.info(String.valueOf(employeeProfileList.size()).concat(" record(s) found."));
+        }
+
+        return employeeProfileDTOList;
+    }
+
+    @Override
+    public List<EmployeeProfileDTO> findEmployeesWhoseContractIsExpired() {
+        logger.info("Retrieving contracts that are expired from the database.");
+        List<EmployeeProfile> employeeProfileList = employeeProfileRepository.findEmployeesWhoseContractIsExpired();
+
+        logger.info("Contracts that are expired were successfully retrieved.");
+        List<EmployeeProfileDTO> employeeProfileDTOList = new ArrayList<>();
+
+        if (!employeeProfileList.isEmpty()) {
+            for (EmployeeProfile employeeProfile : employeeProfileList) {
+                EmployeeProfileDTO employeeProfileDTO = getEmployeeDTO(employeeProfile);
+                employeeProfileDTOList.add(employeeProfileDTO);
+            }
+
+            logger.info(String.valueOf(employeeProfileList.size()).concat(" record(s) found."));
+        }
+
+        return employeeProfileDTOList;
+    }
+
     /**
      * Returns the employee data transfer object where values comes from the employee object.
      * @param employeeProfile - The employee object that contains values from the database.
@@ -155,6 +201,12 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         employeeProfileDTO.setSuffix(employeeProfile.getSuffix());
         employeeProfileDTO.setGender(employeeProfile.getGender());
         employeeProfileDTO.setDateHired(employeeProfile.getDateHired());
+        employeeProfileDTO.setDateResigned(employeeProfile.getDateResigned());
+        employeeProfileDTO.setEmploymentType(employeeProfile.getEmploymentType());
+        employeeProfileDTO.setContractDuration(employeeProfile.getContractDuration());
+        employeeProfileDTO.setStartDate(employeeProfile.getStartDate());
+        employeeProfileDTO.setEndDate(employeeProfile.getEndDate());
+        employeeProfileDTO.setStatus(employeeProfile.getStatus());
         employeeProfileDTO.setCreatedBy(employeeProfile.getCreatedBy());
         employeeProfileDTO.setDateAndTimeCreated(employeeProfile.getDateAndTimeCreated());
         employeeProfileDTO.setUpdatedBy(employeeProfile.getUpdatedBy());

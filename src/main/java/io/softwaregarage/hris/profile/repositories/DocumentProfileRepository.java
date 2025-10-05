@@ -13,4 +13,7 @@ import java.util.UUID;
 public interface DocumentProfileRepository extends JpaRepository<DocumentProfile, UUID> {
     @Query("SELECT dp FROM DocumentProfile dp WHERE dp.employeeProfile = :param")
     List<DocumentProfile> getByEmployee(@Param("param") EmployeeProfile employeeProfile);
+
+    @Query("SELECT dp FROM DocumentProfile dp WHERE dp.employeeProfile = :param AND dp.documentType = 'ID Picture'")
+    DocumentProfile getIDPictureByEmployeeProfile(@Param("param") EmployeeProfile employeeProfile);
 }

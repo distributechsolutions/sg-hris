@@ -24,8 +24,7 @@ public class EmployeeTimesheet extends BaseEntity {
     @Column(name = "timesheet_log_detail", length = 100, nullable = false)
     private String logDetail;
 
-    @Lob
-    @Column(name = "timesheet_log_image", nullable = false, columnDefinition = "BLOB")
+    @Column(name = "timesheet_log_image", nullable = false)
     private byte[] logImage;
 
     @Column(name = "timesheet_status", length = 100, nullable = false)

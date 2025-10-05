@@ -22,11 +22,13 @@ import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.compenben.dtos.LeaveBenefitsDTO;
 import io.softwaregarage.hris.profile.dtos.AddressProfileDTO;
 import io.softwaregarage.hris.profile.dtos.DependentProfileDTO;
+import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.dtos.PersonalProfileDTO;
 import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.compenben.services.LeaveBenefitsService;
 import io.softwaregarage.hris.profile.services.AddressProfileService;
 import io.softwaregarage.hris.profile.services.DependentProfileService;
+import io.softwaregarage.hris.profile.services.EmployeeProfileService;
 import io.softwaregarage.hris.profile.services.PersonalProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
 import io.softwaregarage.hris.utils.StringUtil;
@@ -50,8 +52,10 @@ public class DashboardView extends VerticalLayout {
     @Resource private final AddressProfileService addressProfileService;
     @Resource private final DependentProfileService dependentProfileService;
     @Resource private final LeaveBenefitsService leaveBenefitsService;
+    @Resource private EmployeeProfileService employeeProfileService;
 
     private UserDTO userDTO;
+
 
     enum MessageLevel {
         INFO,
@@ -64,12 +68,14 @@ public class DashboardView extends VerticalLayout {
                          PersonalProfileService personalService,
                          AddressProfileService addressProfileService,
                          DependentProfileService dependentProfileService,
-                         LeaveBenefitsService leaveBenefitsService) {
+                         LeaveBenefitsService leaveBenefitsService,
+                         EmployeeProfileService employeeProfileService) {
         this.userService = userService;
         this.personalProfileService = personalService;
         this.addressProfileService = addressProfileService;
         this.dependentProfileService = dependentProfileService;
         this.leaveBenefitsService = leaveBenefitsService;
+        this.employeeProfileService = employeeProfileService;
 
         // Gets the user data transfer object based from the logged-in user.
         String loggedInUser = Objects.requireNonNull(SecurityUtil.getAuthenticatedUser()).getUsername();
@@ -88,6 +94,12 @@ public class DashboardView extends VerticalLayout {
         Div addressMessageNotification;
         Div dependentMessageNotification;
         Div notificationSectionDiv;
+
+        // This will show the notification messages for the employee contracts.
+        Div soonToExpiredContractNotification;
+        Div employeeSoonToExpiredContractNotification;
+        Div expiredContractNotification;
+        Div employeeExpiredContractNotification;
 
         H3 headerNotification = new H3("Notifications");
         headerNotification.getStyle().set("padding-bottom", "10px");
@@ -127,6 +139,62 @@ public class DashboardView extends VerticalLayout {
             if (personalProfileDTO != null && !addressProfileDTOList.isEmpty() && !dependentProfileDTOList.isEmpty()) {
                 Span messageSpan = new Span("No notifications found. You are all caught up.");
                 notificationSectionDiv.add(messageSpan);
+            }
+
+            List<EmployeeProfileDTO> listOfEmployeeContractsToBeExpired = employeeProfileService.findEmployeesWhoseContractIsNearlyExpired();
+            List<EmployeeProfileDTO> listOfEmployeeContractsExpired = employeeProfileService.findEmployeesWhoseContractIsExpired();
+
+            // The list of notifications for employee contracts will only be shown to admin, HR manager, HR supervisor and HR employee.
+            if (userDTO.getRole().equals("ROLE_ADMIN")
+                || userDTO.getRole().equals("ROLE_HR_MANAGER")
+                || userDTO.getRole().equals("ROLE_HR_SUPERVISOR")
+                || userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
+                if (!listOfEmployeeContractsToBeExpired.isEmpty()) {
+                    int numberOfSoonToExpired = listOfEmployeeContractsToBeExpired.size();
+                    String soonToExpiredMessage = numberOfSoonToExpired > 1 ? "There are " : "There is " + numberOfSoonToExpired + " employee contract(s) soon to be expired.";
+
+                    soonToExpiredContractNotification = buildNotification(soonToExpiredMessage,
+                            MessageLevel.WARNING,
+                            LineAwesomeIcon.EXCLAMATION_TRIANGLE_SOLID.create());
+                    notificationSectionDiv.add(soonToExpiredContractNotification);
+                }
+
+                if (!listOfEmployeeContractsExpired.isEmpty()) {
+                    int numberOfExpired = listOfEmployeeContractsExpired.size();
+                    String expiredMessage = numberOfExpired > 1 ? "There are " : "There is " + numberOfExpired + " employee contract(s) already expired";
+
+                    expiredContractNotification = buildNotification(expiredMessage,
+                            MessageLevel.DANGER,
+                            LineAwesomeIcon.TIMES_CIRCLE_SOLID.create());
+                    notificationSectionDiv.add(expiredContractNotification);
+                }
+            }
+
+            // Notification for employees contract will also display if it is nearly or already expired.
+            if (!listOfEmployeeContractsToBeExpired.isEmpty()) {
+                EmployeeProfileDTO employeeProfileContractToBeExpired = listOfEmployeeContractsToBeExpired.stream().filter(employeeProfileDTO -> {
+                    return employeeProfileDTO.getId().equals(userDTO.getEmployeeDTO().getId());
+                }).findFirst().orElse(null);
+
+                if (employeeProfileContractToBeExpired != null) {
+                    employeeSoonToExpiredContractNotification = buildNotification("Your contract will be expired soon. Please inform your immediate supervisor or HR about this.",
+                                                                                   MessageLevel.WARNING,
+                                                                                   LineAwesomeIcon.EXCLAMATION_TRIANGLE_SOLID.create());
+                    notificationSectionDiv.add(employeeSoonToExpiredContractNotification);
+                }
+            }
+
+            if (!listOfEmployeeContractsExpired.isEmpty()) {
+                EmployeeProfileDTO employeeProfileContractExpired = listOfEmployeeContractsExpired.stream().filter(employeeProfileDTO -> {
+                    return employeeProfileDTO.getId().equals(userDTO.getEmployeeDTO().getId());
+                }).findFirst().orElse(null);
+
+                if (employeeProfileContractExpired != null) {
+                    employeeExpiredContractNotification = buildNotification("Your contract is already expired. Please inform your immediate supervisor or HR about this.",
+                                                                            MessageLevel.DANGER,
+                                                                            LineAwesomeIcon.TIMES_CIRCLE_SOLID.create());
+                    notificationSectionDiv.add(employeeExpiredContractNotification);
+                }
             }
 
             this.add(notificationSectionDiv, this.buildLeaveBenefitsSection());

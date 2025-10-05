@@ -29,7 +29,7 @@ public class DocumentProfile extends BaseEntity {
     @Column(name = "remarks", length = 150, nullable = false)
     private String remarks;
 
-    @Column(name = "expiration_date", nullable = false)
+    @Column(name = "expiration_date")
     private LocalDate expirationDate;
 
     public EmployeeProfile getEmployee() {

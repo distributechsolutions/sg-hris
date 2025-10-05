@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface EmployeeProfileService extends BaseService<EmployeeProfileDTO> {
     List<EmployeeProfileDTO> getEmployeesWhoAreApprovers();
+    List<EmployeeProfileDTO> findEmployeesWhoseContractIsNearlyExpired();
+    List<EmployeeProfileDTO> findEmployeesWhoseContractIsExpired();
 }
