@@ -10,9 +10,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -21,11 +19,11 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 
-import com.vaadin.flow.server.StreamResource;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.dtos.DocumentProfileDTO;
 import io.softwaregarage.hris.profile.services.DocumentProfileService;
@@ -35,18 +33,18 @@ import io.softwaregarage.hris.commons.views.MainLayout;
 
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
-import org.vaadin.lineawesome.LineAwesomeIcon;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.vaadin.lineawesome.LineAwesomeIcon;
+
 @RolesAllowed({"ROLE_ADMIN",
-        "ROLE_HR_MANAGER",
-        "ROLE_HR_SUPERVISOR",
-        "ROLE_HR_EMPLOYEE"})
+               "ROLE_HR_MANAGER",
+               "ROLE_HR_SUPERVISOR",
+               "ROLE_HR_EMPLOYEE"})
 @PageTitle("Employee Document Form")
 @Route(value = "employee-document-form", layout = MainLayout.class)
 public class DocumentProfileFormView extends Div implements HasUrlParameter<String> {
@@ -126,6 +124,7 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
                                       "Diploma",
                                       "Passport",
                                       "Scanned Government ID",
+                                      "ID Picture",
                                       "Others");
         documentTypeComboBox.setRequired(true);
         documentTypeComboBox.setRequiredIndicatorVisible(true);
@@ -134,21 +133,20 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
         Button uploadEmployeeFilesButton = new Button("Upload");
         uploadEmployeeFilesButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
 
-        MemoryBuffer memoryBuffer = new MemoryBuffer();
-
-        employeeDocumentUpload = new Upload(memoryBuffer);
+        employeeDocumentUpload = new Upload();
         employeeDocumentUpload.setId("upload-employee-file");
         employeeDocumentUpload.setDropAllowed(true);
         employeeDocumentUpload.setAcceptedFileTypes(".jpg", ".jpeg", ".png", ".pdf");
         employeeDocumentUpload.setUploadButton(uploadEmployeeFilesButton);
-        employeeDocumentUpload.addSucceededListener(succeededEvent -> {
-            try {
-                this.setFileName(memoryBuffer.getFileName());
-                this.setFileType(memoryBuffer.getFileData().getMimeType());
-                this.setImageBytes(memoryBuffer.getInputStream().readAllBytes());
+        employeeDocumentUpload.setUploadHandler(uploadEvent -> {
+            try (InputStream inputStream = uploadEvent.getInputStream()) {
+                this.setFileName(uploadEvent.getFileName());
+                this.setFileType(uploadEvent.getContentType());
+                this.setImageBytes(inputStream.readAllBytes());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Failed to read uploaded file", e);
             }
+
         });
 
         NativeLabel dropLabel = new NativeLabel("Upload the file here. Accepted file types: .pdf, .png, .jpeg and .jpg");
@@ -166,7 +164,22 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
         documentExpirationDatePicker.setMin(LocalDate.of(LocalDate.now().getYear(),
                                                          LocalDate.now().getMonth(),
                                                          LocalDate.now().getDayOfMonth()));
-        documentExpirationDatePicker.setRequired(true);
+
+        // documentExpirationDatePicker will become a required field
+        // if the following documents were selected in the documentTypeComboBox component.
+        documentTypeComboBox.addValueChangeListener(event -> {
+            if (documentTypeComboBox.getValue().equals("Police Clearance")
+                    || documentTypeComboBox.getValue().equals("NBI Clearance")
+                    || documentTypeComboBox.getValue().equals("Medical Certificate")
+                    || documentTypeComboBox.getValue().equals("Transcript of Records")
+                    || documentTypeComboBox.getValue().equals("Passport")
+                    || documentTypeComboBox.getValue().equals("Scanned Government ID")) {
+                documentExpirationDatePicker.setRequired(true);
+            } else {
+                documentExpirationDatePicker.setRequired(false);
+            }
+        });
+
         documentExpirationDatePicker.setRequiredIndicatorVisible(true);
 
         Button saveButton = new Button("Save");
@@ -232,14 +245,9 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
             if (employeeDocumentDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
                 documentProfileDTO = employeeDocumentDTOGrid.getSelectionModel().getFirstSelectedItem().get();
 
-                // Get the PDF or image data from the selected data row.
-                StreamResource dataStreamResource = new StreamResource(documentProfileDTO.getFileName(), () -> new ByteArrayInputStream(documentProfileDTO.getFileData()));
-
-                // Create a PDF viewer component.
-                PdfViewer pdfViewer;
-
-                // Create an image viewer.
-                Image imageViewer;
+                byte[] fileData = documentProfileDTO.getFileData();
+                String fileName = documentProfileDTO.getFileName();
+                String mimeType = documentProfileDTO.getFileType();
 
                 // Create a layout that will hod the viewer components.
                 VerticalLayout dialogLayout = new VerticalLayout();
@@ -247,12 +255,32 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
                 dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
                 dialogLayout.getStyle().set("width", "768px").set("max-width", "100%");
 
-                if (documentProfileDTO.getFileType().equals("application/pdf")) {
-                    pdfViewer = new PdfViewer();
-                    pdfViewer.setSrc(dataStreamResource);
+                if (mimeType.equals("application/pdf")) {
+                    VerticalLayout pdfLayout = new VerticalLayout();
+                    pdfLayout.setSizeFull();
+
+                    PdfViewer pdfViewer = new PdfViewer();
+                    pdfViewer.setSrc(DownloadHandler.fromInputStream(downloadEvent -> {
+                        try {
+                            return new DownloadResponse(new ByteArrayInputStream(fileData), fileName, mimeType, fileData.length);
+                        } catch (Exception e) {
+                            return DownloadResponse.error(500);
+                        }
+                    }));
+
                     dialogLayout.add(pdfViewer);
                 } else {
-                    imageViewer = new Image(dataStreamResource, documentProfileDTO.getFileName());
+                    Image imageViewer = new Image();
+                    imageViewer.setSrc(downloadHandler -> {
+                        try (OutputStream out = downloadHandler.getOutputStream()) {
+                            out.write(fileData);
+                            downloadHandler.setFileName(fileName);
+                            downloadHandler.setContentType(mimeType);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+                    imageViewer.setAlt(fileName);
                     dialogLayout.add(imageViewer);
                 }
 

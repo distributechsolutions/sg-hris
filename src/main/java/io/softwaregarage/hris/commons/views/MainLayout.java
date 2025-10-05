@@ -15,12 +15,16 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import io.softwaregarage.hris.compenben.views.*;
 import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.attendance.services.EmployeeLeaveFilingService;
+import io.softwaregarage.hris.profile.dtos.DocumentProfileDTO;
+import io.softwaregarage.hris.profile.services.DocumentProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
 import io.softwaregarage.hris.admin.views.UserListView;
 import io.softwaregarage.hris.attendance.views.EmployeeShiftListView;
@@ -34,6 +38,8 @@ import io.softwaregarage.hris.admin.views.CalendarHolidaysListView;
 
 import jakarta.annotation.Resource;
 
+import java.io.ByteArrayInputStream;
+
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 /**
@@ -41,19 +47,41 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
  */
 public class MainLayout extends AppLayout {
     @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
+    @Resource private final DocumentProfileService documentProfileService;
 
     private UserDTO userDTO;
+    private DocumentProfileDTO documentProfileDTO;
     private H1 viewTitle;
+    private DownloadHandler imageHandler;
     private String fullName;
 
     public MainLayout(UserService userService,
-                      EmployeeLeaveFilingService employeeLeaveFilingService) {
+                      EmployeeLeaveFilingService employeeLeaveFilingService,
+                      DocumentProfileService documentProfileService) {
         this.employeeLeaveFilingService = employeeLeaveFilingService;
+        this.documentProfileService = documentProfileService;
 
         // Gets the user data transfer object based from the logged in user.
         if (SecurityUtil.getAuthenticatedUser() != null) {
             userDTO = userService.getByUsername(SecurityUtil.getAuthenticatedUser().getUsername());
             fullName = userDTO.getEmployeeDTO().getFirstName() + " " + userDTO.getEmployeeDTO().getLastName();
+
+            // Set the image component from the employees document file which will be added in the avatar component.
+            documentProfileDTO = documentProfileService.getIDPictureByEmployeeDTO(userDTO.getEmployeeDTO());
+
+            if (documentProfileDTO != null) {
+                byte[] fileData = documentProfileDTO.getFileData();
+                String fileName = documentProfileDTO.getFileName();
+                String mimeType = documentProfileDTO.getFileType();
+
+                imageHandler = DownloadHandler.fromInputStream(downloadEvent -> {
+                    try {
+                        return new DownloadResponse(new ByteArrayInputStream(fileData), fileName, mimeType, fileData.length);
+                    } catch (Exception e) {
+                        return DownloadResponse.error(500);
+                    }
+                });
+            }
         }
 
         setPrimarySection(Section.DRAWER);
@@ -73,7 +101,12 @@ public class MainLayout extends AppLayout {
         if (userDTO != null) {
             Avatar userAvatar = new Avatar(fullName);
             userAvatar.addThemeVariants(AvatarVariant.LUMO_LARGE);
-            userAvatar.setColorIndex((int) (Math.random() * 7) + 1);
+
+            if (imageHandler != DownloadResponse.error(500)) {
+                userAvatar.setImageHandler(imageHandler);
+            } else {
+                userAvatar.setColorIndex((int) (Math.random() * 7) + 1);
+            }
 
             ContextMenu contextMenu = new ContextMenu();
             contextMenu.setTarget(userAvatar);

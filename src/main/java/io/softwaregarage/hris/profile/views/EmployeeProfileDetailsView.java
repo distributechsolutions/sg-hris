@@ -19,8 +19,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
 
-import com.vaadin.flow.server.StreamResource;
 import io.softwaregarage.hris.profile.dtos.AddressProfileDTO;
 import io.softwaregarage.hris.profile.dtos.DependentProfileDTO;
 import io.softwaregarage.hris.profile.dtos.PersonalProfileDTO;
@@ -37,9 +38,13 @@ import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.vaadin.lineawesome.LineAwesomeIcon;
@@ -64,6 +69,8 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
     private List<DocumentProfileDTO> documentProfileDTOList;
 
     private final FormLayout employeeDetailsLayout = new FormLayout();
+    private final HorizontalLayout employeeDetailsWithImageLayout = new HorizontalLayout();
+
     private final Div personalInfoDiv = new Div();
     private final Div addressInfoDiv = new Div();
     private final Div dependentInfoDiv = new Div();
@@ -95,7 +102,7 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         this.documentProfileService = documentProfileService;
 
         setSizeFull();
-        add(employeeDetailsLayout, employeeInformationTabSheets);
+        add(employeeDetailsWithImageLayout, employeeInformationTabSheets);
     }
 
     @Override
@@ -114,56 +121,85 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
     }
 
     public void buildEmployeeDetailsLayout() {
-        Span recordIdLabelSpan = new Span("Record ID");
-        recordIdLabelSpan.getStyle().set("text-align", "right");
+        documentProfileDTOList = documentProfileService.getByEmployeeDTO(employeeProfileDTO);
+        Optional<DocumentProfileDTO> optionalDTO = documentProfileDTOList.stream()
+                                                                         .filter(dto -> "ID Picture".equals(dto.getDocumentType()))
+                                                                         .findFirst();
+        DocumentProfileDTO documentProfileDTO = optionalDTO.orElse(null);
+        Image imageViewer = new Image();
+
+        if (documentProfileDTO != null) {
+            byte[] fileData = documentProfileDTO.getFileData();
+            String fileName = documentProfileDTO.getFileName();
+            String mimeType = documentProfileDTO.getFileType();
+
+            imageViewer.setSrc(downloadHandler -> {
+                try (OutputStream out = downloadHandler.getOutputStream()) {
+                    out.write(fileData);
+                    downloadHandler.setFileName(fileName);
+                    downloadHandler.setContentType(mimeType);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+            imageViewer.setAlt(fileName);
+            imageViewer.setHeight("375px");
+        }
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
 
         Span recordIdValueSpan = new Span(employeeProfileDTO.getId().toString());
         recordIdValueSpan.getStyle().setFontWeight("bold");
 
-        Span employeeNoLabelSpan = new Span("Employee No");
-        employeeNoLabelSpan.getStyle().set("text-align", "right");
-
         Span employeeNoValueSpan = new Span(employeeProfileDTO.getEmployeeNumber());
         employeeNoValueSpan.getStyle().setFontWeight("bold");
 
-        Span fullNameLabelSpan = new Span("Full Name");
-        fullNameLabelSpan.getStyle().set("text-align", "right");
-
-        String fullName = employeeProfileDTO.getFirstName().concat(" ")
-                .concat(employeeProfileDTO.getMiddleName())
-                .concat(" ")
-                .concat(employeeProfileDTO.getLastName())
-                .concat(employeeProfileDTO.getSuffix() != null ? " ".concat(employeeProfileDTO.getSuffix()) : "");
-
-        Span fullNameValueSpan = new Span(fullName);
+        Span fullNameValueSpan = new Span(employeeProfileDTO.getEmployeeFullName());
         fullNameValueSpan.getStyle().setFontWeight("bold");
-
-        Span genderLabelSpan = new Span("Gender");
-        genderLabelSpan.getStyle().set("text-align", "right");
 
         Span genderValueSpan = new Span(employeeProfileDTO.getGender());
         genderValueSpan.getStyle().setFontWeight("bold");
 
-        Span dateHiredLabelSpan = new Span("Date Hired");
-        dateHiredLabelSpan.getStyle().set("text-align", "right");
+        Span employmentTypeValueSpan = new Span(employeeProfileDTO.getEmploymentType());
+        employmentTypeValueSpan.getStyle().setFontWeight("bold");
 
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH);
-        String dateHired = df.format(employeeProfileDTO.getDateHired());
+        Span contractDurationValueSpan = new Span(employeeProfileDTO.getContractDuration());
+        contractDurationValueSpan.getStyle().setFontWeight("bold");
 
-        Span dateHiredValueSpan = new Span(dateHired);
+        Span dateHiredValueSpan = new Span(df.format(employeeProfileDTO.getDateHired()));
         dateHiredValueSpan.getStyle().setFontWeight("bold");
 
-        employeeDetailsLayout.add(recordIdLabelSpan,
-                                  recordIdValueSpan,
-                                  employeeNoLabelSpan,
-                                  employeeNoValueSpan,
-                                  fullNameLabelSpan,
-                                  fullNameValueSpan,
-                                  genderLabelSpan,
-                                  genderValueSpan,
-                                  dateHiredLabelSpan,
-                                  dateHiredValueSpan);
-        employeeDetailsLayout.setWidth("720px");
+        Span startDateValueSpan = new Span(df.format(employeeProfileDTO.getStartDate()));
+        startDateValueSpan.getStyle().setFontWeight("bold");
+
+        Span dateResignedValueSpan = new Span(employeeProfileDTO.getDateResigned() != null ? df.format(employeeProfileDTO.getDateResigned()) : "");
+        dateResignedValueSpan.getStyle().setFontWeight("bold");
+
+        Span endDateValueSpan = new Span(employeeProfileDTO.getEndDate() != null ? df.format(employeeProfileDTO.getEndDate()) : "");
+        endDateValueSpan.getStyle().setFontWeight("bold");
+
+        Span statusValueSpan = new Span(employeeProfileDTO.getStatus());
+        statusValueSpan.getStyle().setFontWeight("bold");
+
+        employeeDetailsLayout.setAutoResponsive(true);
+        employeeDetailsLayout.setLabelsAside(true);
+        employeeDetailsLayout.setLabelWidth("130px");
+        employeeDetailsLayout.setColumnWidth("360px");
+        employeeDetailsLayout.addFormItem(recordIdValueSpan, "ID");
+        employeeDetailsLayout.addFormItem(employeeNoValueSpan, "Employee No");
+        employeeDetailsLayout.addFormItem(fullNameValueSpan, "Full Name");
+        employeeDetailsLayout.addFormItem(genderValueSpan, "Gender");
+        employeeDetailsLayout.addFormItem(employmentTypeValueSpan, "Employment Type");
+        employeeDetailsLayout.addFormItem(contractDurationValueSpan, "Contract Duration");
+        employeeDetailsLayout.addFormItem(dateHiredValueSpan, "Date Hired");
+        employeeDetailsLayout.addFormItem(startDateValueSpan, "Start Date");
+        employeeDetailsLayout.addFormItem(dateResignedValueSpan, "Date Resigned");
+        employeeDetailsLayout.addFormItem(endDateValueSpan, "End Date");
+        employeeDetailsLayout.addFormItem(statusValueSpan, "Status");
+
+        employeeDetailsWithImageLayout.setPadding(true);
+        employeeDetailsWithImageLayout.add(imageViewer, employeeDetailsLayout);
+        employeeDetailsWithImageLayout.setWrap(true);
     }
 
     private void buildEmployeeInformationTabSheets() {
@@ -177,89 +213,51 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         personalProfileDTO = personalProfileService.getByEmployeeDTO(employeeProfileDTO);
 
         if (personalProfileDTO != null) {
-            FormLayout personalInfoFormLayout = new FormLayout();
-
-            Span dateOfBirthLabelSpan = new Span("Date of birth");
-            dateOfBirthLabelSpan.getStyle().set("text-align", "right");
-
-            Span dateOfBirthValueSpan = new Span(DateTimeFormatter.ofPattern("MMM dd, yyyy").format(personalProfileDTO.getDateOfBirth()));
+            Span dateOfBirthValueSpan = new Span(DateTimeFormatter.ofPattern("MMMM dd, yyyy").format(personalProfileDTO.getDateOfBirth()));
             dateOfBirthValueSpan.getStyle().setFontWeight("bold");
-
-            Span placeOfBirthLabelSpan = new Span("Place of birth");
-            placeOfBirthLabelSpan.getStyle().set("text-align", "right");
 
             Span placeOfBirthValueSpan = new Span(personalProfileDTO.getPlaceOfBirth());
             placeOfBirthValueSpan.getStyle().setFontWeight("bold");
 
-            Span maritalStatusLabelSpan = new Span("Marital Status");
-            maritalStatusLabelSpan.getStyle().set("text-align", "right");
-
             Span maritalStatusValueSpan = new Span(personalProfileDTO.getMaritalStatus());
             maritalStatusValueSpan.getStyle().setFontWeight("bold");
-
-            Span spouseLabelSpan = new Span("Spouse Name");
-            spouseLabelSpan.getStyle().set("text-align", "right");
 
             Span spouseValueSpan = new Span(personalProfileDTO.getSpouseName() != null ? personalProfileDTO.getSpouseName() : "");
             spouseValueSpan.getStyle().setFontWeight("bold");
 
-            Span contactNoLabelSpan = new Span("Contact Number");
-            contactNoLabelSpan.getStyle().set("text-align", "right");
-
             Span contactNoValueSpan = new Span(String.valueOf(personalProfileDTO.getContactNumber()));
             contactNoValueSpan.getStyle().setFontWeight("bold");
-
-            Span emailLabelSpan = new Span("Email");
-            emailLabelSpan.getStyle().set("text-align", "right");
 
             Span emailValueSpan = new Span(personalProfileDTO.getEmailAddress());
             emailValueSpan.getStyle().setFontWeight("bold");
 
-            Span tinLabelSpan = new Span("TIN");
-            tinLabelSpan.getStyle().set("text-align", "right");
-
             Span tinValueSpan = new Span(personalProfileDTO.getTaxIdentificationNumber());
             tinValueSpan.getStyle().setFontWeight("bold");
-
-            Span sssLabelSpan = new Span("SSS");
-            sssLabelSpan.getStyle().set("text-align", "right");
 
             Span sssValueSpan = new Span(personalProfileDTO.getSssNumber());
             sssValueSpan.getStyle().setFontWeight("bold");
 
-            Span hdmfLabelSpan = new Span("Pag-Ibig HDMF");
-            hdmfLabelSpan.getStyle().set("text-align", "right");
-
             Span hdmfValueSpan = new Span(personalProfileDTO.getHdmfNumber());
             hdmfValueSpan.getStyle().setFontWeight("bold");
-
-            Span philhealthLabelSpan = new Span("Philhealth");
-            philhealthLabelSpan.getStyle().set("text-align", "right");
 
             Span philhealthValueSpan = new Span(personalProfileDTO.getPhilhealthNumber());
             philhealthValueSpan.getStyle().setFontWeight("bold");
 
-            personalInfoFormLayout.add(dateOfBirthLabelSpan,
-                                       dateOfBirthValueSpan,
-                                       placeOfBirthLabelSpan,
-                                       placeOfBirthValueSpan,
-                                       maritalStatusLabelSpan,
-                                       maritalStatusValueSpan,
-                                       spouseLabelSpan,
-                                       spouseValueSpan,
-                                       contactNoLabelSpan,
-                                       contactNoValueSpan,
-                                       emailLabelSpan,
-                                       emailValueSpan,
-                                       tinLabelSpan,
-                                       tinValueSpan,
-                                       sssLabelSpan,
-                                       sssValueSpan,
-                                       hdmfLabelSpan,
-                                       hdmfValueSpan,
-                                       philhealthLabelSpan,
-                                       philhealthValueSpan);
-            personalInfoFormLayout.setWidth("720px");
+            FormLayout personalInfoFormLayout = new FormLayout();
+            personalInfoFormLayout.setAutoResponsive(true);
+            personalInfoFormLayout.setLabelsAside(true);
+            personalInfoFormLayout.setLabelWidth("130px");
+            personalInfoFormLayout.setColumnWidth("360px");
+            personalInfoFormLayout.addFormItem(dateOfBirthValueSpan, "Date of Birth");
+            personalInfoFormLayout.addFormItem(placeOfBirthValueSpan, "Place of Birth");
+            personalInfoFormLayout.addFormItem(maritalStatusValueSpan, "Marital Status");
+            personalInfoFormLayout.addFormItem(spouseValueSpan, "Spouse Name");
+            personalInfoFormLayout.addFormItem(contactNoValueSpan, "Contact No");
+            personalInfoFormLayout.addFormItem(emailValueSpan, "Email Address");
+            personalInfoFormLayout.addFormItem(tinValueSpan, "TIN");
+            personalInfoFormLayout.addFormItem(sssValueSpan, "SSS Number");
+            personalInfoFormLayout.addFormItem(hdmfValueSpan, "HDMF Number");
+            personalInfoFormLayout.addFormItem(philhealthValueSpan, "Philhealth Number");
 
             personalInfoDiv.add(personalInfoFormLayout);
         } else {
@@ -380,9 +378,9 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         viewButton.addClickListener(buttonClickEvent -> {
             if (employeeDocumentDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
                 DocumentProfileDTO documentProfileDTO = employeeDocumentDTOGrid.getSelectionModel().getFirstSelectedItem().get();
-
-                // Get the PDF or image data from the selected data row.
-                StreamResource dataStreamResource = new StreamResource(documentProfileDTO.getFileName(), () -> new ByteArrayInputStream(documentProfileDTO.getFileData()));
+                byte[] fileData = documentProfileDTO.getFileData();
+                String fileName = documentProfileDTO.getFileName();
+                String mimeType = documentProfileDTO.getFileType();
 
                 // Create a PDF viewer component.
                 PdfViewer pdfViewer;
@@ -398,10 +396,25 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
 
                 if (documentProfileDTO.getFileType().equals("application/pdf")) {
                     pdfViewer = new PdfViewer();
-                    pdfViewer.setSrc(dataStreamResource);
+                    pdfViewer.setSrc(DownloadHandler.fromInputStream(downloadEvent -> {
+                        try {
+                            return new DownloadResponse(new ByteArrayInputStream(fileData), fileName, mimeType, fileData.length);
+                        } catch (Exception e) {
+                            return DownloadResponse.error(500);
+                        }
+                    }));
                     dialogLayout.add(pdfViewer);
                 } else {
-                    imageViewer = new Image(dataStreamResource, documentProfileDTO.getFileName());
+                    imageViewer = new Image();
+                    imageViewer.setSrc(downloadHandler -> {
+                        try (OutputStream out = downloadHandler.getOutputStream()) {
+                            out.write(fileData);
+                            downloadHandler.setFileName(fileName);
+                            downloadHandler.setContentType(mimeType);
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
                     dialogLayout.add(imageViewer);
                 }
 
