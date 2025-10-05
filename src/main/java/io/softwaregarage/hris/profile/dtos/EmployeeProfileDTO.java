@@ -12,6 +12,7 @@ public class EmployeeProfileDTO extends BaseDTO {
     private String suffix;
     private String gender;
     private LocalDate dateHired;
+    private LocalDate dateResigned;
     private String employmentType;
     private String contractDuration;
     private LocalDate startDate;
@@ -28,6 +29,7 @@ public class EmployeeProfileDTO extends BaseDTO {
                               String suffix,
                               String gender,
                               LocalDate dateHired,
+                              LocalDate dateResigned,
                               String employmentType,
                               String contractDuration,
                               LocalDate startDate,
@@ -40,6 +42,7 @@ public class EmployeeProfileDTO extends BaseDTO {
         this.suffix = suffix;
         this.gender = gender;
         this.dateHired = dateHired;
+        this.dateResigned = dateResigned;
         this.employmentType = employmentType;
         this.contractDuration = contractDuration;
         this.startDate = startDate;
@@ -101,6 +104,14 @@ public class EmployeeProfileDTO extends BaseDTO {
 
     public void setDateHired(LocalDate dateHired) {
         this.dateHired = dateHired;
+    }
+
+    public LocalDate getDateResigned() {
+        return dateResigned;
+    }
+
+    public void setDateResigned(LocalDate dateResigned) {
+        this.dateResigned = dateResigned;
     }
 
     public String getEmploymentType() {

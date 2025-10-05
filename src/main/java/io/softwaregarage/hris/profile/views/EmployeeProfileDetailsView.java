@@ -143,93 +143,61 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
                 }
             });
             imageViewer.setAlt(fileName);
-            imageViewer.setHeight("260px");
+            imageViewer.setHeight("375px");
         }
 
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH);
-
-        Span recordIdLabelSpan = new Span("Record ID");
-        recordIdLabelSpan.getStyle().set("text-align", "right");
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
 
         Span recordIdValueSpan = new Span(employeeProfileDTO.getId().toString());
         recordIdValueSpan.getStyle().setFontWeight("bold");
 
-        Span employeeNoLabelSpan = new Span("Employee No");
-        employeeNoLabelSpan.getStyle().set("text-align", "right");
-
         Span employeeNoValueSpan = new Span(employeeProfileDTO.getEmployeeNumber());
         employeeNoValueSpan.getStyle().setFontWeight("bold");
-
-        Span dateHiredLabelSpan = new Span("Date Hired");
-        dateHiredLabelSpan.getStyle().set("text-align", "right");
-
-        Span dateHiredValueSpan = new Span(df.format(employeeProfileDTO.getDateHired()));
-        dateHiredValueSpan.getStyle().setFontWeight("bold");
-
-        Span fullNameLabelSpan = new Span("Full Name");
-        fullNameLabelSpan.getStyle().set("text-align", "right");
 
         Span fullNameValueSpan = new Span(employeeProfileDTO.getEmployeeFullName());
         fullNameValueSpan.getStyle().setFontWeight("bold");
 
-        Span genderLabelSpan = new Span("Gender");
-        genderLabelSpan.getStyle().set("text-align", "right");
-
         Span genderValueSpan = new Span(employeeProfileDTO.getGender());
         genderValueSpan.getStyle().setFontWeight("bold");
-
-        Span employmentTypeLabelSpan = new Span("Employment Type");
-        employmentTypeLabelSpan.getStyle().set("text-align", "right");
 
         Span employmentTypeValueSpan = new Span(employeeProfileDTO.getEmploymentType());
         employmentTypeValueSpan.getStyle().setFontWeight("bold");
 
-        Span contractDurationLabelSpan = new Span("Contract Duration");
-        contractDurationLabelSpan.getStyle().set("text-align", "right");
-
         Span contractDurationValueSpan = new Span(employeeProfileDTO.getContractDuration());
         contractDurationValueSpan.getStyle().setFontWeight("bold");
 
-        Span startDateLabelSpan = new Span("Start Date");
-        startDateLabelSpan.getStyle().set("text-align", "right");
+        Span dateHiredValueSpan = new Span(df.format(employeeProfileDTO.getDateHired()));
+        dateHiredValueSpan.getStyle().setFontWeight("bold");
 
         Span startDateValueSpan = new Span(df.format(employeeProfileDTO.getStartDate()));
         startDateValueSpan.getStyle().setFontWeight("bold");
 
-        Span endDateLabelSpan = new Span("End Date");
-        endDateLabelSpan.getStyle().set("text-align", "right");
+        Span dateResignedValueSpan = new Span(employeeProfileDTO.getDateResigned() != null ? df.format(employeeProfileDTO.getDateResigned()) : "");
+        dateResignedValueSpan.getStyle().setFontWeight("bold");
 
-        Span endDateValueSpan = new Span(df.format(employeeProfileDTO.getEndDate()));
+        Span endDateValueSpan = new Span(employeeProfileDTO.getEndDate() != null ? df.format(employeeProfileDTO.getEndDate()) : "");
         endDateValueSpan.getStyle().setFontWeight("bold");
-
-        Span statusLabelSpan = new Span("Status");
-        statusLabelSpan.getStyle().set("text-align", "right");
 
         Span statusValueSpan = new Span(employeeProfileDTO.getStatus());
         statusValueSpan.getStyle().setFontWeight("bold");
 
-        employeeDetailsLayout.add(recordIdLabelSpan,
-                                  recordIdValueSpan,
-                                  employeeNoLabelSpan,
-                                  employeeNoValueSpan,
-                                  dateHiredLabelSpan,
-                                  dateHiredValueSpan,
-                                  fullNameLabelSpan,
-                                  fullNameValueSpan,
-                                  genderLabelSpan,
-                                  genderValueSpan,
-                                  employmentTypeLabelSpan,
-                                  employmentTypeValueSpan,
-                                  contractDurationLabelSpan,
-                                  contractDurationValueSpan,
-                                  startDateLabelSpan,
-                                  startDateValueSpan,
-                                  endDateLabelSpan,
-                                  endDateValueSpan,
-                                  statusLabelSpan,
-                                  statusValueSpan);
-        employeeDetailsLayout.setWidth("80%");
+        employeeDetailsLayout.setAutoResponsive(true);
+        employeeDetailsLayout.setLabelsAside(true);
+        employeeDetailsLayout.setLabelWidth("130px");
+        employeeDetailsLayout.setColumnWidth("360px");
+        employeeDetailsLayout.addFormItem(recordIdValueSpan, "ID");
+        employeeDetailsLayout.addFormItem(employeeNoValueSpan, "Employee No");
+        employeeDetailsLayout.addFormItem(fullNameValueSpan, "Full Name");
+        employeeDetailsLayout.addFormItem(genderValueSpan, "Gender");
+        employeeDetailsLayout.addFormItem(employmentTypeValueSpan, "Employment Type");
+        employeeDetailsLayout.addFormItem(contractDurationValueSpan, "Contract Duration");
+        employeeDetailsLayout.addFormItem(dateHiredValueSpan, "Date Hired");
+        employeeDetailsLayout.addFormItem(startDateValueSpan, "Start Date");
+        employeeDetailsLayout.addFormItem(dateResignedValueSpan, "Date Resigned");
+        employeeDetailsLayout.addFormItem(endDateValueSpan, "End Date");
+        employeeDetailsLayout.addFormItem(statusValueSpan, "Status");
 
+        employeeDetailsWithImageLayout.setPadding(true);
         employeeDetailsWithImageLayout.add(imageViewer, employeeDetailsLayout);
         employeeDetailsWithImageLayout.setWrap(true);
     }
@@ -245,89 +213,51 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
         personalProfileDTO = personalProfileService.getByEmployeeDTO(employeeProfileDTO);
 
         if (personalProfileDTO != null) {
-            FormLayout personalInfoFormLayout = new FormLayout();
-
-            Span dateOfBirthLabelSpan = new Span("Date of birth");
-            dateOfBirthLabelSpan.getStyle().set("text-align", "right");
-
-            Span dateOfBirthValueSpan = new Span(DateTimeFormatter.ofPattern("MMM dd, yyyy").format(personalProfileDTO.getDateOfBirth()));
+            Span dateOfBirthValueSpan = new Span(DateTimeFormatter.ofPattern("MMMM dd, yyyy").format(personalProfileDTO.getDateOfBirth()));
             dateOfBirthValueSpan.getStyle().setFontWeight("bold");
-
-            Span placeOfBirthLabelSpan = new Span("Place of birth");
-            placeOfBirthLabelSpan.getStyle().set("text-align", "right");
 
             Span placeOfBirthValueSpan = new Span(personalProfileDTO.getPlaceOfBirth());
             placeOfBirthValueSpan.getStyle().setFontWeight("bold");
 
-            Span maritalStatusLabelSpan = new Span("Marital Status");
-            maritalStatusLabelSpan.getStyle().set("text-align", "right");
-
             Span maritalStatusValueSpan = new Span(personalProfileDTO.getMaritalStatus());
             maritalStatusValueSpan.getStyle().setFontWeight("bold");
-
-            Span spouseLabelSpan = new Span("Spouse Name");
-            spouseLabelSpan.getStyle().set("text-align", "right");
 
             Span spouseValueSpan = new Span(personalProfileDTO.getSpouseName() != null ? personalProfileDTO.getSpouseName() : "");
             spouseValueSpan.getStyle().setFontWeight("bold");
 
-            Span contactNoLabelSpan = new Span("Contact Number");
-            contactNoLabelSpan.getStyle().set("text-align", "right");
-
             Span contactNoValueSpan = new Span(String.valueOf(personalProfileDTO.getContactNumber()));
             contactNoValueSpan.getStyle().setFontWeight("bold");
-
-            Span emailLabelSpan = new Span("Email");
-            emailLabelSpan.getStyle().set("text-align", "right");
 
             Span emailValueSpan = new Span(personalProfileDTO.getEmailAddress());
             emailValueSpan.getStyle().setFontWeight("bold");
 
-            Span tinLabelSpan = new Span("TIN");
-            tinLabelSpan.getStyle().set("text-align", "right");
-
             Span tinValueSpan = new Span(personalProfileDTO.getTaxIdentificationNumber());
             tinValueSpan.getStyle().setFontWeight("bold");
-
-            Span sssLabelSpan = new Span("SSS");
-            sssLabelSpan.getStyle().set("text-align", "right");
 
             Span sssValueSpan = new Span(personalProfileDTO.getSssNumber());
             sssValueSpan.getStyle().setFontWeight("bold");
 
-            Span hdmfLabelSpan = new Span("Pag-Ibig HDMF");
-            hdmfLabelSpan.getStyle().set("text-align", "right");
-
             Span hdmfValueSpan = new Span(personalProfileDTO.getHdmfNumber());
             hdmfValueSpan.getStyle().setFontWeight("bold");
-
-            Span philhealthLabelSpan = new Span("Philhealth");
-            philhealthLabelSpan.getStyle().set("text-align", "right");
 
             Span philhealthValueSpan = new Span(personalProfileDTO.getPhilhealthNumber());
             philhealthValueSpan.getStyle().setFontWeight("bold");
 
-            personalInfoFormLayout.add(dateOfBirthLabelSpan,
-                                       dateOfBirthValueSpan,
-                                       placeOfBirthLabelSpan,
-                                       placeOfBirthValueSpan,
-                                       maritalStatusLabelSpan,
-                                       maritalStatusValueSpan,
-                                       spouseLabelSpan,
-                                       spouseValueSpan,
-                                       contactNoLabelSpan,
-                                       contactNoValueSpan,
-                                       emailLabelSpan,
-                                       emailValueSpan,
-                                       tinLabelSpan,
-                                       tinValueSpan,
-                                       sssLabelSpan,
-                                       sssValueSpan,
-                                       hdmfLabelSpan,
-                                       hdmfValueSpan,
-                                       philhealthLabelSpan,
-                                       philhealthValueSpan);
-            personalInfoFormLayout.setWidth("720px");
+            FormLayout personalInfoFormLayout = new FormLayout();
+            personalInfoFormLayout.setAutoResponsive(true);
+            personalInfoFormLayout.setLabelsAside(true);
+            personalInfoFormLayout.setLabelWidth("130px");
+            personalInfoFormLayout.setColumnWidth("360px");
+            personalInfoFormLayout.addFormItem(dateOfBirthValueSpan, "Date of Birth");
+            personalInfoFormLayout.addFormItem(placeOfBirthValueSpan, "Place of Birth");
+            personalInfoFormLayout.addFormItem(maritalStatusValueSpan, "Marital Status");
+            personalInfoFormLayout.addFormItem(spouseValueSpan, "Spouse Name");
+            personalInfoFormLayout.addFormItem(contactNoValueSpan, "Contact No");
+            personalInfoFormLayout.addFormItem(emailValueSpan, "Email Address");
+            personalInfoFormLayout.addFormItem(tinValueSpan, "TIN");
+            personalInfoFormLayout.addFormItem(sssValueSpan, "SSS Number");
+            personalInfoFormLayout.addFormItem(hdmfValueSpan, "HDMF Number");
+            personalInfoFormLayout.addFormItem(philhealthValueSpan, "Philhealth Number");
 
             personalInfoDiv.add(personalInfoFormLayout);
         } else {

@@ -81,6 +81,9 @@ public class EmployeeProfileListView extends VerticalLayout {
         employeeDTOGrid.addColumn(new LocalDateRenderer<>(EmployeeProfileDTO::getStartDate, "MMM dd, yyyy"))
                        .setHeader("Start Date")
                        .setSortable(true);
+        employeeDTOGrid.addColumn(new LocalDateRenderer<>(EmployeeProfileDTO::getDateResigned, "MMM dd, yyyy"))
+                        .setHeader("Date Resigned")
+                        .setSortable(true);
         employeeDTOGrid.addColumn(new LocalDateRenderer<>(EmployeeProfileDTO::getEndDate, "MMM dd, yyyy"))
                        .setHeader("End Date")
                        .setSortable(true);

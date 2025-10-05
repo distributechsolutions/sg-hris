@@ -32,6 +32,9 @@ public class EmployeeProfile extends BaseEntity {
     @Column(name = "date_hired", nullable = false)
     private LocalDate dateHired;
 
+    @Column(name = "date_resigned")
+    private LocalDate dateResigned;
+
     @Column(name = "employment_type", length = 25, nullable = false)
     private String employmentType;
 
@@ -41,7 +44,7 @@ public class EmployeeProfile extends BaseEntity {
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private LocalDate endDate;
 
     @Column(name = "status", length = 25, nullable = false)
@@ -57,6 +60,7 @@ public class EmployeeProfile extends BaseEntity {
                            String suffix,
                            String gender,
                            LocalDate dateHired,
+                           LocalDate dateResigned,
                            String employmentType,
                            String contractDuration,
                            LocalDate startDate,
@@ -69,6 +73,7 @@ public class EmployeeProfile extends BaseEntity {
         this.suffix = suffix;
         this.gender = gender;
         this.dateHired = dateHired;
+        this.dateResigned = dateResigned;
         this.employmentType = employmentType;
         this.contractDuration = contractDuration;
         this.startDate = startDate;
@@ -130,6 +135,14 @@ public class EmployeeProfile extends BaseEntity {
 
     public void setDateHired(LocalDate dateHired) {
         this.dateHired = dateHired;
+    }
+
+    public LocalDate getDateResigned() {
+        return dateResigned;
+    }
+
+    public void setDateResigned(LocalDate dateResigned) {
+        this.dateResigned = dateResigned;
     }
 
     public String getEmploymentType() {

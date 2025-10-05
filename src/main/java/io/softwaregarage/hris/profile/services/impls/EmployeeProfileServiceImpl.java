@@ -50,6 +50,7 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         employeeProfile.setSuffix(object.getSuffix());
         employeeProfile.setGender(object.getGender());
         employeeProfile.setDateHired(object.getDateHired());
+        employeeProfile.setDateResigned(object.getDateResigned());
         employeeProfile.setEmploymentType(object.getEmploymentType());
         employeeProfile.setContractDuration(object.getContractDuration());
         employeeProfile.setStartDate(object.getStartDate());
@@ -200,6 +201,7 @@ public class EmployeeProfileServiceImpl implements EmployeeProfileService {
         employeeProfileDTO.setSuffix(employeeProfile.getSuffix());
         employeeProfileDTO.setGender(employeeProfile.getGender());
         employeeProfileDTO.setDateHired(employeeProfile.getDateHired());
+        employeeProfileDTO.setDateResigned(employeeProfile.getDateResigned());
         employeeProfileDTO.setEmploymentType(employeeProfile.getEmploymentType());
         employeeProfileDTO.setContractDuration(employeeProfile.getContractDuration());
         employeeProfileDTO.setStartDate(employeeProfile.getStartDate());

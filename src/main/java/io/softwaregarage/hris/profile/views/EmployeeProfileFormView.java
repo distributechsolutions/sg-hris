@@ -49,6 +49,7 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
                              contractDurationComboBox,
                              statusComboBox;
     private DatePicker dateHiredDatePicker,
+                       dateResignedDatePicker,
                        startDatePicker,
                        endDatePicker;
 
@@ -124,6 +125,10 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
         dateHiredDatePicker.setClearButtonVisible(true);
         if (employeeProfileDTO != null) dateHiredDatePicker.setValue(employeeProfileDTO.getDateHired());
 
+        dateResignedDatePicker = new DatePicker("Date Resigned");
+        dateResignedDatePicker.setClearButtonVisible(true);
+        if (employeeProfileDTO != null && employeeProfileDTO.getDateResigned() != null) dateResignedDatePicker.setValue(employeeProfileDTO.getDateResigned());
+
         employmentTypeComboBox = new ComboBox<>("Employment Type");
         employmentTypeComboBox.setRequired(true);
         employmentTypeComboBox.setItems("REGULAR", "PROBATIONARY", "CONTRACTUAL");
@@ -173,9 +178,8 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
         if (employeeProfileDTO != null) startDatePicker.setValue(employeeProfileDTO.getStartDate());
 
         endDatePicker = new DatePicker("End Date");
-        endDatePicker.setRequired(true);
         endDatePicker.setClearButtonVisible(true);
-        if (employeeProfileDTO != null) endDatePicker.setValue(employeeProfileDTO.getEndDate());
+        if (employeeProfileDTO != null && employeeProfileDTO.getEndDate() != null) endDatePicker.setValue(employeeProfileDTO.getEndDate());
 
         statusComboBox =  new ComboBox<>("Status");
         statusComboBox.setRequired(true);
@@ -201,7 +205,6 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
         buttonLayout.setPadding(true);
 
         employeeDTOFormLayout.add(employeeNoTextField,
-                                  dateHiredDatePicker,
                                   lastNameTextField,
                                   suffixTextField,
                                   firstNameTextField,
@@ -209,10 +212,13 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
                                   genderComboBox,
                                   employmentTypeComboBox,
                                   contractDurationComboBox,
+                                  dateHiredDatePicker,
                                   startDatePicker,
+                                  dateResignedDatePicker,
                                   endDatePicker,
                                   statusComboBox,
                                   buttonLayout);
+        employeeDTOFormLayout.setColspan(employeeNoTextField, 2);
         employeeDTOFormLayout.setColspan(buttonLayout, 2);
         employeeDTOFormLayout.setMaxWidth("720px");
     }
@@ -234,6 +240,7 @@ public class EmployeeProfileFormView extends VerticalLayout implements HasUrlPar
         employeeProfileDTO.setMiddleName(middleNameTextField.getValue());
         employeeProfileDTO.setGender(genderComboBox.getValue());
         employeeProfileDTO.setDateHired(dateHiredDatePicker.getValue());
+        employeeProfileDTO.setDateResigned(dateResignedDatePicker.getValue());
         employeeProfileDTO.setEmploymentType(employmentTypeComboBox.getValue());
         employeeProfileDTO.setContractDuration(contractDurationComboBox.getValue());
         employeeProfileDTO.setStartDate(startDatePicker.getValue());

@@ -164,7 +164,22 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
         documentExpirationDatePicker.setMin(LocalDate.of(LocalDate.now().getYear(),
                                                          LocalDate.now().getMonth(),
                                                          LocalDate.now().getDayOfMonth()));
-        documentExpirationDatePicker.setRequired(true);
+
+        // documentExpirationDatePicker will become a required field
+        // if the following documents were selected in the documentTypeComboBox component.
+        documentTypeComboBox.addValueChangeListener(event -> {
+            if (documentTypeComboBox.getValue().equals("Police Clearance")
+                    || documentTypeComboBox.getValue().equals("NBI Clearance")
+                    || documentTypeComboBox.getValue().equals("Medical Certificate")
+                    || documentTypeComboBox.getValue().equals("Transcript of Records")
+                    || documentTypeComboBox.getValue().equals("Passport")
+                    || documentTypeComboBox.getValue().equals("Scanned Government ID")) {
+                documentExpirationDatePicker.setRequired(true);
+            } else {
+                documentExpirationDatePicker.setRequired(false);
+            }
+        });
+
         documentExpirationDatePicker.setRequiredIndicatorVisible(true);
 
         Button saveButton = new Button("Save");

@@ -35,13 +35,21 @@ public interface EmployeeProfileRepository extends JpaRepository<EmployeeProfile
     @Query(value = """
             SELECT shep.* 
             FROM sg_hris_employee_profile shep 
-            WHERE shep.end_date BETWEEN CURRENT_DATE 
+            WHERE shep.end_date IS NOT NULL
+            AND shep.end_date BETWEEN CURRENT_DATE 
             AND CURRENT_DATE + INTERVAL '2 weeks' 
-            AND shep.status IN ('ONBOARDING', 'ACTIVE', 'ON LEAVE', 'SUSPENDED')""",
+            AND shep.status IN ('ONBOARDING', 'ACTIVE', 'ON LEAVE', 'SUSPENDED')
+            """,
             nativeQuery = true)
     List<EmployeeProfile> findEmployeesWhoseContractIsNearlyExpired();
 
-    @Query(value = "SELECT shep.* FROM sg_hris_employee_profile shep WHERE shep.end_date < CURRENT_DATE AND shep.status IN ('ONBOARDING', 'ACTIVE', 'ON LEAVE', 'SUSPENDED')",
+    @Query(value = """
+                   SELECT shep.* 
+                   FROM sg_hris_employee_profile shep 
+                   WHERE shep.end_date IS NOT NULL 
+                   AND shep.end_date < CURRENT_DATE 
+                   AND shep.status IN ('ONBOARDING', 'ACTIVE', 'ON LEAVE', 'SUSPENDED')
+                   """,
            nativeQuery = true)
     List<EmployeeProfile> findEmployeesWhoseContractIsExpired();
 }
