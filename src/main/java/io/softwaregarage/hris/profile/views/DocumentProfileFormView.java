@@ -24,6 +24,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 
+import io.softwaregarage.hris.profile.dtos.DependentProfileDTO;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.dtos.DocumentProfileDTO;
 import io.softwaregarage.hris.profile.services.DocumentProfileService;
@@ -36,6 +37,7 @@ import jakarta.annotation.security.RolesAllowed;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -51,6 +53,7 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
     @Resource private final DocumentProfileService documentProfileService;
     @Resource private final EmployeeProfileService employeeProfileService;
 
+    private List<DocumentProfileDTO> documentProfileDTOList;
     private DocumentProfileDTO documentProfileDTO;
     private EmployeeProfileDTO employeeProfileDTO;
     private UUID parameterId;
@@ -146,7 +149,6 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read uploaded file", e);
             }
-
         });
 
         NativeLabel dropLabel = new NativeLabel("Upload the file here. Accepted file types: .pdf, .png, .jpeg and .jpg");
@@ -168,12 +170,12 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
         // documentExpirationDatePicker will become a required field
         // if the following documents were selected in the documentTypeComboBox component.
         documentTypeComboBox.addValueChangeListener(event -> {
-            if (documentTypeComboBox.getValue().equals("Police Clearance")
-                    || documentTypeComboBox.getValue().equals("NBI Clearance")
-                    || documentTypeComboBox.getValue().equals("Medical Certificate")
-                    || documentTypeComboBox.getValue().equals("Transcript of Records")
-                    || documentTypeComboBox.getValue().equals("Passport")
-                    || documentTypeComboBox.getValue().equals("Scanned Government ID")) {
+            if ("Police Clearance".equals(documentTypeComboBox.getValue())
+                    || "NBI Clearance".equals(documentTypeComboBox.getValue())
+                    || "Medical Certificate".equals(documentTypeComboBox.getValue())
+                    || "Transcript of Records".equals(documentTypeComboBox.getValue())
+                    || "Passport".equals(documentTypeComboBox.getValue())
+                    || "Scanned Government ID".equals(documentTypeComboBox.getValue())) {
                 documentExpirationDatePicker.setRequired(true);
             } else {
                 documentExpirationDatePicker.setRequired(false);
@@ -185,14 +187,13 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
         Button saveButton = new Button("Save");
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         saveButton.addClickListener(buttonClickEvent -> {
-            // Save the data.
+            // Save the data and clear the fields.
             this.saveEmployeeDocumentDTO();
-
-            // Clear the fields.
             this.clearFields();
 
             // Update the data grid.
-            this.updateEmployeeDocumentDTOGrid();
+            documentProfileDTOList = documentProfileService.getByEmployeeDTO(employeeProfileDTO);
+            employeeDocumentDTOGrid.setItems(documentProfileDTOList);
         });
 
         Button cancelButton = new Button("Cancel");
