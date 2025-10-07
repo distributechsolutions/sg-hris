@@ -168,10 +168,6 @@ public class AddressProfileFormView extends VerticalLayout {
             this.saveAddressInfoDTO();
             this.clearFields();
 
-            // Show notification message.
-            Notification notification = Notification.show("You have successfully saved your address information.",  5000, Notification.Position.TOP_CENTER);
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
             // Update the address grid table.
             addressProfileDTOList = addressProfileService.getByEmployeeDTO(employeeProfileDTO);
             addressInfoDTOGrid.setItems(addressProfileDTOList);

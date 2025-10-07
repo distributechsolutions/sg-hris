@@ -131,7 +131,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void addDrawerContent() {
-        Span appName = new Span("WHIZ Services HRIS");
+        Span appName = new Span("Software Garage HRIS");
         appName.addClassNames(LumoUtility.FontWeight.SEMIBOLD, LumoUtility.FontSize.LARGE);
         Header header = new Header(appName);
 
@@ -162,11 +162,20 @@ public class MainLayout extends AppLayout {
         nav.addItem(new SideNavItem("My Attendance", AttendanceView.class, LineAwesomeIcon.CLOCK.create()));
         nav.addItem(new SideNavItem("My Leave Filings", LeaveFilingView.class, LineAwesomeIcon.DOOR_OPEN_SOLID.create()));
 
-        if (!userDTO.getRole().equals("ROLE_EMPLOYEE")) {
-            nav.addItem(this.createEmployeeNavigation(),
-                        this.createAttendanceNavigation(),
-                        this.createCompenbenNavigation(),
-                        this.createAdminNavigation());
+        if (!this.createEmployeeNavigation().getItems().isEmpty()) {
+            nav.addItem(this.createEmployeeNavigation());
+        }
+
+        if (!this.createAttendanceNavigation().getItems().isEmpty()) {
+            nav.addItem(this.createAttendanceNavigation());
+        }
+
+        if (!this.createCompenbenNavigation().getItems().isEmpty()) {
+            nav.addItem(this.createCompenbenNavigation());
+        }
+
+        if (!this.createAdminNavigation().getItems().isEmpty()) {
+            nav.addItem(this.createAdminNavigation());
         }
 
         return nav;
