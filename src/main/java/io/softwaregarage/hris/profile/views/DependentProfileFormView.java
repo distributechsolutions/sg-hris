@@ -105,10 +105,6 @@ public class DependentProfileFormView extends VerticalLayout {
             this.saveDependentInfoDTO();
             this.clearFields();
 
-            // Show notification message.
-            Notification notification = Notification.show("You have successfully saved your dependent information.",  5000, Notification.Position.TOP_CENTER);
-            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
             // Update the dependent grid table.
             dependentProfileDTOList = dependentProfileService.getByEmployeeDTO(employeeProfileDTO);
             dependentInfoDTOGrid.setItems(dependentProfileDTOList);
