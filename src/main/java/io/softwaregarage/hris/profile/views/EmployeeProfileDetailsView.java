@@ -138,6 +138,7 @@ public class EmployeeProfileDetailsView extends Div implements HasUrlParameter<S
                     out.write(fileData);
                     downloadHandler.setFileName(fileName);
                     downloadHandler.setContentType(mimeType);
+                    out.flush();
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
                 }

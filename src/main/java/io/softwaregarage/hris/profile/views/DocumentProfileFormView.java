@@ -277,6 +277,7 @@ public class DocumentProfileFormView extends Div implements HasUrlParameter<Stri
                             out.write(fileData);
                             downloadHandler.setFileName(fileName);
                             downloadHandler.setContentType(mimeType);
+                            out.flush();
                         } catch (IOException e) {
                             throw new UncheckedIOException(e);
                         }
