@@ -2,11 +2,13 @@ package io.softwaregarage.hris.attendance.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
@@ -14,16 +16,17 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.streams.DownloadEvent;
+import com.vaadin.flow.server.streams.DownloadHandler;
 import io.softwaregarage.hris.attendance.dtos.EmployeeTimesheetDTO;
 import io.softwaregarage.hris.attendance.services.EmployeeTimesheetService;
+import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.services.EmployeeProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
 import io.softwaregarage.hris.commons.views.MainLayout;
@@ -31,9 +34,17 @@ import io.softwaregarage.hris.commons.views.MainLayout;
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.vaadin.lineawesome.LineAwesomeIcon;
@@ -49,8 +60,10 @@ public class EmployeeTimesheetListView extends VerticalLayout {
     @Resource private final EmployeeProfileService employeeProfileService;
 
     private Grid<EmployeeTimesheetDTO> timesheetDTOGrid;
-    private TextField searchFilterTextField;
+    private ComboBox<EmployeeProfileDTO> employeeDTOComboBox;
+    private DatePicker startDatePicker, endDatePicker;
 
+    List<EmployeeTimesheetDTO> employeeTimesheetDTOList = new ArrayList<>();
     private String loggedInUser;
 
     public EmployeeTimesheetListView(EmployeeTimesheetService employeeTimesheetService,
@@ -70,27 +83,56 @@ public class EmployeeTimesheetListView extends VerticalLayout {
     public HorizontalLayout buildHeaderToolbar() {
         HorizontalLayout headerToolbarLayout = new HorizontalLayout();
 
-        searchFilterTextField = new TextField();
-        searchFilterTextField.setWidth("350px");
-        searchFilterTextField.setPlaceholder("Search");
-        searchFilterTextField.setPrefixComponent(LineAwesomeIcon.SEARCH_SOLID.create());
-        searchFilterTextField.getStyle().set("margin", "0 auto 0 0");
-        searchFilterTextField.setValueChangeMode(ValueChangeMode.LAZY);
-        searchFilterTextField.addValueChangeListener(valueChangeEvent -> this.updateTimesheetDTOGrid());
+        // Create the query object that will do the pagination of employee records in the combo box component.
+        Query<EmployeeProfileDTO, Void> employeeQuery = new Query<>();
 
-        Button uploadButton = new Button("Upload Timesheet");
-        uploadButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-//        uploadButton.addClickListener(buttonClickEvent -> this.buildUploadTimesheetDialog().open());
+        employeeDTOComboBox = new ComboBox<>("Employee");
+        employeeDTOComboBox.setItems((employeeDTO, filterString) -> employeeDTO.getEmployeeFullName().toLowerCase().contains(filterString.toLowerCase()),
+                employeeProfileService.getAll(employeeQuery.getPage(), employeeQuery.getPageSize()));
+        employeeDTOComboBox.setItemLabelGenerator(EmployeeProfileDTO::getEmployeeFullName);
+        employeeDTOComboBox.setClearButtonVisible(true);
 
-        headerToolbarLayout.add(searchFilterTextField, uploadButton);
-        headerToolbarLayout.setAlignItems(Alignment.CENTER);
-        headerToolbarLayout.getThemeList().clear();
+        startDatePicker = new DatePicker("Start date");
+        startDatePicker.setRequired(true);
+
+        endDatePicker = new DatePicker("End date");
+        endDatePicker.setRequired(true);
+
+        Anchor downloadTimesheetLink = new Anchor(createCsvDownloadHandler(employeeDTOComboBox.getValue(), startDatePicker.getValue(), endDatePicker.getValue()), "Download Timesheet");
+        downloadTimesheetLink.getStyle().set("margin", "0 0 0 auto");
+        downloadTimesheetLink.setEnabled(false);
+
+        Button searchButton = new Button("Search");
+        searchButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        searchButton.getStyle().set("display", "block");
+        searchButton.addClickListener(event -> {
+            executeSearchAndUpdateResult(employeeDTOComboBox.getValue(), startDatePicker.getValue(), endDatePicker.getValue());
+            downloadTimesheetLink.setEnabled((employeeDTOComboBox.getValue() != null && startDatePicker.getValue() != null && endDatePicker.getValue() != null)
+                                            || (employeeDTOComboBox.getValue() == null && startDatePicker.getValue() != null && endDatePicker.getValue() != null));
+        });
+
+        headerToolbarLayout.add(employeeDTOComboBox,
+                                startDatePicker,
+                                endDatePicker,
+                                searchButton,
+                                downloadTimesheetLink);
+        headerToolbarLayout.setWrap(true);
+        headerToolbarLayout.setAlignItems(Alignment.END);
 
         return headerToolbarLayout;
     }
 
-    private Grid<EmployeeTimesheetDTO> buildTimesheetDTOGrid() {
+    public void executeSearchAndUpdateResult(EmployeeProfileDTO employeeProfileDTO, LocalDate startDate, LocalDate endDate) {
+        if (employeeProfileDTO != null) {
+            employeeTimesheetDTOList = employeeTimesheetService.findTimesheetByEmployeeAndLogDate(employeeProfileDTO, startDate, endDate);
+        } else {
+            employeeTimesheetDTOList = employeeTimesheetService.findByLogDateRange(startDatePicker.getValue(), endDatePicker.getValue());
+        }
 
+        this.updateEmployeeTimesheetGrid(employeeTimesheetDTOList);
+    }
+
+    private Grid<EmployeeTimesheetDTO> buildTimesheetDTOGrid() {
         timesheetDTOGrid = new Grid<>(EmployeeTimesheetDTO.class, false);
 
         // Include the ID of the record but do not display it.
@@ -134,12 +176,7 @@ public class EmployeeTimesheetListView extends VerticalLayout {
                                           GridVariant.LUMO_WRAP_CELL_CONTENT);
         timesheetDTOGrid.setSelectionMode(Grid.SelectionMode.SINGLE);
         timesheetDTOGrid.setMultiSort(true, Grid.MultiSortPriority.APPEND);
-        timesheetDTOGrid.setEmptyStateText("No pending timesheet records found.");
-        timesheetDTOGrid.setItems(query ->
-                employeeTimesheetService.getAll(query.getPage(), query.getPageSize())
-                        .stream()
-                        .filter(employeeTimesheetDTO -> "PENDING".equals(employeeTimesheetDTO.getStatus()))
-        );
+        timesheetDTOGrid.setEmptyStateText("No timesheet records found.");
 
         return timesheetDTOGrid;
     }
@@ -152,10 +189,7 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         viewButton.setIcon(LineAwesomeIcon.SEARCH_SOLID.create());
         viewButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         viewButton.addClickListener(buttonClickEvent -> viewButton.getUI().ifPresent(ui -> {
-            if (timesheetDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
-                EmployeeTimesheetDTO selectedEmployeeTimesheetDTO = timesheetDTOGrid.getSelectionModel().getFirstSelectedItem().get();
-                buildViewTimesheetDialog(selectedEmployeeTimesheetDTO).open();
-            }
+            buildViewTimesheetDialog(employeeTimesheetDTO).open();
         }));
 
         Button editButton = new Button();
@@ -163,9 +197,8 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         editButton.setIcon(LineAwesomeIcon.PENCIL_ALT_SOLID.create());
         editButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         editButton.addClickListener(buttonClickEvent -> editButton.getUI().ifPresent(ui -> {
-            if (timesheetDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
-                EmployeeTimesheetDTO selectedEmployeeTimesheetDTO = timesheetDTOGrid.getSelectionModel().getFirstSelectedItem().get();
-                buildEditTimesheetDialog(selectedEmployeeTimesheetDTO).open();
+            if (employeeTimesheetDTO.getId() != null) {
+                buildEditTimesheetDialog(employeeTimesheetDTO).open();
             }
         }));
 
@@ -174,18 +207,15 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         approveButton.setIcon(LineAwesomeIcon.THUMBS_UP.create());
         approveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         approveButton.addClickListener(buttonClickEvent -> approveButton.getUI().ifPresent(ui -> {
-            if (timesheetDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
-                EmployeeTimesheetDTO selectedEmployeeTimesheetDTO = timesheetDTOGrid.getSelectionModel().getFirstSelectedItem().get();
-
-                selectedEmployeeTimesheetDTO.setStatus("APPROVED");
-                selectedEmployeeTimesheetDTO.setUpdatedBy(loggedInUser);
-
-                employeeTimesheetService.saveOrUpdate(selectedEmployeeTimesheetDTO);
-
-                this.updateTimesheetDTOGrid();
+            if (employeeTimesheetDTO.getId() != null) {
+                employeeTimesheetDTO.setStatus("APPROVED");
+                employeeTimesheetDTO.setUpdatedBy(loggedInUser);
+                employeeTimesheetService.saveOrUpdate(employeeTimesheetDTO);
 
                 Notification notification = Notification.show("Timesheet approved successfully.", 5000, Notification.Position.TOP_CENTER);
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+                executeSearchAndUpdateResult(employeeDTOComboBox.getValue(), startDatePicker.getValue(), endDatePicker.getValue());
             }
         }));
 
@@ -196,20 +226,8 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         return rowToolbarLayout;
     }
 
-    private void updateTimesheetDTOGrid() {
-        if (!searchFilterTextField.getValue().isEmpty()) {
-            timesheetDTOGrid.setItems(employeeTimesheetService.findByParameter(searchFilterTextField.getValue())
-                    .stream()
-                    .filter(employeeTimesheetDTO -> "PENDING".equals(employeeTimesheetDTO.getStatus()))
-                    .toList()
-            );
-        } else {
-            timesheetDTOGrid.setItems(query ->
-                    employeeTimesheetService.getAll(query.getPage(), query.getPageSize())
-                            .stream()
-                            .filter(employeeTimesheetDTO -> "PENDING".equals(employeeTimesheetDTO.getStatus()))
-            );
-        }
+    private void updateEmployeeTimesheetGrid(List<EmployeeTimesheetDTO> employeeTimesheetDTOList) {
+        timesheetDTOGrid.setItems(employeeTimesheetDTOList);
     }
 
     private Dialog buildViewTimesheetDialog(EmployeeTimesheetDTO employeeTimesheetDTO) {
@@ -358,14 +376,14 @@ public class EmployeeTimesheetListView extends VerticalLayout {
             // Close the dialog.
             dialog.close();
 
-            // Update the data grid.
-            this.updateTimesheetDTOGrid();
-
             // Show the notification message.
             Notification notification = Notification.show("Timesheet successfully updated.");
             notification.setPosition(Notification.Position.TOP_CENTER);
             notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             notification.setDuration(5000);
+
+            // Update the timesheet grid.
+            executeSearchAndUpdateResult(employeeDTOComboBox.getValue(), startDatePicker.getValue(), endDatePicker.getValue());
         });
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
@@ -377,11 +395,77 @@ public class EmployeeTimesheetListView extends VerticalLayout {
     }
 
     private Image convertLogImage(String fileName, byte[] logImage) {
-        StreamResource streamResource = new StreamResource(fileName, () -> new ByteArrayInputStream(logImage));
-        Image image = new Image(streamResource, "Log Image Preview");
+        Image image = new Image();
+        image.setSrc(downloadHandler -> {
+            try (OutputStream out = downloadHandler.getOutputStream()) {
+                out.write(logImage);
+                downloadHandler.setFileName(fileName);
+                out.flush();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
         image.setWidth("320px");
         image.setHeight("auto");
         return image;
+    }
+
+    /**
+     * Returns a DownloadHandler that streams CSV for the given grid.
+     * Uses event.getWriter() so text is written using correct charset.
+     */
+    private DownloadHandler createCsvDownloadHandler(EmployeeProfileDTO employeeProfileDTO, LocalDate startDate, LocalDate endDate) {
+        if (employeeProfileDTO != null) {
+            employeeTimesheetDTOList = employeeTimesheetService.findTimesheetByEmployeeAndLogDate(employeeProfileDTO, startDate, endDate);
+        } else {
+            employeeTimesheetDTOList = employeeTimesheetService.findByLogDateRange(startDatePicker.getValue(), endDatePicker.getValue());
+        }
+
+        return (DownloadEvent event) -> {
+            // Suggested filename and content type
+            event.setFileName("employee_timesheet_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("MM_dd_yyyy_HHmmss")) + ".csv");
+            event.setContentType("text/csv; charset=" + StandardCharsets.UTF_8.name());
+
+            try (Writer writer = event.getWriter()) {
+                // CSV header
+                writer.write("Employee No.,Employee Name,Log Date,Shift Schedule,Log Time,Log Detail,Status\n");
+
+                // Fetch items from the grid's DataProvider (honors provider filters).
+                // This streams rows directly to the response writer — avoids building full string in memory.
+                employeeTimesheetDTOList.forEach(employeeTimesheetDTO -> {
+                    try {
+                        writer.write(makeCsvLine(employeeTimesheetDTO));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+                writer.flush();
+            } catch (IOException e) {
+                // If you want, set an HTTP error status or log the error:
+                // event.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                throw new RuntimeException("Failed to generate CSV", e);
+            }
+        };
+    }
+
+    /** Build a properly escaped CSV line for the person (always quotes fields). */
+    private String makeCsvLine(EmployeeTimesheetDTO p) {
+        return quote(String.valueOf(p.getEmployeeDTO().getEmployeeNumber())) + ","
+                + quote(p.getEmployeeDTO().getEmployeeFullName()) + ","
+                + quote(p.getLogDate().format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))) + ","
+                + quote(p.getShiftScheduleDTO().getShiftSchedule()) + ","
+                + quote(p.getLogTime().format(DateTimeFormatter.ofPattern("H:mm:ss a"))) + ","
+                + quote(p.getLogDetail()) + ","
+                + p.getStatus() + "\n";
+    }
+
+    /** Quote and double-quote escape */
+    private String quote(String s) {
+        if (s == null) {
+            return "\"\"";
+        }
+        return "\"" + s.replace("\"", "\"\"") + "\"";
     }
 
 }

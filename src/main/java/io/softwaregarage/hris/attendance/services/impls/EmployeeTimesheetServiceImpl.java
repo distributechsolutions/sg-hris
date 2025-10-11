@@ -247,6 +247,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 for (EmployeeTimesheet employeeTimesheet : employeeTimesheetLinkedList) {
                     EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
 
+                    employeeTimesheetDTO.setId(employeeTimesheet.getId());
                     employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                     employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                     employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
@@ -263,6 +264,8 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 }
 
                 logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOLinkedList.size()));
+            } else {
+                logger.info("No records have successfully retrieved.");
             }
         }
 
@@ -285,6 +288,7 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 for (EmployeeTimesheet employeeTimesheet : employeeTimesheetList) {
                     EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
 
+                    employeeTimesheetDTO.setId(employeeTimesheet.getId());
                     employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
                     employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
                     employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
@@ -301,6 +305,8 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
                 }
 
                 logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOLinkedList.size()));
+            } else {
+                logger.info("No records have successfully retrieved.");
             }
         }
 

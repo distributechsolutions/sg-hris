@@ -44,8 +44,7 @@ public interface EmployeeTimesheetRepository extends JpaRepository<EmployeeTimes
     @Query("""
            SELECT et
            FROM EmployeeTimesheet et
-           WHERE et.status = 'APPROVED'
-             AND et.logDate BETWEEN :startDate AND :endDate
+           WHERE et.logDate BETWEEN :startDate AND :endDate
            ORDER BY et.employeeProfile.lastName ASC, et.logDate ASC
            """)
     List<EmployeeTimesheet> findTimesheetByLogDateRange(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
