@@ -5,6 +5,7 @@ import io.softwaregarage.hris.commons.views.LoginView;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,13 +20,25 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends VaadinWebSecurity {
+    @Value("${spring.datasource.url}")
+    private String dbUrl;
+
+    @Value("${spring.datasource.username}")
+    private String dbUsername;
+
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+
+    @Value("${spring.datasource.driver-class-name:org.postgresql.Driver}")
+    private String dbDriverClassName;
+
     @Bean
     public DataSource configureDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/sg-hris");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("p@$$w0rd");
+        dataSource.setDriverClassName(dbDriverClassName);
+        dataSource.setUrl(dbUrl);
+        dataSource.setUsername(dbUsername);
+        dataSource.setPassword(dbPassword);
 
         return dataSource;
     }

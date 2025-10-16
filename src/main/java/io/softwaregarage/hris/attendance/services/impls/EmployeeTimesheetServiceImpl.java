@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
@@ -231,57 +228,22 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
         List<EmployeeTimesheetDTO> employeeTimesheetDTOLinkedList = new LinkedList<>();
         List<EmployeeTimesheet> employeeTimesheetList = null;
 
-        if (employeeProfileDTO != null) {
+        if (employeeProfileDTO != null && startDate != null && endDate != null) {
             logger.info("Retrieving employee's timesheet records from the database.");
             employeeTimesheetList = employeeTimesheetRepository.findTimesheetByEmployeeAndLogDateRange(employeeProfileRepository.getById(employeeProfileDTO.getId()),
-                    startDate,
-                    endDate);
+                                                                                                       startDate,
+                                                                                                       endDate);
 
             if (!employeeTimesheetList.isEmpty()) {
+                // Ensure chronological order by date and time
+                employeeTimesheetList.sort(Comparator.comparing((EmployeeTimesheet t) -> t.getEmployee().getId())
+                                                     .thenComparing(t -> t.getShiftSchedule().getShiftSchedule())
+                                                     .thenComparing(EmployeeTimesheet::getLogDate)
+                                                     .thenComparing(EmployeeTimesheet::getLogTime));
+
                 // Convert list to linked list to retain the order of the result.
                 LinkedList<EmployeeTimesheet> employeeTimesheetLinkedList = new LinkedList<>(employeeTimesheetList);
 
-                logger.info("Employee's timesheet records has successfully retrieved.");
-                EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
-
-                for (EmployeeTimesheet employeeTimesheet : employeeTimesheetLinkedList) {
-                    EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
-
-                    employeeTimesheetDTO.setId(employeeTimesheet.getId());
-                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
-                    employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
-                    employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
-                    employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
-                    employeeTimesheetDTO.setLogImage(employeeTimesheet.getLogImage());
-                    employeeTimesheetDTO.setShiftScheduleDTO(employeeShiftScheduleService.getById(employeeTimesheet.getShiftSchedule().getId()));
-                    employeeTimesheetDTO.setStatus(employeeTimesheet.getStatus());
-                    employeeTimesheetDTO.setCreatedBy(employeeTimesheet.getCreatedBy());
-                    employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
-                    employeeTimesheetDTO.setUpdatedBy(employeeTimesheet.getUpdatedBy());
-                    employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
-
-                    employeeTimesheetDTOLinkedList.add(employeeTimesheetDTO);
-                }
-
-                logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOLinkedList.size()));
-            } else {
-                logger.info("No records have successfully retrieved.");
-            }
-        }
-
-        return employeeTimesheetDTOLinkedList;
-    }
-
-    @Override
-    public List<EmployeeTimesheetDTO> findByLogDateRange(LocalDate startDate, LocalDate endDate) {
-            List<EmployeeTimesheetDTO> employeeTimesheetDTOLinkedList = new LinkedList<>();
-            List<EmployeeTimesheet> employeeTimesheetList = null;
-
-        if (startDate != null && endDate != null) {
-            logger.info("Retrieving employee's timesheet records from the database.");
-            employeeTimesheetList = employeeTimesheetRepository.findTimesheetByLogDateRange(startDate, endDate);
-
-            if (!employeeTimesheetList.isEmpty()) {
                 logger.info("Employee's timesheet records has successfully retrieved.");
                 EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
 
@@ -310,6 +272,57 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
             }
         }
 
+        // Sort it again by date and its log time.
+        employeeTimesheetDTOLinkedList.sort(Comparator.comparing(EmployeeTimesheetDTO::getLogDate).thenComparing(EmployeeTimesheetDTO::getLogTime));
+        return employeeTimesheetDTOLinkedList;
+    }
+
+    @Override
+    public List<EmployeeTimesheetDTO> findByLogDateRange(LocalDate startDate, LocalDate endDate) {
+            List<EmployeeTimesheetDTO> employeeTimesheetDTOLinkedList = new LinkedList<>();
+            List<EmployeeTimesheet> employeeTimesheetList = null;
+
+        if (startDate != null && endDate != null) {
+            logger.info("Retrieving employee's timesheet records from the database.");
+            employeeTimesheetList = employeeTimesheetRepository.findTimesheetByLogDateRange(startDate, endDate);
+
+            if (!employeeTimesheetList.isEmpty()) {
+                // Ensure chronological order by date and time
+                employeeTimesheetList.sort(Comparator.comparing((EmployeeTimesheet t) -> t.getEmployee().getId())
+                                                     .thenComparing(t -> t.getShiftSchedule().getShiftSchedule())
+                                                     .thenComparing(EmployeeTimesheet::getLogDate)
+                                                     .thenComparing(EmployeeTimesheet::getLogTime));
+
+                logger.info("Employee's timesheet records has successfully retrieved.");
+                EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
+
+                for (EmployeeTimesheet employeeTimesheet : employeeTimesheetList) {
+                    EmployeeTimesheetDTO employeeTimesheetDTO = new EmployeeTimesheetDTO();
+
+                    employeeTimesheetDTO.setId(employeeTimesheet.getId());
+                    employeeTimesheetDTO.setEmployeeDTO(employeeProfileService.getById(employeeTimesheet.getEmployee().getId()));
+                    employeeTimesheetDTO.setLogDate(employeeTimesheet.getLogDate());
+                    employeeTimesheetDTO.setLogTime(employeeTimesheet.getLogTime());
+                    employeeTimesheetDTO.setLogDetail(employeeTimesheet.getLogDetail());
+                    employeeTimesheetDTO.setLogImage(employeeTimesheet.getLogImage());
+                    employeeTimesheetDTO.setShiftScheduleDTO(employeeShiftScheduleService.getById(employeeTimesheet.getShiftSchedule().getId()));
+                    employeeTimesheetDTO.setStatus(employeeTimesheet.getStatus());
+                    employeeTimesheetDTO.setCreatedBy(employeeTimesheet.getCreatedBy());
+                    employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
+                    employeeTimesheetDTO.setUpdatedBy(employeeTimesheet.getUpdatedBy());
+                    employeeTimesheetDTO.setDateAndTimeUpdated(employeeTimesheet.getDateAndTimeUpdated());
+
+                    employeeTimesheetDTOLinkedList.add(employeeTimesheetDTO);
+                }
+
+                logger.info(String.format("%s records have successfully retrieved.", employeeTimesheetDTOLinkedList.size()));
+            } else {
+                logger.info("No records have successfully retrieved.");
+            }
+        }
+
+        // Sort it again by date and its log time.
+        employeeTimesheetDTOLinkedList.sort(Comparator.comparing(EmployeeTimesheetDTO::getLogDate).thenComparing(EmployeeTimesheetDTO::getLogTime));
         return employeeTimesheetDTOLinkedList;
     }
 }

@@ -13,6 +13,8 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -64,7 +66,6 @@ public class AttendanceView extends VerticalLayout {
     private List<EmployeeTimesheetDTO> employeeTimesheetDTOList;
 
     private String loggedInUser;
-    private File tempImageFile;
     private byte[] imageBytes;
 
     private RadioButtonGroup<String> statusRadioGroup;
@@ -150,6 +151,10 @@ public class AttendanceView extends VerticalLayout {
                                             """, getElement()
                     )
             );
+
+            // Show the notification message after capturing the image.
+            Notification notification = Notification.show("Log In".equals(statusRadioGroup.getValue()) ? "You have successfully logged in." : "You have successfully logged out.",  5000, Notification.Position.TOP_CENTER);
+            notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
         });
 
         HorizontalLayout loginLayout = new HorizontalLayout();
@@ -176,8 +181,8 @@ public class AttendanceView extends VerticalLayout {
         videoElement.setAttribute("id", "webcam");
         videoElement.setAttribute("autoplay", "");
         videoElement.setAttribute("playsinline", "");
-        videoElement.setAttribute("width", "320");
-        videoElement.setAttribute("height", "320");
+//        videoElement.setAttribute("width", "320");
+//        videoElement.setAttribute("height", "320");
         videoElement.getStyle().set("padding", "0 !important");
         videoElement.getStyle().set("margin", "0 !important");
         videoElement.getStyle().set("display", "block"); // Avoid inline spacing
