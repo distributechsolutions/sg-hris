@@ -159,7 +159,18 @@ public class EmployeeTimesheetListView extends VerticalLayout {
                         .setHeader("Log Detail")
                         .setSortable(true);
         timesheetDTOGrid.addColumn(new ComponentRenderer<>(HorizontalLayout::new, (layout, employeeTimesheetDTO) -> {
-                                        String theme = String.format("badge %s", employeeTimesheetDTO.getStatus().equalsIgnoreCase("PENDING") ? "contrast" : "success");
+                                        String theme;
+                                        String status = employeeTimesheetDTO.getStatus();
+                                        switch (status) {
+                                            case "APPROVED":
+                                                theme = String.format("badge success");
+                                                break;
+                                            case "REJECTED":
+                                                theme = String.format("badge error");
+                                                break;
+                                            default:
+                                                theme = String.format("badge contrast");
+                                        }
 
                                         Span activeSpan = new Span();
                                         activeSpan.getElement().setAttribute("theme", theme);
@@ -185,7 +196,7 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         HorizontalLayout rowToolbarLayout = new HorizontalLayout();
 
         Button viewButton = new Button();
-        viewButton.setTooltipText("View Timesheet");
+        viewButton.setTooltipText("View Time Log");
         viewButton.setIcon(LineAwesomeIcon.SEARCH_SOLID.create());
         viewButton.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         viewButton.addClickListener(buttonClickEvent -> viewButton.getUI().ifPresent(ui -> {
@@ -193,7 +204,7 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         }));
 
         Button editButton = new Button();
-        editButton.setTooltipText("Edit Timesheet");
+        editButton.setTooltipText("Edit Time Log");
         editButton.setIcon(LineAwesomeIcon.PENCIL_ALT_SOLID.create());
         editButton.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         editButton.addClickListener(buttonClickEvent -> editButton.getUI().ifPresent(ui -> {
@@ -203,7 +214,7 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         }));
 
         Button approveButton = new Button();
-        approveButton.setTooltipText("Approve Timesheet");
+        approveButton.setTooltipText("Approve Time log");
         approveButton.setIcon(LineAwesomeIcon.THUMBS_UP.create());
         approveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SUCCESS);
         approveButton.addClickListener(buttonClickEvent -> approveButton.getUI().ifPresent(ui -> {
@@ -212,15 +223,38 @@ public class EmployeeTimesheetListView extends VerticalLayout {
                 employeeTimesheetDTO.setUpdatedBy(loggedInUser);
                 employeeTimesheetService.saveOrUpdate(employeeTimesheetDTO);
 
-                Notification notification = Notification.show("Timesheet approved successfully.", 5000, Notification.Position.TOP_CENTER);
+                Notification notification = Notification.show("Time log approved successfully.", 5000, Notification.Position.TOP_CENTER);
                 notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 
                 executeSearchAndUpdateResult(employeeDTOComboBox.getValue(), startDatePicker.getValue(), endDatePicker.getValue());
             }
         }));
 
-        rowToolbarLayout.add(viewButton, editButton, approveButton);
-        rowToolbarLayout.setJustifyContentMode(JustifyContentMode.CENTER);
+        Button rejectButton = new Button();
+        rejectButton.setTooltipText("Reject Time Log");
+        rejectButton.setIcon(LineAwesomeIcon.THUMBS_DOWN.create());
+        rejectButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        rejectButton.addClickListener(buttonClickEvent -> rejectButton.getUI().ifPresent(ui -> {
+            if (employeeTimesheetDTO.getId() != null) {
+                employeeTimesheetDTO.setStatus("REJECTED");
+                employeeTimesheetDTO.setUpdatedBy(loggedInUser);
+                employeeTimesheetService.saveOrUpdate(employeeTimesheetDTO);
+
+                Notification notification = Notification.show("Time log rejected successfully.", 5000, Notification.Position.TOP_CENTER);
+                notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+
+                executeSearchAndUpdateResult(employeeDTOComboBox.getValue(), startDatePicker.getValue(), endDatePicker.getValue());
+            }
+        }));
+
+        // Removed the Approve button once the status of the employee's timesheet is approved.
+        if (!"APPROVED".equals(employeeTimesheetDTO.getStatus())) {
+            rowToolbarLayout.add(viewButton, editButton, approveButton, rejectButton);
+        } else {
+            rowToolbarLayout.add(viewButton, editButton, rejectButton);
+        }
+
+        rowToolbarLayout.setJustifyContentMode(JustifyContentMode.START);
         rowToolbarLayout.getStyle().set("flex-wrap", "wrap");
 
         return rowToolbarLayout;
