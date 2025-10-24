@@ -1,6 +1,7 @@
 package io.softwaregarage.hris.configs;
 
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
+
 import io.softwaregarage.hris.commons.views.LoginView;
 
 import javax.sql.DataSource;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,17 +65,12 @@ public class SecurityConfig extends VaadinWebSecurity {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> {
-            authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.GET, "/images/**").permitAll();
-        });
-
-        http.headers(headersConfigurer -> headersConfigurer.frameOptions(frameOptions -> frameOptions.disable()));
+        http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.GET, "/images/**").permitAll());
+        http.headers(headersConfigurer -> headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
         super.configure(http);
         this.setLoginView(http, LoginView.class, "/");
 
-        http.formLogin(httpSecurityFormLoginConfigurer -> {
-            httpSecurityFormLoginConfigurer.defaultSuccessUrl("/dashboard", true);
-        });
+        http.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.defaultSuccessUrl("/dashboard", true));
     }
 }
