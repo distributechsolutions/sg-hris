@@ -22,8 +22,12 @@ import java.io.InputStream;
 @Service
 public class EmailUtil {
     private final Logger logger = LoggerFactory.getLogger(EmailUtil.class);
-
     @Autowired private JavaMailSender javaMailSender;
+    private final ClassLoader classLoader = this.getClass().getClassLoader();;
+
+    private String readContent(InputStream inputStream) throws IOException {
+        return StringUtil.readContentFromInputStream(inputStream);
+    }
 
     public void sendWelcomeEmailForNewUser(String emailTo, String fullName, String username, String password) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -33,25 +37,53 @@ public class EmailUtil {
         try {
             mimeMessage.setFrom(new InternetAddress("gdpags5@yahoo.com"));
             mimeMessage.setRecipients(MimeMessage.RecipientType.TO, emailTo);
-            mimeMessage.setSubject("Victory Ltd HR and Payroll User Access");
+            mimeMessage.setSubject("Software Garage HRIS User Access");
 
             // Get the email HTML template in the resources folder.
-            ClassLoader classLoader = this.getClass().getClassLoader();
             InputStream inputStream = classLoader.getResourceAsStream("META-INF/resources/html/welcome_email_template.html");
-            String htmlTemplate = StringUtil.readContentFromInputStream(inputStream);
+            String welcomeTemplate = this.readContent(inputStream);
 
             // Replace the placeholders.
-            htmlTemplate = htmlTemplate.replace("${fullname}", fullName);
-            htmlTemplate = htmlTemplate.replace("${username}", username);
-            htmlTemplate = htmlTemplate.replace("${password}", password);
+            welcomeTemplate = welcomeTemplate.replace("${fullname}", fullName);
+            welcomeTemplate = welcomeTemplate.replace("${username}", username);
+            welcomeTemplate = welcomeTemplate.replace("${password}", password);
 
             // Set the email's content to be the HTML template and send.
-            mimeMessage.setContent(htmlTemplate, "text/html; charset=utf-8");
+            mimeMessage.setContent(welcomeTemplate, "text/html; charset=utf-8");
             javaMailSender.send(mimeMessage);
 
             logger.info("Done sending welcome email for new user.");
         } catch (MessagingException | IOException e) {
             logger.info("There is an error in sending welcome email for new user.", e);
+        }
+    }
+
+    public void sendForgotPasswordEmail(String emailTo, String fullName, String username, String password) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+
+        logger.info("Sending forgot password email to the user.");
+
+        try {
+            mimeMessage.setFrom(new InternetAddress("gdpags5@yahoo.com"));
+            mimeMessage.setRecipients(MimeMessage.RecipientType.TO, emailTo);
+            mimeMessage.setSubject("Software Garage HRIS User Forgot Password");
+
+            // Get the email HTML template in the resources folder.
+            InputStream inputStream = classLoader.getResourceAsStream("META-INF/resources/html/forgot_password_email_template.html");
+            String forgotPasswordTemplate = this.readContent(inputStream);
+
+            // Replace the placeholders.
+            forgotPasswordTemplate = forgotPasswordTemplate.replace("${fullname}", fullName);
+            forgotPasswordTemplate = forgotPasswordTemplate.replace("${username}", username);
+            forgotPasswordTemplate = forgotPasswordTemplate.replace("${password}", password);
+
+            // Set the email's content to be the HTML template and send.
+            mimeMessage.setContent(forgotPasswordTemplate, "text/html; charset=utf-8");
+            javaMailSender.send(mimeMessage);
+
+            logger.info("Done sending forgot password email to the user.");
+        } catch (MessagingException | IOException e) {
+            logger.info("There is an error in sending forgot password email to the user");
         }
     }
 }
