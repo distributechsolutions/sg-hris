@@ -50,7 +50,6 @@ public class MainLayout extends AppLayout {
     @Resource private final DocumentProfileService documentProfileService;
 
     private UserDTO userDTO;
-    private DocumentProfileDTO documentProfileDTO;
     private H1 viewTitle;
     private DownloadHandler imageHandler;
     private String fullName;
@@ -67,7 +66,7 @@ public class MainLayout extends AppLayout {
             fullName = userDTO.getEmployeeDTO().getFirstName() + " " + userDTO.getEmployeeDTO().getLastName();
 
             // Set the image component from the employees document file which will be added in the avatar component.
-            documentProfileDTO = documentProfileService.getIDPictureByEmployeeDTO(userDTO.getEmployeeDTO());
+            DocumentProfileDTO documentProfileDTO = documentProfileService.getIDPictureByEmployeeDTO(userDTO.getEmployeeDTO());
 
             if (documentProfileDTO != null) {
                 byte[] fileData = documentProfileDTO.getFileData();
@@ -102,7 +101,7 @@ public class MainLayout extends AppLayout {
             Avatar userAvatar = new Avatar(fullName);
             userAvatar.addThemeVariants(AvatarVariant.LUMO_LARGE);
 
-            if (imageHandler != DownloadResponse.error(500)) {
+            if (imageHandler != null && !imageHandler.equals(DownloadResponse.error(500))) {
                 userAvatar.setImageHandler(imageHandler);
             } else {
                 userAvatar.setColorIndex((int) (Math.random() * 7) + 1);
@@ -111,13 +110,10 @@ public class MainLayout extends AppLayout {
             ContextMenu contextMenu = new ContextMenu();
             contextMenu.setTarget(userAvatar);
             contextMenu.setOpenOnClick(true);
-            contextMenu.add(this.createProfileDiv());
-            contextMenu.add(new Hr());
-
-            MenuItem changePasswordMenuItem = contextMenu.addItem("Change Password");
-            changePasswordMenuItem.add(new Icon(VaadinIcon.PASSWORD));
-
-            contextMenu.add(new Hr());
+            contextMenu.addItem(this.createProfileDiv());
+            contextMenu.addItem("Change Password", menuItemClickEvent -> {
+                contextMenu.getUI().ifPresent(ui -> ui.navigate(ChangePasswordView.class));
+            });
             contextMenu.addItem("Logout", menuItemClickEvent -> SecurityUtil.logout());
 
             VerticalLayout verticalLayout = new VerticalLayout();
