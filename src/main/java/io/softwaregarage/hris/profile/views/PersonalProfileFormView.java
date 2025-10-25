@@ -38,7 +38,7 @@ public class PersonalProfileFormView extends FormLayout {
     private UserDTO userDTO;
     private PersonalProfileDTO personalProfileDTO;
 
-    private String loggedInUser;
+    private final String loggedInUser;
 
     private DatePicker dateOfBirthDatePicker;
     private TextField placeOfBirthTextField;
