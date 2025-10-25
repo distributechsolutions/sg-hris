@@ -36,7 +36,7 @@ public class EmployeeInfoView extends Div {
     @Resource private final MunicipalityService municipalityService;
     @Resource private final BarangayService barangayService;
 
-    private TabSheet infoTabSheets = new TabSheet();
+    private final TabSheet infoTabSheets = new TabSheet();
 
     public EmployeeInfoView(PersonalProfileService personalProfileService,
                             AddressProfileService addressProfileService,
@@ -64,18 +64,18 @@ public class EmployeeInfoView extends Div {
 
     public void createInfoTabSheets() {
         PersonalProfileFormView personalProfileFormView = new PersonalProfileFormView(personalProfileService,
-                                                                 userService,
-                employeeProfileService);
+                                                                                      userService,
+                                                                                      employeeProfileService);
         AddressProfileFormView addressProfileFormView = new AddressProfileFormView(addressProfileService,
-                                                              userService,
-                employeeProfileService,
-                                                              regionService,
-                                                              provinceService,
-                                                              municipalityService,
-                                                              barangayService);
+                                                                                   userService,
+                                                                                   employeeProfileService,
+                                                                                   regionService,
+                                                                                   provinceService,
+                                                                                   municipalityService,
+                                                                                   barangayService);
         DependentProfileFormView dependentProfileFormView = new DependentProfileFormView(dependentProfileService,
-                                                                    userService,
-                employeeProfileService);
+                                                                                         userService,
+                                                                                         employeeProfileService);
 
         infoTabSheets.add("Personal", personalProfileFormView);
         infoTabSheets.add("Addresses", addressProfileFormView);
