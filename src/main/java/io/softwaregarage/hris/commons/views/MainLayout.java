@@ -4,16 +4,20 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.contextmenu.MenuItem;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.*;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
@@ -23,6 +27,7 @@ import io.softwaregarage.hris.compenben.views.*;
 import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.attendance.services.EmployeeLeaveFilingService;
+import io.softwaregarage.hris.configs.SecurityConfig;
 import io.softwaregarage.hris.profile.dtos.DocumentProfileDTO;
 import io.softwaregarage.hris.profile.services.DocumentProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
@@ -36,9 +41,13 @@ import io.softwaregarage.hris.profile.views.EmployeeProfileListView;
 import io.softwaregarage.hris.profile.views.PositionProfileListView;
 import io.softwaregarage.hris.admin.views.CalendarHolidaysListView;
 
+import io.softwaregarage.hris.utils.StringUtil;
 import jakarta.annotation.Resource;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Objects;
 
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
@@ -46,6 +55,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
  * The main view is a top-level placeholder for other views.
  */
 public class MainLayout extends AppLayout {
+    @Resource private final UserService userService;
     @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
     @Resource private final DocumentProfileService documentProfileService;
 
@@ -57,6 +67,7 @@ public class MainLayout extends AppLayout {
     public MainLayout(UserService userService,
                       EmployeeLeaveFilingService employeeLeaveFilingService,
                       DocumentProfileService documentProfileService) {
+        this.userService = userService;
         this.employeeLeaveFilingService = employeeLeaveFilingService;
         this.documentProfileService = documentProfileService;
 
@@ -111,9 +122,7 @@ public class MainLayout extends AppLayout {
             contextMenu.setTarget(userAvatar);
             contextMenu.setOpenOnClick(true);
             contextMenu.addItem(this.createProfileDiv());
-            contextMenu.addItem("Change Password", menuItemClickEvent -> {
-                contextMenu.getUI().ifPresent(ui -> ui.navigate(ChangePasswordView.class));
-            });
+            contextMenu.addItem("Change Password", menuItemClickEvent -> this.buildChangePasswordDialog().open());
             contextMenu.addItem("Logout", menuItemClickEvent -> SecurityUtil.logout());
 
             VerticalLayout verticalLayout = new VerticalLayout();
@@ -301,5 +310,64 @@ public class MainLayout extends AppLayout {
     private String getCurrentPageTitle() {
         PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
         return title == null ? "" : title.value();
+    }
+
+    private Dialog buildChangePasswordDialog() {
+        Dialog changePasswordDialog = new Dialog("Change Password");
+
+        PasswordField currentPasswordField = new PasswordField("Current Password");
+        currentPasswordField.setRequired(true);
+        currentPasswordField.setRequiredIndicatorVisible(true);
+
+        PasswordField newPasswordField = new PasswordField("New Password");
+        newPasswordField.setRequired(true);
+        newPasswordField.setRequiredIndicatorVisible(true);
+
+        PasswordField confirmNewPasswordField = new PasswordField("Confirm New Password");
+        confirmNewPasswordField.setRequired(true);
+        confirmNewPasswordField.setRequiredIndicatorVisible(true);
+
+        Button saveButton = new Button("Save");
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveButton.addClickListener(clickEvent -> {
+            Notification successNotification, errorNotification;
+            boolean isCurrentPasswordMatch = new SecurityConfig().passwordEncoder().matches(currentPasswordField.getValue(), userDTO.getPassword());
+
+            if (isCurrentPasswordMatch) {
+                if (newPasswordField.getValue().equals(confirmNewPasswordField.getValue())) {
+                    userDTO.setPassword(StringUtil.encryptPassword(newPasswordField.getValue()));
+                    userDTO.setUpdatedBy(Objects.requireNonNull(SecurityUtil.getAuthenticatedUser()).getUsername());
+                    userDTO.setDateAndTimeUpdated(LocalDateTime.now(ZoneId.of("Asia/Manila")));
+
+                    userService.saveOrUpdate(userDTO);
+
+                    successNotification = new Notification("You have successfully updated your password.", 5000, Notification.Position.TOP_CENTER);
+                    successNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    successNotification.open();
+
+                    changePasswordDialog.close();
+                } else {
+                    errorNotification = new Notification("Your new password is not matched!", 5000, Notification.Position.TOP_CENTER);
+                    errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                    errorNotification.open();
+                }
+            } else {
+                errorNotification = new Notification("Your current password is wrong!", 5000, Notification.Position.TOP_CENTER);
+                errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                errorNotification.open();
+            }
+        });
+
+        FormLayout changePasswordLayout = new FormLayout();
+        changePasswordLayout.add(currentPasswordField,
+                newPasswordField,
+                confirmNewPasswordField);
+        changePasswordLayout.setWidth("500px");
+
+        changePasswordDialog.add(changePasswordLayout);
+        changePasswordDialog.getFooter().add(saveButton);
+        changePasswordDialog.setCloseOnOutsideClick(false);
+
+        return changePasswordDialog;
     }
 }
