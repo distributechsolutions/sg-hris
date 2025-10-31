@@ -6,10 +6,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
     private static StringUtil INSTANCE;
+    private static final SecureRandom random = new SecureRandom();
 
     private StringUtil() {
     }
@@ -39,8 +40,46 @@ public class StringUtil {
      * @return The generated random password.
      */
     public static String generateRandomPassword() {
-        return UUID.randomUUID().toString();
+        String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String LOWER = "abcdefghijklmnopqrstuvwxyz";
+        String DIGITS = "0123456789";
+        String SYMBOLS = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+        String ALL_CHARS = UPPER + LOWER + DIGITS + SYMBOLS;
+
+        StringBuilder password = new StringBuilder(8);
+
+        // Ensure at least one character from each category
+        password.append(UPPER.charAt(random.nextInt(UPPER.length())));
+        password.append(LOWER.charAt(random.nextInt(LOWER.length())));
+        password.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
+        password.append(SYMBOLS.charAt(random.nextInt(SYMBOLS.length())));
+
+        // Fill the rest with random characters
+        for (int i = 4; i < 8; i++) {
+            password.append(ALL_CHARS.charAt(random.nextInt(ALL_CHARS.length())));
+        }
+
+        return shuffleString(password.toString());
     }
+
+    /**
+     * A private method that will shuffle the given string.
+     *
+     * @param input - The String value.
+     * @return A shuffled String value
+     */
+    private static String shuffleString(String input) {
+        char[] chars = input.toCharArray();
+        for (int i = chars.length - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            char temp = chars[i];
+            chars[i] = chars[j];
+            chars[j] = temp;
+        }
+        return new String(chars);
+    }
+
+
 
     /**
      * Encrypts the input password using the bcrypt encyption.
