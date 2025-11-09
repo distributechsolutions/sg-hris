@@ -35,7 +35,9 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         this.emailUtil = emailUtil;
 
         loginForm.setAction("login");
-        loginForm.addForgotPasswordListener(forgotPasswordEvent -> this.buildForgotPasswordDialog().open());
+        loginForm.addAttachListener(event -> {
+            loginForm.addForgotPasswordListener(forgotPasswordEvent -> this.buildForgotPasswordDialog().open());
+        });
 
         this.setSizeFull();
         this.setAlignItems(Alignment.CENTER);
