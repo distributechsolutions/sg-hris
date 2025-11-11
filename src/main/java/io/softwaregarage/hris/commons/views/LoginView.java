@@ -15,10 +15,12 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+
 import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.utils.EmailUtil;
 import io.softwaregarage.hris.utils.StringUtil;
+
 import jakarta.annotation.Resource;
 
 @AnonymousAllowed
@@ -35,8 +37,10 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
         this.emailUtil = emailUtil;
 
         loginForm.setAction("login");
-        loginForm.addAttachListener(event -> {
-            loginForm.addForgotPasswordListener(forgotPasswordEvent -> this.buildForgotPasswordDialog().open());
+        loginForm.addForgotPasswordListener(event -> {
+            Dialog dialog = buildForgotPasswordDialog();
+            this.getUI().ifPresent(ui -> ui.add(dialog));
+            dialog.open();
         });
 
         this.setSizeFull();
