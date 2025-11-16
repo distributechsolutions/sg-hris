@@ -40,8 +40,8 @@ import io.softwaregarage.hris.profile.views.DepartmentProfileListView;
 import io.softwaregarage.hris.profile.views.EmployeeProfileListView;
 import io.softwaregarage.hris.profile.views.PositionProfileListView;
 import io.softwaregarage.hris.admin.views.CalendarHolidaysListView;
-
 import io.softwaregarage.hris.utils.StringUtil;
+
 import jakarta.annotation.Resource;
 
 import java.io.ByteArrayInputStream;
