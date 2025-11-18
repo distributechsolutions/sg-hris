@@ -23,6 +23,8 @@ import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
+import io.softwaregarage.hris.admin.views.DepartmentListView;
+import io.softwaregarage.hris.admin.views.PositionListView;
 import io.softwaregarage.hris.compenben.views.*;
 import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.UserService;
@@ -216,7 +218,7 @@ public class MainLayout extends AppLayout {
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
                 userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
-            navItem.addItem(new SideNavItem("Timesheets", EmployeeTimesheetListView.class, LineAwesomeIcon.CALENDAR_WEEK_SOLID.create()));
+            navItem.addItem(new SideNavItem("Timesheet Approvals", EmployeeTimesheetListView.class, LineAwesomeIcon.CALENDAR_WEEK_SOLID.create()));
         }
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
@@ -279,8 +281,8 @@ public class MainLayout extends AppLayout {
 
         if (userDTO.getRole().equals("ROLE_ADMIN") || userDTO.getRole().equals("ROLE_HR_MANAGER")) {
             navItem.addItem(new SideNavItem("Calendar Holidays", CalendarHolidaysListView.class, LineAwesomeIcon.CALENDAR.create()));
-            navItem.addItem(new SideNavItem("Positions", io.softwaregarage.hris.admin.views.PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
-            navItem.addItem(new SideNavItem("Departments", io.softwaregarage.hris.admin.views.DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
+            navItem.addItem(new SideNavItem("Positions", PositionListView.class, LineAwesomeIcon.SITEMAP_SOLID.create()));
+            navItem.addItem(new SideNavItem("Departments", DepartmentListView.class, LineAwesomeIcon.BUILDING_SOLID.create()));
             navItem.addItem(new SideNavItem("Users", UserListView.class, LineAwesomeIcon.USER_LOCK_SOLID.create()));
         }
 

@@ -26,7 +26,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
                "ROLE_HR_MANAGER",
                "ROLE_HR_SUPERVISOR",
                "ROLE_HR_EMPLOYEE"})
-@PageTitle("Employee Position List")
+@PageTitle("Assign Position")
 @Route(value = "employee-position-list", layout = MainLayout.class)
 public class PositionProfileListView extends VerticalLayout {
     @Resource private final PositionProfileService positionProfileService;

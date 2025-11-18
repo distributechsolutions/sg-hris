@@ -22,7 +22,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 @RolesAllowed({"ROLE_ADMIN", "ROLE_HR_MANAGER", "ROLE_HR_SUPERVISOR"})
-@PageTitle("Department List")
+@PageTitle("Departments")
 @Route(value = "department-list", layout = MainLayout.class)
 public class DepartmentListView extends VerticalLayout {
     @Resource private final DepartmentService departmentService;
