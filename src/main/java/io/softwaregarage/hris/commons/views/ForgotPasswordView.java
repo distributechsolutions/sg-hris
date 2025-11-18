@@ -51,22 +51,23 @@ public class ForgotPasswordView extends VerticalLayout {
         TextField username = new TextField("Enter your username");
         username.setRequiredIndicatorVisible(true);
         username.setRequired(true);
-        username.setWidthFull();
+        username.setWidth("300px");
 
-        EmailField userEmail = new EmailField("Enter your registered email");
-        userEmail.setRequiredIndicatorVisible(true);
-        userEmail.setRequired(true);
-        userEmail.setWidthFull();
+        TextField emailField = new TextField("Enter your email");
+        emailField.setRequiredIndicatorVisible(true);
+        emailField.setErrorMessage("Please enter a valid email address");
+        emailField.setWidth("300px"); // ensures visible size
+
 
         Button submitButton = new Button("Send my new password");
         submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         submitButton.addClickListener(event -> {
             if (username.getValue().isEmpty()) {
                 username.setErrorMessage("Username should not be empty or whitespace.");
-            } else if (userEmail.getValue().isEmpty()) {
-                userEmail.setErrorMessage("Email should not be empty or whitespace.");
-            } else if (!userEmail.getValue().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
-                userEmail.setErrorMessage("This is not a valid email address");
+            } else if (emailField.getValue().isEmpty()) {
+                emailField.setErrorMessage("Email should not be empty or whitespace.");
+            } else if (!emailField.getValue().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+                emailField.setErrorMessage("This is not a valid email address");
             } else {
                 userDTO = userService.getByUsername(username.getValue());
                 String generatedRawPassword = StringUtil.generateRandomPassword();
@@ -78,7 +79,7 @@ public class ForgotPasswordView extends VerticalLayout {
 
                     // Save the updated password and send it to the registered email.
                     userService.saveOrUpdate(userDTO);
-                    emailUtil.sendForgotPasswordEmail(userEmail.getValue(),
+                    emailUtil.sendForgotPasswordEmail(emailField.getValue(),
                             userDTO.getEmployeeDTO().getEmployeeFullName(),
                             username.getValue(),
                             generatedRawPassword);
@@ -101,14 +102,13 @@ public class ForgotPasswordView extends VerticalLayout {
 
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setAlignItems(Alignment.CENTER);
-        buttonLayout.setJustifyContentMode(JustifyContentMode.END);
         buttonLayout.setWidthFull();
         buttonLayout.add(submitButton, cancelButton);
 
-        layout.setWidth("20%");
+        layout.setWidth("300px");
         layout.add(new H2("Forgot Password"),
                    username,
-                   userEmail,
+                   emailField,
                    buttonLayout);
 
         return layout;
