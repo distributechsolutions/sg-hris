@@ -53,7 +53,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
                "ROLE_HR_MANAGER",
                "ROLE_HR_SUPERVISOR",
                "ROLE_HR_EMPLOYEE"})
-@PageTitle("Timesheet List")
+@PageTitle("Timesheet Approvals")
 @Route(value = "timesheets-view", layout = MainLayout.class)
 public class EmployeeTimesheetListView extends VerticalLayout {
     @Resource private final EmployeeTimesheetService employeeTimesheetService;

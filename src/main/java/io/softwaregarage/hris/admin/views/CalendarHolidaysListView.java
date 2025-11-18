@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 @RolesAllowed({"ROLE_ADMIN",
                "ROLE_HR_MANAGER",
                "ROLE_HR_SUPERVISOR"})
-@PageTitle("Calendar Holiday List")
+@PageTitle("Calendar Holidays")
 @Route(value = "calendar-holiday-list", layout = MainLayout.class)
 public class CalendarHolidaysListView extends VerticalLayout {
     @Resource

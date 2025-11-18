@@ -28,7 +28,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 @RolesAllowed({"ROLE_ADMIN", "ROLE_HR_MANAGER"})
-@PageTitle("User List")
+@PageTitle("Users")
 @Route(value = "user-list", layout = MainLayout.class)
 public class UserListView extends VerticalLayout {
     @Resource

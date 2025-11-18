@@ -45,7 +45,7 @@ import java.util.Objects;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 @PermitAll
-@PageTitle("Leave Filing")
+@PageTitle("My Leave Filings")
 @Route(value = "leave-filing-view", layout = MainLayout.class)
 public class LeaveFilingView extends VerticalLayout {
     @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
