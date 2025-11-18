@@ -23,7 +23,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 @RolesAllowed({"ROLE_ADMIN",
                "ROLE_HR_MANAGER",
                "ROLE_HR_SUPERVISOR"})
-@PageTitle("Loan Deduction List")
+@PageTitle("Loan Deductions")
 @Route(value = "loan-deduction-list", layout = MainLayout.class)
 public class LoanDeductionListView extends VerticalLayout {
     @Resource

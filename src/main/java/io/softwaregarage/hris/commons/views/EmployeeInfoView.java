@@ -23,7 +23,7 @@ import jakarta.annotation.Resource;
 import jakarta.annotation.security.PermitAll;
 
 @PermitAll
-@PageTitle("Employee Information")
+@PageTitle("My Profile")
 @Route(value = "employee-information", layout = MainLayout.class)
 public class EmployeeInfoView extends Div {
     @Resource private final PersonalProfileService personalProfileService;

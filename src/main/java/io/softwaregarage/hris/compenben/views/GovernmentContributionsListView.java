@@ -24,7 +24,7 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 @RolesAllowed({"ROLE_ADMIN",
                "ROLE_HR_MANAGER",
                "ROLE_HR_SUPERVISOR"})
-@PageTitle("Government Contributions List")
+@PageTitle("Contributions")
 @Route(value = "government-contributions-list", layout = MainLayout.class)
 public class GovernmentContributionsListView extends VerticalLayout {
     @Resource

@@ -15,6 +15,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.renderer.LocalDateTimeRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import io.softwaregarage.hris.admin.dtos.UserDTO;
@@ -39,6 +40,7 @@ import java.util.Objects;
                "ROLE_MANAGER",
                "ROLE_SUPERVISOR"})
 @Route(value = "leave-approvals-list-view", layout = MainLayout.class)
+@PageTitle("Leave Approvals")
 public class EmployeeLeaveApprovalsListView extends VerticalLayout {
     @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
     @Resource private final LeaveBenefitsService leaveBenefitsService;
