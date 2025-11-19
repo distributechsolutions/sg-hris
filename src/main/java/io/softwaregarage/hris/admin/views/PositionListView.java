@@ -1,10 +1,14 @@
 package io.softwaregarage.hris.admin.views;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -17,8 +21,8 @@ import io.softwaregarage.hris.admin.services.PositionService;
 import io.softwaregarage.hris.commons.views.MainLayout;
 
 import jakarta.annotation.Resource;
-
 import jakarta.annotation.security.RolesAllowed;
+
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 @RolesAllowed({"ROLE_ADMIN", "ROLE_HR_MANAGER", "ROLE_HR_SUPERVISOR"})
@@ -103,7 +107,48 @@ public class PositionListView extends VerticalLayout {
             }
         }));
 
-        rowToolbarLayout.add(viewButton, editButton);
+        Button deleteButton = new Button();
+        deleteButton.setTooltipText("Delete Position");
+        deleteButton.setIcon(LineAwesomeIcon.TRASH_ALT_SOLID.create());
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        deleteButton.addClickListener(buttonClickEvent -> {
+            if (positionDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
+                // Show the confirmation dialog.
+                ConfirmDialog confirmDialog = new ConfirmDialog();
+                confirmDialog.setHeader("Delete Position");
+                confirmDialog.setText(new Html("""
+                                               <p>
+                                               WARNING! Before deleting this position, be sure that there are no
+                                               employees assigned to it. Are you sure you want to delete the selected
+                                               position?
+                                               </p>
+                                               """));
+                confirmDialog.setConfirmText("Yes, Delete it.");
+                confirmDialog.setConfirmButtonTheme("error primary");
+                confirmDialog.addConfirmListener(confirmEvent -> {
+                    // Get the selected position and delete it.
+                    PositionDTO selectedPositionDTO = positionDTOGrid.getSelectionModel().getFirstSelectedItem().get();
+                    positionService.delete(selectedPositionDTO);
+
+                    // Refresh the data grid from the backend after the delete operation.
+                    positionDTOGrid.getDataProvider().refreshAll();
+
+                    // Show notification message.
+                    Notification notification = Notification.show("You have successfully deleted the selected position.",
+                                                          5000,
+                                                                  Notification.Position.TOP_CENTER);
+                    notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+                    // Close the confirmation dialog.
+                    confirmDialog.close();
+                });
+                confirmDialog.setCancelable(true);
+                confirmDialog.setCancelText("No");
+                confirmDialog.open();
+            }
+        });
+
+        rowToolbarLayout.add(viewButton, editButton, deleteButton);
         rowToolbarLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         rowToolbarLayout.getStyle().set("flex-wrap", "wrap");
 
