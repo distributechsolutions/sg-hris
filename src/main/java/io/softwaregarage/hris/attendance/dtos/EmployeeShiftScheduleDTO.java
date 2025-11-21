@@ -7,6 +7,9 @@ import java.time.LocalTime;
 
 public class EmployeeShiftScheduleDTO extends BaseDTO {
     private EmployeeProfileDTO employeeProfileDTO;
+    private EmployeeProfileDTO assignedApproverEmployeeProfileDTO;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String shiftSchedule;
     private Integer shiftHours;
     private String shiftScheduledDays;
@@ -20,6 +23,14 @@ public class EmployeeShiftScheduleDTO extends BaseDTO {
 
     public void setEmployeeDTO(EmployeeProfileDTO employeeProfileDTO) {
         this.employeeProfileDTO = employeeProfileDTO;
+    }
+
+    public EmployeeProfileDTO getAssignedApproverEmployeeProfileDTO() {
+        return assignedApproverEmployeeProfileDTO;
+    }
+
+    public void setAssignedApproverEmployeeProfileDTO(EmployeeProfileDTO assignedApproverEmployeeProfileDTO) {
+        this.assignedApproverEmployeeProfileDTO = assignedApproverEmployeeProfileDTO;
     }
 
     public String getShiftSchedule() {

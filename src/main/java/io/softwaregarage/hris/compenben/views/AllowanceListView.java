@@ -1,9 +1,13 @@
 package io.softwaregarage.hris.compenben.views;
 
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -11,9 +15,12 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import io.softwaregarage.hris.admin.dtos.UserDTO;
+import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.compenben.dtos.AllowanceDTO;
 import io.softwaregarage.hris.compenben.services.AllowanceService;
 import io.softwaregarage.hris.commons.views.MainLayout;
+import io.softwaregarage.hris.utils.SecurityUtil;
 
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
@@ -29,11 +36,21 @@ public class AllowanceListView extends VerticalLayout {
     @Resource
     private final AllowanceService allowanceService;
 
+    @Resource
+    private final UserService userService;
+
+    private UserDTO userDTO;
+
     private Grid<AllowanceDTO> allowanceDTOGrid;
     private TextField searchFilterTextField;
 
-    public AllowanceListView(AllowanceService allowanceService) {
+    public AllowanceListView(AllowanceService allowanceService, UserService userService) {
         this.allowanceService = allowanceService;
+        this.userService = userService;
+
+        if (SecurityUtil.getAuthenticatedUser() != null) {
+            userDTO = userService.getByUsername(SecurityUtil.getAuthenticatedUser().getUsername());
+        }
 
         this.add(buildHeaderToolbar(), buildAllowanceDTOGrid());
         this.setSizeFull();
@@ -120,7 +137,67 @@ public class AllowanceListView extends VerticalLayout {
             }
         }));
 
-        rowToolbarLayout.add(viewButton, editButton);
+        // Show the delete button if the role of the logged-in user is ROLE_ADMIN.
+        Button deleteButton = new Button();
+        deleteButton.setTooltipText("Delete Allowance");
+        deleteButton.setIcon(LineAwesomeIcon.TRASH_ALT_SOLID.create());
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        deleteButton.addClickListener(buttonClickEvent -> {
+            if (allowanceDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
+                AllowanceDTO selectedAllowanceDTO = allowanceDTOGrid.getSelectionModel()
+                        .getFirstSelectedItem().get();
+
+                // Check first if that record is not an active employee anymore. If it is not active, you may proceed
+                // for the deletion.
+                if (selectedAllowanceDTO.getEmployeeDTO().getStatus().equals("RESIGNED")
+                        || selectedAllowanceDTO.getEmployeeDTO().getStatus().equals("RETIRED")
+                        || selectedAllowanceDTO.getEmployeeDTO().getStatus().equals("TERMINATED")
+                        || selectedAllowanceDTO.getEmployeeDTO().getStatus().equals("DECEASED")) {
+                    // Show the confirmation dialog.
+                    ConfirmDialog confirmDialog = new ConfirmDialog();
+                    confirmDialog.setHeader("Delete Allowance");
+                    confirmDialog.setText(new Html("""
+                                               <p>
+                                               WARNING! Are you sure you want to delete the selected employee allowance?
+                                               </p>
+                                               """));
+                    confirmDialog.setConfirmText("Yes, Delete it.");
+                    confirmDialog.setConfirmButtonTheme("error primary");
+                    confirmDialog.addConfirmListener(confirmEvent -> {
+                        // Get the selected allowance and delete it.
+                        allowanceService.delete(selectedAllowanceDTO);
+
+                        // Refresh the data grid from the backend after the delete operation.
+                        allowanceDTOGrid.getDataProvider().refreshAll();
+
+                        // Show notification message.
+                        Notification notification = Notification.show("You have successfully deleted the selected employee allowance.",
+                                5000,
+                                Notification.Position.TOP_CENTER);
+                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+                        // Close the confirmation dialog.
+                        confirmDialog.close();
+                    });
+                    confirmDialog.setCancelable(true);
+                    confirmDialog.setCancelText("No");
+                    confirmDialog.open();
+                } else {
+                    // Show notification message.
+                    Notification notification = Notification.show("You cannot delete the selected employee allowance. Employee is still in active status.",
+                            5000,
+                            Notification.Position.TOP_CENTER);
+                    notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
+            }
+        });
+
+        if (userDTO.getRole().equals("ROLE_ADMIN")) {
+            rowToolbarLayout.add(viewButton, editButton, deleteButton);
+        } else {
+            rowToolbarLayout.add(viewButton, editButton);
+        }
+
         rowToolbarLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         rowToolbarLayout.getStyle().set("flex-wrap", "wrap");
 

@@ -13,18 +13,19 @@ import java.util.UUID;
 
 public interface EmployeeTimesheetRepository extends JpaRepository<EmployeeTimesheet, UUID> {
     @Query(value = """
-           SELECT et.*
-           FROM sg_hris_employee_timesheet et
-           JOIN sg_hris_employee_profile ep ON et.employee_id = ep.id
-           WHERE unaccent(lower(ep.first_name)) LIKE lower(concat('%', :param, '%'))
-              OR unaccent(lower(ep.middle_name)) LIKE lower(concat('%', :param, '%'))
-              OR unaccent(lower(ep.last_name)) LIKE lower(concat('%', :param, '%'))
-              OR unaccent(lower(et.shift_schedule)) LIKE lower(concat('%', :param, '%'))
-              OR unaccent(lower(et.log_detail)) LIKE lower(concat('%', :param, '%'))
-              OR unaccent(lower(et.status)) LIKE lower(concat('%', :param, '%'))
-              OR to_char(et.log_date, 'YYYY-MM-DD') LIKE concat('%', :param, '%')
-              OR to_char(et.log_time, 'HH24:MI:SS') LIKE concat('%', :param, '%')
-           """, nativeQuery = true)
+                   SELECT et.*
+                   FROM sg_hris_employee_timesheet et
+                   JOIN sg_hris_employee_profile ep ON et.employee_id = ep.id
+                   WHERE UNACCENT(LOWER(ep.first_name)) LIKE LOWER(CONCAT('%', :param, '%'))
+                   OR UNACCENT(LOWER(ep.middle_name)) LIKE LOWER(CONCAT('%', :param, '%'))
+                   OR UNACCENT(LOWER(ep.last_name)) LIKE LOWER(CONCAT('%', :param, '%'))
+                   OR UNACCENT(LOWER(et.shift_schedule)) LIKE LOWER(CONCAT('%', :param, '%'))
+                   OR UNACCENT(LOWER(et.log_detail)) LIKE LOWER(CONCAT('%', :param, '%'))
+                   OR UNACCENT(LOWER(et.status)) LIKE LOWER(CONCAT('%', :param, '%'))
+                   OR TO_CHAR(et.log_date, 'YYYY-MM-DD') LIKE CONCAT('%', :param, '%')
+                   OR TO_CHAR(et.log_time, 'HH24:MI:SS') LIKE CONCAT('%', :param, '%')
+                   """,
+           nativeQuery = true)
     List<EmployeeTimesheet> findTimesheetByStringParameter(@Param("param") String param);
 
     @Query("SELECT et FROM EmployeeTimesheet et WHERE et.employeeProfile = :employeeParam")

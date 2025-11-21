@@ -27,6 +27,7 @@ import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,10 +43,10 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
 
     private EmployeeShiftScheduleDTO employeeShiftScheduleDTO;
     private UUID parameterId;
-    private String loggedInUser;
+    private final String loggedInUser;
 
     private final FormLayout employeeShiftDTOFormLayout = new FormLayout();
-    private ComboBox<EmployeeProfileDTO> employeeDTOComboBox;
+    private ComboBox<EmployeeProfileDTO> employeeDTOComboBox, assignedApproverEmployeeDTOComboBox;
     private ComboBox<String> shiftScheduleComboBox;
     private TimePicker startShiftTimePicker, endShiftTimePicker;
     private IntegerField noOfHoursField;
@@ -89,6 +90,19 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
         employeeDTOComboBox.setRequired(true);
         employeeDTOComboBox.setRequiredIndicatorVisible(true);
         if (employeeShiftScheduleDTO != null) employeeDTOComboBox.setValue(employeeShiftScheduleDTO.getEmployeeDTO());
+
+        // Get the list of employees who are approvers.
+        List<EmployeeProfileDTO> approverEmployeeProfileDTOList = employeeProfileService.getEmployeesWhoAreApprovers();
+
+        assignedApproverEmployeeDTOComboBox = new ComboBox<>("Approver");
+        assignedApproverEmployeeDTOComboBox.setItems((employeeApproverDTO, filterString) -> employeeApproverDTO.getEmployeeFullName()
+                        .toLowerCase()
+                        .contains(filterString.toLowerCase()),
+                approverEmployeeProfileDTOList);
+        assignedApproverEmployeeDTOComboBox.setItemLabelGenerator(EmployeeProfileDTO::getEmployeeFullName);
+        assignedApproverEmployeeDTOComboBox.setRequired(true);
+        assignedApproverEmployeeDTOComboBox.setRequiredIndicatorVisible(true);
+        if (employeeShiftScheduleDTO != null) assignedApproverEmployeeDTOComboBox.setValue(employeeShiftScheduleDTO.getAssignedApproverEmployeeProfileDTO());
 
         shiftScheduleComboBox = new ComboBox<>("Shift Schedule");
         shiftScheduleComboBox.setItems("Morning Shift", "Mid Shift", "Night Shift");
@@ -143,6 +157,7 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
         buttonLayout.setPadding(true);
 
         employeeShiftDTOFormLayout.add(employeeDTOComboBox,
+                                       assignedApproverEmployeeDTOComboBox,
                                        shiftScheduleComboBox,
                                        noOfHoursField,
                                        startShiftTimePicker,
@@ -150,7 +165,6 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
                                        shiftScheduledDaysCheckboxGroup,
                                        activeShiftToggleButton,
                                        buttonLayout);
-        employeeShiftDTOFormLayout.setColspan(employeeDTOComboBox, 2);
         employeeShiftDTOFormLayout.setColspan(shiftScheduledDaysCheckboxGroup, 2);
         employeeShiftDTOFormLayout.setColspan(activeShiftToggleButton, 2);
         employeeShiftDTOFormLayout.setColspan(buttonLayout, 2);
@@ -166,6 +180,7 @@ public class EmployeeShiftFormView extends VerticalLayout implements HasUrlParam
         }
 
         employeeShiftScheduleDTO.setEmployeeDTO(employeeDTOComboBox.getValue());
+        employeeShiftScheduleDTO.setAssignedApproverEmployeeProfileDTO(assignedApproverEmployeeDTOComboBox.getValue());
         employeeShiftScheduleDTO.setShiftSchedule(shiftScheduleComboBox.getValue());
         employeeShiftScheduleDTO.setShiftHours(noOfHoursField.getValue());
         employeeShiftScheduleDTO.setShiftStartTime(startShiftTimePicker.getValue());

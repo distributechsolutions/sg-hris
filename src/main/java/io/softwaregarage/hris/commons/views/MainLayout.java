@@ -73,7 +73,7 @@ public class MainLayout extends AppLayout {
         this.employeeLeaveFilingService = employeeLeaveFilingService;
         this.documentProfileService = documentProfileService;
 
-        // Gets the user data transfer object based from the logged in user.
+        // Gets the user data transfer object based from the logged-in user.
         if (SecurityUtil.getAuthenticatedUser() != null) {
             userDTO = userService.getByUsername(SecurityUtil.getAuthenticatedUser().getUsername());
             fullName = userDTO.getEmployeeDTO().getFirstName() + " " + userDTO.getEmployeeDTO().getLastName();
@@ -217,7 +217,8 @@ public class MainLayout extends AppLayout {
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
-                userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
+                userDTO.getRole().equals("ROLE_MANAGER") ||
+                userDTO.getRole().equals("ROLE_SUPERVISOR")) {
             navItem.addItem(new SideNavItem("Timesheet Approvals", EmployeeTimesheetListView.class, LineAwesomeIcon.CALENDAR_WEEK_SOLID.create()));
         }
 

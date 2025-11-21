@@ -1,24 +1,35 @@
 package io.softwaregarage.hris.compenben.views;
 
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
-
 import com.vaadin.flow.router.Route;
+
+import io.softwaregarage.hris.admin.dtos.UserDTO;
+import io.softwaregarage.hris.admin.services.UserService;
+import io.softwaregarage.hris.attendance.dtos.EmployeeLeaveFilingDTO;
+import io.softwaregarage.hris.attendance.services.EmployeeLeaveFilingService;
 import io.softwaregarage.hris.compenben.dtos.LeaveBenefitsDTO;
 import io.softwaregarage.hris.compenben.services.LeaveBenefitsService;
 import io.softwaregarage.hris.commons.views.MainLayout;
+import io.softwaregarage.hris.utils.SecurityUtil;
 
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
+
+import java.util.List;
 
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
@@ -28,13 +39,30 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 @PageTitle("Leave Benefits")
 @Route(value = "leave-benefits-list", layout = MainLayout.class)
 public class LeaveBenefitsListView extends VerticalLayout {
-    @Resource private final LeaveBenefitsService leaveBenefitsService;
+    @Resource
+    private final LeaveBenefitsService leaveBenefitsService;
+
+    @Resource
+    private final EmployeeLeaveFilingService employeeLeaveFilingService;
+
+    @Resource
+    private final UserService userService;
+
+    private UserDTO userDTO;
 
     private Grid<LeaveBenefitsDTO> leaveBenefitsDTOGrid;
     private TextField searchFilterTextField;
 
-    public LeaveBenefitsListView(LeaveBenefitsService leaveBenefitsService) {
+    public LeaveBenefitsListView(LeaveBenefitsService leaveBenefitsService,
+                                 EmployeeLeaveFilingService employeeLeaveFilingService,
+                                 UserService userService) {
         this.leaveBenefitsService = leaveBenefitsService;
+        this.employeeLeaveFilingService = employeeLeaveFilingService;
+        this.userService = userService;
+
+        if (SecurityUtil.getAuthenticatedUser() != null) {
+            userDTO = userService.getByUsername(SecurityUtil.getAuthenticatedUser().getUsername());
+        }
 
         this.add(buildHeaderToolbar(), buildLeaveBenefitsDTOGrid());
         this.setSizeFull();
@@ -137,7 +165,77 @@ public class LeaveBenefitsListView extends VerticalLayout {
             }
         }));
 
-        rowToolbarLayout.add(viewButton, editButton);
+        // Show the delete button if the role of the logged-in user is ROLE_ADMIN.
+        Button deleteButton = new Button();
+        deleteButton.setTooltipText("Delete Leave Benefit");
+        deleteButton.setIcon(LineAwesomeIcon.TRASH_ALT_SOLID.create());
+        deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        deleteButton.addClickListener(buttonClickEvent -> {
+            if (leaveBenefitsDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
+                LeaveBenefitsDTO selectedLeaveBenefitsDTO = leaveBenefitsDTOGrid.getSelectionModel()
+                        .getFirstSelectedItem().get();
+
+                // Check first if that record is not an active employee anymore. If it is not active, you may proceed
+                // for the deletion.
+                if (selectedLeaveBenefitsDTO.getEmployeeDTO().getStatus().equals("RESIGNED")
+                        || selectedLeaveBenefitsDTO.getEmployeeDTO().getStatus().equals("RETIRED")
+                        || selectedLeaveBenefitsDTO.getEmployeeDTO().getStatus().equals("TERMINATED")
+                        || selectedLeaveBenefitsDTO.getEmployeeDTO().getStatus().equals("DECEASED")) {
+                    // Show the confirmation dialog.
+                    ConfirmDialog confirmDialog = new ConfirmDialog();
+                    confirmDialog.setHeader("Delete Leave Benefit");
+                    confirmDialog.setText(new Html("""
+                                               <p>
+                                               WARNING! Are you sure you want to delete the selected leave benefit of
+                                               the employee? This will also delete the filed leaves made by the employee.
+                                               </p>
+                                               """));
+                    confirmDialog.setConfirmText("Yes, Delete it.");
+                    confirmDialog.setConfirmButtonTheme("error primary");
+                    confirmDialog.addConfirmListener(confirmEvent -> {
+                        // Delete first the related filed leaves of employee
+                        List<EmployeeLeaveFilingDTO> employeeLeaveFilingDTOList = employeeLeaveFilingService
+                                .getByEmployeeDTO(selectedLeaveBenefitsDTO.getEmployeeDTO());
+                        if (!employeeLeaveFilingDTOList.isEmpty()) {
+                            for (EmployeeLeaveFilingDTO employeeLeaveFilingDTO : employeeLeaveFilingDTOList) {
+                                employeeLeaveFilingService.delete(employeeLeaveFilingDTO);
+                            }
+                        }
+
+                        // Get the selected department and delete it.
+                        leaveBenefitsService.delete(selectedLeaveBenefitsDTO);
+
+                        // Refresh the data grid from the backend after the delete operation.
+                        leaveBenefitsDTOGrid.getDataProvider().refreshAll();
+
+                        // Show notification message.
+                        Notification notification = Notification.show("You have successfully deleted the selected employee leave benefit and all its filed leaves.",
+                                5000,
+                                Notification.Position.TOP_CENTER);
+                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+                        // Close the confirmation dialog.
+                        confirmDialog.close();
+                    });
+                    confirmDialog.setCancelable(true);
+                    confirmDialog.setCancelText("No");
+                    confirmDialog.open();
+                } else {
+                    // Show notification message.
+                    Notification notification = Notification.show("You cannot delete the selected employee benefit. Employee is still in active status.",
+                            5000,
+                            Notification.Position.TOP_CENTER);
+                    notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
+            }
+        });
+
+        if (userDTO.getRole().equals("ROLE_ADMIN")) {
+            rowToolbarLayout.add(viewButton, editButton, deleteButton);
+        } else {
+            rowToolbarLayout.add(viewButton, editButton);
+        }
+
         rowToolbarLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         rowToolbarLayout.getStyle().set("flex-wrap", "wrap");
 

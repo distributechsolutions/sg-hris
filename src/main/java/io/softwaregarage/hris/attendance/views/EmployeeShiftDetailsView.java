@@ -65,6 +65,12 @@ public class EmployeeShiftDetailsView extends VerticalLayout implements HasUrlPa
         Span employeeNameValueSpan = new Span(employeeShiftScheduleDTO.getEmployeeDTO().getEmployeeFullName());
         employeeNameValueSpan.getStyle().setFontWeight("bold");
 
+        Span approverNameLabelSpan = new Span("Approver Name");
+        approverNameLabelSpan.getStyle().set("text-align", "right");
+
+        Span approverNameValueSpan = new Span(employeeShiftScheduleDTO.getAssignedApproverEmployeeProfileDTO().getEmployeeFullName());
+        approverNameValueSpan.getStyle().setFontWeight("bold");
+
         Span shiftScheduleLabelSpan = new Span("Shift Schedule");
         shiftScheduleLabelSpan.getStyle().set("text-align", "right");
 
@@ -105,6 +111,8 @@ public class EmployeeShiftDetailsView extends VerticalLayout implements HasUrlPa
                                        employeeNoValueSpan,
                                        employeeNameLabelSpan,
                                        employeeNameValueSpan,
+                                       approverNameLabelSpan,
+                                       approverNameValueSpan,
                                        shiftScheduleLabelSpan,
                                        shiftScheduleValueSpan,
                                        noOfHoursLabelSpan,
