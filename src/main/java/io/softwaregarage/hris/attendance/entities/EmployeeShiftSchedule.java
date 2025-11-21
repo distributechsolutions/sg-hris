@@ -14,6 +14,10 @@ public class EmployeeShiftSchedule extends BaseEntity {
     @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
     private EmployeeProfile employeeProfile;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_approver_employee_id", referencedColumnName = "id", nullable = false)
+    private EmployeeProfile assignedApproverEmployeeProfile;
+
     @Column(name = "shift_schedule", length = 25, nullable = false)
     private String shiftSchedule;
 
@@ -38,6 +42,14 @@ public class EmployeeShiftSchedule extends BaseEntity {
 
     public void setEmployee(EmployeeProfile employeeProfile) {
         this.employeeProfile = employeeProfile;
+    }
+
+    public EmployeeProfile getAssignedApproverEmployeeProfile() {
+        return assignedApproverEmployeeProfile;
+    }
+
+    public void setAssignedApproverEmployeeProfile(EmployeeProfile assignedApproverEmployeeProfile) {
+        this.assignedApproverEmployeeProfile = assignedApproverEmployeeProfile;
     }
 
     public String getShiftSchedule() {

@@ -27,13 +27,19 @@ public class DepartmentProfileServiceImpl implements DepartmentProfileService {
     private final DepartmentProfileRepository departmentProfileRepository;
     private final EmployeeProfileRepository employeeProfileRepository;
     private final DepartmentRepository departmentRepository;
+    private final EmployeeProfileService employeeProfileService;
+    private final DepartmentService departmentService;
 
     public DepartmentProfileServiceImpl(DepartmentProfileRepository employeeDepartmentProfileRepository,
                                         EmployeeProfileRepository employeeProfileRepository,
-                                        io.softwaregarage.hris.admin.repositories.DepartmentRepository departmentRepository) {
+                                        DepartmentRepository departmentRepository,
+                                        EmployeeProfileService employeeProfileService,
+                                        DepartmentService departmentService) {
         this.departmentProfileRepository = employeeDepartmentProfileRepository;
         this.employeeProfileRepository = employeeProfileRepository;
         this.departmentRepository = departmentRepository;
+        this.employeeProfileService = employeeProfileService;
+        this.departmentService = departmentService;
     }
 
     @Override
@@ -69,8 +75,9 @@ public class DepartmentProfileServiceImpl implements DepartmentProfileService {
         DepartmentProfileDTO departmentProfileDTO = new DepartmentProfileDTO();
 
         departmentProfileDTO.setId(departmentProfile.getId());
-        departmentProfileDTO.setEmployeeDTO(new EmployeeProfileServiceImpl(employeeProfileRepository).getById(departmentProfile.getEmployee().getId()));
-        departmentProfileDTO.setDepartmentDTO(new io.softwaregarage.hris.admin.services.impls.DepartmentServiceImpl(departmentRepository).getById(departmentProfile.getDepartment().getId()));
+        departmentProfileDTO.setEmployeeDTO(new EmployeeProfileServiceImpl(employeeProfileRepository)
+                .getById(departmentProfile.getEmployee().getId()));
+        departmentProfileDTO.setDepartmentDTO(departmentService.getById(departmentProfile.getDepartment().getId()));
         departmentProfileDTO.setCurrentDepartment(departmentProfile.isCurrentDepartment());
         departmentProfileDTO.setCreatedBy(departmentProfile.getCreatedBy());
         departmentProfileDTO.setDateAndTimeCreated(departmentProfile.getDateAndTimeCreated());
@@ -104,15 +111,13 @@ public class DepartmentProfileServiceImpl implements DepartmentProfileService {
         List<DepartmentProfileDTO> departmentProfileDTOList = new ArrayList<>();
 
         if (!departmentProfileList.isEmpty()) {
-            EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
-            io.softwaregarage.hris.admin.services.DepartmentService positionService = new io.softwaregarage.hris.admin.services.impls.DepartmentServiceImpl(departmentRepository);
 
             for (DepartmentProfile departmentProfile : departmentProfileList) {
                 DepartmentProfileDTO departmentProfileDTO = new DepartmentProfileDTO();
 
                 departmentProfileDTO.setId(departmentProfile.getId());
                 departmentProfileDTO.setEmployeeDTO(employeeProfileService.getById(departmentProfile.getEmployee().getId()));
-                departmentProfileDTO.setDepartmentDTO(positionService.getById(departmentProfile.getDepartment().getId()));
+                departmentProfileDTO.setDepartmentDTO(departmentService.getById(departmentProfile.getDepartment().getId()));
                 departmentProfileDTO.setCurrentDepartment(departmentProfile.isCurrentDepartment());
                 departmentProfileDTO.setCreatedBy(departmentProfile.getCreatedBy());
                 departmentProfileDTO.setDateAndTimeCreated(departmentProfile.getDateAndTimeCreated());
@@ -144,15 +149,12 @@ public class DepartmentProfileServiceImpl implements DepartmentProfileService {
         if (!departmentProfileList.isEmpty()) {
             logger.info("Employee's department records with parameter '%".concat(param).concat("%' has successfully retrieved."));
 
-            EmployeeProfileService employeeProfileService = new EmployeeProfileServiceImpl(employeeProfileRepository);
-            DepartmentService positionService = new io.softwaregarage.hris.admin.services.impls.DepartmentServiceImpl(departmentRepository);
-
             for (DepartmentProfile departmentProfile : departmentProfileList) {
                 DepartmentProfileDTO departmentProfileDTO = new DepartmentProfileDTO();
 
                 departmentProfileDTO.setId(departmentProfile.getId());
                 departmentProfileDTO.setEmployeeDTO(employeeProfileService.getById(departmentProfile.getEmployee().getId()));
-                departmentProfileDTO.setDepartmentDTO(positionService.getById(departmentProfile.getDepartment().getId()));
+                departmentProfileDTO.setDepartmentDTO(departmentService.getById(departmentProfile.getDepartment().getId()));
                 departmentProfileDTO.setCurrentDepartment(departmentProfile.isCurrentDepartment());
                 departmentProfileDTO.setCreatedBy(departmentProfile.getCreatedBy());
                 departmentProfileDTO.setDateAndTimeCreated(departmentProfile.getDateAndTimeCreated());

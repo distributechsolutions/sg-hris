@@ -17,25 +17,49 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import io.softwaregarage.hris.admin.dtos.DepartmentDTO;
+import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.DepartmentService;
+import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.commons.views.MainLayout;
+import io.softwaregarage.hris.profile.dtos.DepartmentProfileDTO;
+import io.softwaregarage.hris.profile.services.DepartmentProfileService;
+import io.softwaregarage.hris.utils.SecurityUtil;
 
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
+import java.util.List;
+
 @RolesAllowed({"ROLE_ADMIN", "ROLE_HR_MANAGER", "ROLE_HR_SUPERVISOR"})
 @PageTitle("Departments")
 @Route(value = "department-list", layout = MainLayout.class)
 public class DepartmentListView extends VerticalLayout {
-    @Resource private final DepartmentService departmentService;
+    @Resource
+    private final DepartmentService departmentService;
+
+    @Resource
+    private final DepartmentProfileService departmentProfileService;
+
+    @Resource
+    private final UserService userService;
+
+    private UserDTO userDTO;
 
     private TextField searchFilterTextField;
     private Grid<DepartmentDTO> departmentDTOGrid;
 
-    public DepartmentListView(DepartmentService departmentService) {
+    public DepartmentListView(DepartmentService departmentService,
+                              DepartmentProfileService departmentProfileService,
+                              UserService userService) {
         this.departmentService = departmentService;
+        this.departmentProfileService = departmentProfileService;
+        this.userService = userService;
+
+        if (SecurityUtil.getAuthenticatedUser() != null) {
+            userDTO = userService.getByUsername(SecurityUtil.getAuthenticatedUser().getUsername());
+        }
 
         this.add(buildHeaderToolbar(), buildDepartmentDTOGrid());
         this.setSizeFull();
@@ -108,47 +132,62 @@ public class DepartmentListView extends VerticalLayout {
         }));
 
         Button deleteButton = new Button();
-        deleteButton.setTooltipText("Delete Position");
+        deleteButton.setTooltipText("Delete Department");
         deleteButton.setIcon(LineAwesomeIcon.TRASH_ALT_SOLID.create());
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.addClickListener(buttonClickEvent -> {
             if (departmentDTOGrid.getSelectionModel().getFirstSelectedItem().isPresent()) {
-                // Show the confirmation dialog.
-                ConfirmDialog confirmDialog = new ConfirmDialog();
-                confirmDialog.setHeader("Delete Department");
-                confirmDialog.setText(new Html("""
+                DepartmentDTO selectedDepartmentDTO = departmentDTOGrid.getSelectionModel().getFirstSelectedItem().get();
+
+                List<DepartmentProfileDTO> departmentProfileDTOList = departmentProfileService.findByParameter(selectedDepartmentDTO.getCode());
+                if (departmentProfileDTOList.isEmpty()) {
+                    // Show the confirmation dialog.
+                    ConfirmDialog confirmDialog = new ConfirmDialog();
+                    confirmDialog.setHeader("Delete Department");
+                    confirmDialog.setText(new Html("""
                                                <p>
                                                WARNING! Before deleting this department, be sure that there are no
                                                employees assigned to it. Are you sure you want to delete the selected
                                                department?
                                                </p>
                                                """));
-                confirmDialog.setConfirmText("Yes, Delete it.");
-                confirmDialog.setConfirmButtonTheme("error primary");
-                confirmDialog.addConfirmListener(confirmEvent -> {
-                    // Get the selected department and delete it.
-                    DepartmentDTO selectedDepartmentDTO = departmentDTOGrid.getSelectionModel().getFirstSelectedItem().get();
-                    departmentService.delete(selectedDepartmentDTO);
+                    confirmDialog.setConfirmText("Yes, Delete it.");
+                    confirmDialog.setConfirmButtonTheme("error primary");
+                    confirmDialog.addConfirmListener(confirmEvent -> {
+                        // Get the selected department and delete it.
+                        departmentService.delete(selectedDepartmentDTO);
 
-                    // Refresh the data grid from the backend after the delete operation.
-                    departmentDTOGrid.getDataProvider().refreshAll();
+                        // Refresh the data grid from the backend after the delete operation.
+                        departmentDTOGrid.getDataProvider().refreshAll();
 
+                        // Show notification message.
+                        Notification notification = Notification.show("You have successfully deleted the selected department.",
+                                5000,
+                                Notification.Position.TOP_CENTER);
+                        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+                        // Close the confirmation dialog.
+                        confirmDialog.close();
+                    });
+                    confirmDialog.setCancelable(true);
+                    confirmDialog.setCancelText("No");
+                    confirmDialog.open();
+                } else {
                     // Show notification message.
-                    Notification notification = Notification.show("You have successfully deleted the selected department.",
-                                                          5000,
-                                                                  Notification.Position.TOP_CENTER);
-                    notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-
-                    // Close the confirmation dialog.
-                    confirmDialog.close();
-                });
-                confirmDialog.setCancelable(true);
-                confirmDialog.setCancelText("No");
-                confirmDialog.open();
+                    Notification notification = Notification.show("You cannot delete the selected department. There are employees assigned to it.",
+                            5000,
+                            Notification.Position.TOP_CENTER);
+                    notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
             }
         });
 
-        rowToolbarLayout.add(viewButton, editButton, deleteButton);
+        if (userDTO.getRole().equals("ROLE_ADMIN")) {
+            rowToolbarLayout.add(viewButton, editButton, deleteButton);
+        } else {
+            rowToolbarLayout.add(viewButton, editButton);
+        }
+
         rowToolbarLayout.setJustifyContentMode(JustifyContentMode.CENTER);
         rowToolbarLayout.getStyle().set("flex-wrap", "wrap");
 

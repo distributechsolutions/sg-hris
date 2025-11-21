@@ -279,8 +279,8 @@ public class EmployeeTimesheetServiceImpl implements EmployeeTimesheetService {
 
     @Override
     public List<EmployeeTimesheetDTO> findByLogDateRange(LocalDate startDate, LocalDate endDate) {
-            List<EmployeeTimesheetDTO> employeeTimesheetDTOLinkedList = new LinkedList<>();
-            List<EmployeeTimesheet> employeeTimesheetList = null;
+        List<EmployeeTimesheetDTO> employeeTimesheetDTOLinkedList = new LinkedList<>();
+        List<EmployeeTimesheet> employeeTimesheetList = null;
 
         if (startDate != null && endDate != null) {
             logger.info("Retrieving employee's timesheet records from the database.");

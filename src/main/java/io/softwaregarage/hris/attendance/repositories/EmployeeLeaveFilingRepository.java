@@ -15,9 +15,9 @@ public interface EmployeeLeaveFilingRepository extends JpaRepository<EmployeeLea
     List<EmployeeLeaveFiling> findByEmployee(@Param("param") EmployeeProfile employeeProfile);
 
     @Query("""
-           SELECT elf FROM EmployeeLeaveFiling elf 
+           SELECT elf FROM EmployeeLeaveFiling elf
            WHERE elf.leaveStatus = :leaveStatusParam
-           AND elf.assignedApproverEmployeeProfile = :employeeParam 
+           AND elf.assignedApproverEmployeeProfile = :employeeParam
            ORDER BY elf.leaveDateAndTimeFrom ASC
            """)
     List<EmployeeLeaveFiling> findByStatusAndAssignedApproverEmployee(@Param("leaveStatusParam") String leaveStatus, @Param("employeeParam") EmployeeProfile employeeProfile);

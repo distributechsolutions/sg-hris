@@ -24,7 +24,11 @@ import com.vaadin.flow.router.Route;
 
 import com.vaadin.flow.server.streams.DownloadEvent;
 import com.vaadin.flow.server.streams.DownloadHandler;
+import io.softwaregarage.hris.admin.dtos.UserDTO;
+import io.softwaregarage.hris.admin.services.UserService;
+import io.softwaregarage.hris.attendance.dtos.EmployeeShiftScheduleDTO;
 import io.softwaregarage.hris.attendance.dtos.EmployeeTimesheetDTO;
+import io.softwaregarage.hris.attendance.services.EmployeeShiftScheduleService;
 import io.softwaregarage.hris.attendance.services.EmployeeTimesheetService;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.services.EmployeeProfileService;
@@ -52,12 +56,15 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 @RolesAllowed({"ROLE_ADMIN",
                "ROLE_HR_MANAGER",
                "ROLE_HR_SUPERVISOR",
-               "ROLE_HR_EMPLOYEE"})
+               "ROLE_MANAGER",
+               "ROLE_SUPERVISOR"})
 @PageTitle("Timesheet Approvals")
 @Route(value = "timesheets-view", layout = MainLayout.class)
 public class EmployeeTimesheetListView extends VerticalLayout {
     @Resource private final EmployeeTimesheetService employeeTimesheetService;
     @Resource private final EmployeeProfileService employeeProfileService;
+    @Resource private final EmployeeShiftScheduleService employeeShiftScheduleService;
+    @Resource private final UserService userService;
 
     private Grid<EmployeeTimesheetDTO> timesheetDTOGrid;
     private ComboBox<EmployeeProfileDTO> employeeDTOComboBox;
@@ -67,9 +74,13 @@ public class EmployeeTimesheetListView extends VerticalLayout {
     private String loggedInUser;
 
     public EmployeeTimesheetListView(EmployeeTimesheetService employeeTimesheetService,
-                                     EmployeeProfileService employeeProfileService) {
+                                     EmployeeProfileService employeeProfileService,
+                                     EmployeeShiftScheduleService employeeShiftScheduleService,
+                                     UserService userService) {
         this.employeeTimesheetService = employeeTimesheetService;
         this.employeeProfileService = employeeProfileService;
+        this.employeeShiftScheduleService = employeeShiftScheduleService;
+        this.userService = userService;
 
         // Get the logged-in user of the system.
         loggedInUser = Objects.requireNonNull(SecurityUtil.getAuthenticatedUser()).getUsername();
@@ -83,12 +94,32 @@ public class EmployeeTimesheetListView extends VerticalLayout {
     public HorizontalLayout buildHeaderToolbar() {
         HorizontalLayout headerToolbarLayout = new HorizontalLayout();
 
+        employeeDTOComboBox = new ComboBox<>("Employee");
+
         // Create the query object that will do the pagination of employee records in the combo box component.
         Query<EmployeeProfileDTO, Void> employeeQuery = new Query<>();
+        List<EmployeeProfileDTO> employeeProfileDTOList = employeeProfileService.getAll(employeeQuery.getPage(), employeeQuery.getPageSize());
+        UserDTO userDTO = userService.getByUsername(loggedInUser);
 
-        employeeDTOComboBox = new ComboBox<>("Employee");
-        employeeDTOComboBox.setItems((employeeDTO, filterString) -> employeeDTO.getEmployeeFullName().toLowerCase().contains(filterString.toLowerCase()),
-                employeeProfileService.getAll(employeeQuery.getPage(), employeeQuery.getPageSize()));
+        if (!"ROLE_ADMIN".equals(userDTO.getRole())) {
+            List<EmployeeProfileDTO> filteredProfiles = employeeProfileDTOList.stream()
+                    .filter(employeeProfileDTO -> employeeShiftScheduleService
+                            .getEmployeeShiftScheduleByEmployeeDTO(employeeProfileDTO).stream()
+                            .filter(EmployeeShiftScheduleDTO::isActiveShift)
+                            .findFirst()
+                            .map(EmployeeShiftScheduleDTO::getAssignedApproverEmployeeProfileDTO)
+                            .filter(obj -> true)
+                            .map(approver -> approver.getEmployeeNumber().equals(userDTO.getEmployeeDTO().getEmployeeNumber()))
+                            .orElse(false))
+                    .toList();
+
+            employeeDTOComboBox.setItems((employeeDTO, filterString) -> employeeDTO
+                            .getEmployeeFullName().toLowerCase().contains(filterString.toLowerCase()), filteredProfiles);
+        } else {
+            employeeDTOComboBox.setItems((employeeDTO, filterString) -> employeeDTO
+                            .getEmployeeFullName().toLowerCase().contains(filterString.toLowerCase()), employeeProfileDTOList);
+        }
+
         employeeDTOComboBox.setItemLabelGenerator(EmployeeProfileDTO::getEmployeeFullName);
         employeeDTOComboBox.setClearButtonVisible(true);
 
@@ -107,8 +138,7 @@ public class EmployeeTimesheetListView extends VerticalLayout {
         searchButton.getStyle().set("display", "block");
         searchButton.addClickListener(event -> {
             executeSearchAndUpdateResult(employeeDTOComboBox.getValue(), startDatePicker.getValue(), endDatePicker.getValue());
-            downloadTimesheetLink.setEnabled((employeeDTOComboBox.getValue() != null && startDatePicker.getValue() != null && endDatePicker.getValue() != null)
-                                            || (employeeDTOComboBox.getValue() == null && startDatePicker.getValue() != null && endDatePicker.getValue() != null));
+            downloadTimesheetLink.setEnabled(timesheetDTOGrid.getDataProvider().size(new Query<>()) >= 1);
         });
 
         headerToolbarLayout.add(employeeDTOComboBox,
