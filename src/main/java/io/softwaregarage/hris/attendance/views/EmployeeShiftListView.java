@@ -232,8 +232,10 @@ public class EmployeeShiftListView extends VerticalLayout {
                         // Delete first the related timesheet of the employee.
                         List<EmployeeTimesheetDTO> employeeTimesheetDTOList = employeeTimesheetService
                                 .findByEmployeeDTO(selectedEmployeeShiftScheduleDTO.getEmployeeDTO());
-                        for (EmployeeTimesheetDTO employeeTimesheetDTO : employeeTimesheetDTOList) {
-                            employeeTimesheetService.delete(employeeTimesheetDTO);
+                        if (!employeeTimesheetDTOList.isEmpty()) {
+                            for (EmployeeTimesheetDTO employeeTimesheetDTO : employeeTimesheetDTOList) {
+                                employeeTimesheetService.delete(employeeTimesheetDTO);
+                            }
                         }
 
                         // Get the selected department and delete it.

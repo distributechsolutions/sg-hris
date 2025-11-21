@@ -22,8 +22,8 @@ import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.profile.dtos.PositionProfileDTO;
 import io.softwaregarage.hris.profile.services.PositionProfileService;
 import io.softwaregarage.hris.commons.views.MainLayout;
-
 import io.softwaregarage.hris.utils.SecurityUtil;
+
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
