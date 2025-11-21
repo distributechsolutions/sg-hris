@@ -23,13 +23,16 @@ import java.util.UUID;
 @Service
 public class EmployeeShiftScheduleServiceImpl implements EmployeeShiftScheduleService {
     private final Logger logger = LoggerFactory.getLogger(EmployeeShiftScheduleServiceImpl.class);
-    private EmployeeShiftScheduleRepository employeeShiftScheduleRepository;
+    private final EmployeeShiftScheduleRepository employeeShiftScheduleRepository;
     private final EmployeeProfileRepository employeeProfileRepository;
+    private final EmployeeProfileService employeeProfileService;
 
     public EmployeeShiftScheduleServiceImpl(EmployeeShiftScheduleRepository employeeShiftScheduleRepository,
-                                            EmployeeProfileRepository employeeProfileRepository) {
+                                            EmployeeProfileRepository employeeProfileRepository,
+                                            EmployeeProfileService employeeProfileService) {
         this.employeeShiftScheduleRepository = employeeShiftScheduleRepository;
         this.employeeProfileRepository = employeeProfileRepository;
+        this.employeeProfileService = employeeProfileService;
     }
 
     @Override
@@ -48,6 +51,7 @@ public class EmployeeShiftScheduleServiceImpl implements EmployeeShiftScheduleSe
         }
 
         employeeShiftSchedule.setEmployee(employeeProfileRepository.getReferenceById(object.getEmployeeDTO().getId()));
+        employeeShiftSchedule.setAssignedApproverEmployeeProfile(employeeProfileRepository.getReferenceById(object.getAssignedApproverEmployeeProfileDTO().getId()));
         employeeShiftSchedule.setShiftSchedule(object.getShiftSchedule());
         employeeShiftSchedule.setShiftHours(object.getShiftHours());
         employeeShiftSchedule.setShiftScheduledDays(object.getShiftScheduledDays());
@@ -69,7 +73,8 @@ public class EmployeeShiftScheduleServiceImpl implements EmployeeShiftScheduleSe
         EmployeeShiftScheduleDTO employeeShiftScheduleDTO = new EmployeeShiftScheduleDTO();
 
         employeeShiftScheduleDTO.setId(employeeShiftSchedule.getId());
-        employeeShiftScheduleDTO.setEmployeeDTO(new EmployeeProfileServiceImpl(employeeProfileRepository).getById(employeeShiftSchedule.getEmployee().getId()));
+        employeeShiftScheduleDTO.setEmployeeDTO(employeeProfileService.getById(employeeShiftSchedule.getEmployee().getId()));
+        employeeShiftScheduleDTO.setAssignedApproverEmployeeProfileDTO(employeeProfileService.getById(employeeShiftSchedule.getAssignedApproverEmployeeProfile().getId()));
         employeeShiftScheduleDTO.setShiftSchedule(employeeShiftSchedule.getShiftSchedule());
         employeeShiftScheduleDTO.setShiftHours(employeeShiftSchedule.getShiftHours());
         employeeShiftScheduleDTO.setShiftScheduledDays(employeeShiftSchedule.getShiftScheduledDays());
@@ -114,6 +119,7 @@ public class EmployeeShiftScheduleServiceImpl implements EmployeeShiftScheduleSe
 
                 employeeShiftScheduleDTO.setId(employeeShiftSchedule.getId());
                 employeeShiftScheduleDTO.setEmployeeDTO(employeeProfileService.getById(employeeShiftSchedule.getEmployee().getId()));
+                employeeShiftScheduleDTO.setAssignedApproverEmployeeProfileDTO(employeeProfileService.getById(employeeShiftSchedule.getAssignedApproverEmployeeProfile().getId()));
                 employeeShiftScheduleDTO.setShiftSchedule(employeeShiftSchedule.getShiftSchedule());
                 employeeShiftScheduleDTO.setShiftHours(employeeShiftSchedule.getShiftHours());
                 employeeShiftScheduleDTO.setShiftScheduledDays(employeeShiftSchedule.getShiftScheduledDays());
@@ -155,6 +161,7 @@ public class EmployeeShiftScheduleServiceImpl implements EmployeeShiftScheduleSe
 
                 employeeShiftScheduleDTO.setId(employeeShiftSchedule.getId());
                 employeeShiftScheduleDTO.setEmployeeDTO(employeeProfileService.getById(employeeProfileDTO.getId()));
+                employeeShiftScheduleDTO.setAssignedApproverEmployeeProfileDTO(employeeProfileService.getById(employeeShiftSchedule.getAssignedApproverEmployeeProfile().getId()));
                 employeeShiftScheduleDTO.setShiftSchedule(employeeShiftSchedule.getShiftSchedule());
                 employeeShiftScheduleDTO.setShiftHours(employeeShiftSchedule.getShiftHours());
                 employeeShiftScheduleDTO.setShiftScheduledDays(employeeShiftSchedule.getShiftScheduledDays());

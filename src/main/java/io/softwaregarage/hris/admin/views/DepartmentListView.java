@@ -108,7 +108,7 @@ public class DepartmentListView extends VerticalLayout {
         }));
 
         Button deleteButton = new Button();
-        deleteButton.setTooltipText("Delete Position");
+        deleteButton.setTooltipText("Delete Department");
         deleteButton.setIcon(LineAwesomeIcon.TRASH_ALT_SOLID.create());
         deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         deleteButton.addClickListener(buttonClickEvent -> {
