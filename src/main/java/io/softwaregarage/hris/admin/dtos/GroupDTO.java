@@ -2,10 +2,10 @@ package io.softwaregarage.hris.admin.dtos;
 
 import io.softwaregarage.hris.commons.BaseDTO;
 
-public class DepartmentDTO extends BaseDTO {
+public class GroupDTO extends BaseDTO {
     private String code;
     private String name;
-    private GroupDTO groupDTO;
+    private String description;
 
     public String getCode() {
         return code;
@@ -23,11 +23,11 @@ public class DepartmentDTO extends BaseDTO {
         this.name = name;
     }
 
-    public GroupDTO getGroupDTO() {
-        return groupDTO;
+    public String getDescription() {
+        return description;
     }
 
-    public void setGroupDTO(GroupDTO groupDTO) {
-        this.groupDTO = groupDTO;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

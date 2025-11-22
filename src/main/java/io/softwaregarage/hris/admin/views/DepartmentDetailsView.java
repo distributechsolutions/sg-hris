@@ -5,9 +5,11 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+
 import io.softwaregarage.hris.admin.dtos.DepartmentDTO;
 import io.softwaregarage.hris.admin.services.DepartmentService;
 import io.softwaregarage.hris.commons.views.MainLayout;
+
 import jakarta.annotation.Resource;
 import jakarta.annotation.security.RolesAllowed;
 
@@ -18,7 +20,9 @@ import java.util.UUID;
 @PageTitle("Department Details")
 @Route(value = "department-details", layout = MainLayout.class)
 public class DepartmentDetailsView extends VerticalLayout implements HasUrlParameter<String> {
-    @Resource private final DepartmentService departmentService;
+    @Resource
+    private final DepartmentService departmentService;
+
     private DepartmentDTO departmentDTO;
 
     private final FormLayout departmentDetailsLayout = new FormLayout();
@@ -60,6 +64,12 @@ public class DepartmentDetailsView extends VerticalLayout implements HasUrlParam
         Span departmentNameValueSpan = new Span(departmentDTO.getName());
         departmentNameValueSpan.getStyle().setFontWeight("bold");
 
+        Span departmentGroupLabelSpan = new Span("Group");
+        departmentGroupLabelSpan.getStyle().set("text-align", "right");
+
+        Span departmentGroupValueSpan = new Span(departmentDTO.getGroupDTO().getName());
+        departmentGroupValueSpan.getStyle().setFontWeight("bold");
+
         Span createdByLabelSpan = new Span("Created by");
         createdByLabelSpan.getStyle().set("text-align", "right");
 
@@ -88,6 +98,8 @@ public class DepartmentDetailsView extends VerticalLayout implements HasUrlParam
                 departmentCodeValueSpan,
                 departmentNameLabelSpan,
                 departmentNameValueSpan,
+                departmentGroupLabelSpan,
+                departmentGroupValueSpan,
                 createdByLabelSpan,
                 createdByValueSpan,
                 dateCreatedLabelSpan,
