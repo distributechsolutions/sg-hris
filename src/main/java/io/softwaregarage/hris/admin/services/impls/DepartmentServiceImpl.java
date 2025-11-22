@@ -1,9 +1,13 @@
 package io.softwaregarage.hris.admin.services.impls;
 
 import io.softwaregarage.hris.admin.dtos.DepartmentDTO;
+import io.softwaregarage.hris.admin.dtos.GroupDTO;
 import io.softwaregarage.hris.admin.entities.Department;
 import io.softwaregarage.hris.admin.repositories.DepartmentRepository;
+import io.softwaregarage.hris.admin.repositories.GroupRepository;
 import io.softwaregarage.hris.admin.services.DepartmentService;
+import io.softwaregarage.hris.admin.services.GroupService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
@@ -17,11 +21,17 @@ import java.util.UUID;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
-    private final Logger logger = LoggerFactory.getLogger(PositionServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(DepartmentServiceImpl.class);
     private final DepartmentRepository departmentRepository;
+    private final GroupRepository groupRepository;
+    private final GroupService groupService;
 
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository) {
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository,
+                                 GroupRepository groupRepository,
+                                 GroupService groupService) {
         this.departmentRepository = departmentRepository;
+        this.groupRepository = groupRepository;
+        this.groupService = groupService;
     }
 
     @Override
@@ -39,9 +49,9 @@ public class DepartmentServiceImpl implements DepartmentService {
             logMessage = "Department record is successfully created.";
         }
 
-
         department.setCode(object.getCode());
         department.setName(object.getName());
+        department.setGroup(groupRepository.getReferenceById(object.getGroupDTO().getId()));
         department.setUpdatedBy(object.getUpdatedBy());
         department.setDateAndTimeUpdated(LocalDateTime.now(ZoneId.of("Asia/Manila")));
 
@@ -59,6 +69,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentDTO.setId(department.getId());
         departmentDTO.setCode(department.getCode());
         departmentDTO.setName(department.getName());
+        departmentDTO.setGroupDTO(groupService.getById(department.getGroup().getId()));
         departmentDTO.setCreatedBy(department.getCreatedBy());
         departmentDTO.setDateAndTimeCreated(department.getDateAndTimeCreated());
         departmentDTO.setUpdatedBy(department.getUpdatedBy());
@@ -97,6 +108,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                 departmentDTO.setId(department.getId());
                 departmentDTO.setCode(department.getCode());
                 departmentDTO.setName(department.getName());
+                departmentDTO.setGroupDTO(groupService.getById(department.getGroup().getId()));
                 departmentDTO.setCreatedBy(department.getCreatedBy());
                 departmentDTO.setDateAndTimeCreated(department.getDateAndTimeCreated());
                 departmentDTO.setUpdatedBy(department.getUpdatedBy());
@@ -127,6 +139,36 @@ public class DepartmentServiceImpl implements DepartmentService {
                 departmentDTO.setId(department.getId());
                 departmentDTO.setCode(department.getCode());
                 departmentDTO.setName(department.getName());
+                departmentDTO.setGroupDTO(groupService.getById(department.getGroup().getId()));
+                departmentDTO.setCreatedBy(department.getCreatedBy());
+                departmentDTO.setDateAndTimeCreated(department.getDateAndTimeCreated());
+                departmentDTO.setUpdatedBy(department.getUpdatedBy());
+                departmentDTO.setDateAndTimeUpdated(department.getDateAndTimeUpdated());
+
+                departmentDTOList.add(departmentDTO);
+            }
+        }
+
+        return departmentDTOList;
+    }
+
+    @Override
+    public List<DepartmentDTO> getDepartmentsByGroup(GroupDTO groupDTO) {
+        logger.info("Retrieving department records from group '".concat(groupDTO.getName()).concat("' in the database."));
+
+        List<DepartmentDTO> departmentDTOList = new ArrayList<>();
+        List<Department> departmentList = departmentRepository.findByGroup(groupRepository.getReferenceById(groupDTO.getId()));
+
+        if (!departmentList.isEmpty()) {
+            logger.info("Department records from group '".concat(groupDTO.getName()).concat("' has successfully retrieved."));
+
+            for (Department department : departmentList) {
+                DepartmentDTO departmentDTO = new DepartmentDTO();
+
+                departmentDTO.setId(department.getId());
+                departmentDTO.setCode(department.getCode());
+                departmentDTO.setName(department.getName());
+                departmentDTO.setGroupDTO(groupService.getById(department.getGroup().getId()));
                 departmentDTO.setCreatedBy(department.getCreatedBy());
                 departmentDTO.setDateAndTimeCreated(department.getDateAndTimeCreated());
                 departmentDTO.setUpdatedBy(department.getUpdatedBy());

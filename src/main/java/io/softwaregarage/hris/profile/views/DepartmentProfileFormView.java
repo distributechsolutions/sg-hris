@@ -17,6 +17,7 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import io.softwaregarage.hris.admin.dtos.DepartmentDTO;
 import io.softwaregarage.hris.admin.services.DepartmentService;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.profile.dtos.DepartmentProfileDTO;
@@ -92,12 +93,12 @@ public class DepartmentProfileFormView extends VerticalLayout implements HasUrlP
         if (departmentProfileDTO != null) employeeDTOComboBox.setValue(departmentProfileDTO.getEmployeeDTO());
 
         // Create the query object that will do the pagination of position records in the combo box component.
-        Query<io.softwaregarage.hris.admin.dtos.DepartmentDTO, Void> departmentQuery = new Query<>();
+        Query<DepartmentDTO, Void> departmentQuery = new Query<>();
 
         departmentDTOComboBox = new ComboBox<>("Department");
         departmentDTOComboBox.setItems((departmentDTO, filterString) -> departmentDTO.getName().toLowerCase().contains(filterString.toLowerCase()),
                 departmentService.getAll(departmentQuery.getPage(), departmentQuery.getPageSize()));
-        departmentDTOComboBox.setItemLabelGenerator(io.softwaregarage.hris.admin.dtos.DepartmentDTO::getName);
+        departmentDTOComboBox.setItemLabelGenerator(DepartmentDTO::getName);
         departmentDTOComboBox.setClearButtonVisible(true);
         departmentDTOComboBox.setRequired(true);
         departmentDTOComboBox.setRequiredIndicatorVisible(true);

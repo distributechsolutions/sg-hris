@@ -23,8 +23,7 @@ import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
-import io.softwaregarage.hris.admin.views.DepartmentListView;
-import io.softwaregarage.hris.admin.views.PositionListView;
+import io.softwaregarage.hris.admin.views.*;
 import io.softwaregarage.hris.compenben.views.*;
 import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.UserService;
@@ -33,7 +32,6 @@ import io.softwaregarage.hris.configs.SecurityConfig;
 import io.softwaregarage.hris.profile.dtos.DocumentProfileDTO;
 import io.softwaregarage.hris.profile.services.DocumentProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
-import io.softwaregarage.hris.admin.views.UserListView;
 import io.softwaregarage.hris.attendance.views.EmployeeShiftListView;
 import io.softwaregarage.hris.attendance.views.EmployeeLeaveApprovalsListView;
 import io.softwaregarage.hris.attendance.views.EmployeeTimesheetListView;
@@ -41,7 +39,6 @@ import io.softwaregarage.hris.compenben.views.PayrollGeneratorView;
 import io.softwaregarage.hris.profile.views.DepartmentProfileListView;
 import io.softwaregarage.hris.profile.views.EmployeeProfileListView;
 import io.softwaregarage.hris.profile.views.PositionProfileListView;
-import io.softwaregarage.hris.admin.views.CalendarHolidaysListView;
 import io.softwaregarage.hris.utils.StringUtil;
 
 import jakarta.annotation.Resource;
@@ -287,6 +284,7 @@ public class MainLayout extends AppLayout {
         }
 
         if (userDTO.getRole().equals("ROLE_ADMIN")) {
+            navItem.addItem(new SideNavItem("Groups", GroupListView.class, LineAwesomeIcon.USERS_SOLID.create()));
             navItem.addItem(new SideNavItem("Users", UserListView.class, LineAwesomeIcon.USER_LOCK_SOLID.create()));
         }
 
