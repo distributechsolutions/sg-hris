@@ -2,6 +2,7 @@ package io.softwaregarage.hris.admin.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -9,10 +10,13 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.*;
 
 import io.softwaregarage.hris.admin.dtos.DepartmentDTO;
+import io.softwaregarage.hris.admin.dtos.GroupDTO;
 import io.softwaregarage.hris.admin.services.DepartmentService;
+import io.softwaregarage.hris.admin.services.GroupService;
 import io.softwaregarage.hris.utils.SecurityUtil;
 import io.softwaregarage.hris.commons.views.MainLayout;
 
@@ -26,15 +30,23 @@ import java.util.UUID;
 @PageTitle("Department Form")
 @Route(value = "department-form", layout = MainLayout.class)
 public class DepartmentFormView extends VerticalLayout implements HasUrlParameter<String> {
-    @Resource private final DepartmentService departmentService;
+    @Resource
+    private final DepartmentService departmentService;
+
+    @Resource
+    private final GroupService groupService;
+
     private DepartmentDTO departmentDTO;
     private UUID parameterId;
 
     private final FormLayout departmentDTOFormLayout = new FormLayout();
     private TextField codeTextField, nameTextField;
+    private ComboBox<GroupDTO> groupComboBox;
 
-    public DepartmentFormView(DepartmentService departmentService) {
+    public DepartmentFormView(DepartmentService departmentService,
+                              GroupService groupService) {
         this.departmentService = departmentService;
+        this.groupService = groupService;
 
         add(departmentDTOFormLayout);
         setSizeFull();
@@ -66,6 +78,17 @@ public class DepartmentFormView extends VerticalLayout implements HasUrlParamete
         nameTextField.setRequiredIndicatorVisible(true);
         if (departmentDTO != null) nameTextField.setValue(departmentDTO.getName());
 
+        Query<GroupDTO, Void> groupQuery = new Query<>();
+        groupComboBox = new ComboBox<>("Group");
+        groupComboBox.setItems((groupDTO, filterString) -> groupDTO.getName()
+                .toLowerCase().contains(filterString.toLowerCase()),
+                groupService.getAll(groupQuery.getPage(), groupQuery.getPageSize()));
+        groupComboBox.setItemLabelGenerator(GroupDTO::getName);
+        groupComboBox.setRequiredIndicatorVisible(true);
+        groupComboBox.setRequired(true);
+        groupComboBox.setClearButtonVisible(true);
+        if (departmentDTO != null) groupComboBox.setValue(departmentDTO.getGroupDTO());
+
         Button saveButton = new Button("Save");
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         saveButton.addClickListener(buttonClickEvent -> {
@@ -85,6 +108,7 @@ public class DepartmentFormView extends VerticalLayout implements HasUrlParamete
 
         departmentDTOFormLayout.add(codeTextField,
                                   nameTextField,
+                                  groupComboBox,
                                   buttonLayout);
         departmentDTOFormLayout.setColspan(buttonLayout, 2);
         departmentDTOFormLayout.setMaxWidth("720px");
@@ -102,6 +126,7 @@ public class DepartmentFormView extends VerticalLayout implements HasUrlParamete
 
         departmentDTO.setCode(codeTextField.getValue());
         departmentDTO.setName(nameTextField.getValue());
+        departmentDTO.setGroupDTO(groupComboBox.getValue());
         departmentDTO.setUpdatedBy(loggedInUser);
 
         departmentService.saveOrUpdate(departmentDTO);

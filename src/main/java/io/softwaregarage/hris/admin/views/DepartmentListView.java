@@ -93,6 +93,8 @@ public class DepartmentListView extends VerticalLayout {
 
         departmentDTOGrid.addColumn(DepartmentDTO::getCode).setHeader("Code").setSortable(true);
         departmentDTOGrid.addColumn(DepartmentDTO::getName).setHeader("Name").setSortable(true);
+        departmentDTOGrid.addColumn(departmentDTO -> departmentDTO.getGroupDTO().getName())
+                .setHeader("Group").setSortable(true);
         departmentDTOGrid.addComponentColumn(userDTO -> buildRowToolbar()).setHeader("Action");
         departmentDTOGrid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES,
                                            GridVariant.LUMO_COLUMN_BORDERS,
