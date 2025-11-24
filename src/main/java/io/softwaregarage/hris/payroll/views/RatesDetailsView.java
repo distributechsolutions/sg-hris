@@ -1,4 +1,4 @@
-package io.softwaregarage.hris.compenben.views;
+package io.softwaregarage.hris.payroll.views;
 
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
@@ -9,9 +9,9 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import io.softwaregarage.hris.compenben.dtos.RatesDTO;
+import io.softwaregarage.hris.payroll.dtos.RatesDTO;
 import io.softwaregarage.hris.compenben.services.AllowanceService;
-import io.softwaregarage.hris.compenben.services.RatesService;
+import io.softwaregarage.hris.payroll.services.RatesService;
 import io.softwaregarage.hris.commons.views.MainLayout;
 
 import jakarta.annotation.Resource;
@@ -25,8 +25,11 @@ import java.util.UUID;
 @PageTitle("Rates Details")
 @Route(value = "rates-details", layout = MainLayout.class)
 public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<String> {
-    @Resource private final RatesService ratesService;
-    @Resource private final AllowanceService allowanceService;
+    @Resource
+    private final RatesService ratesService;
+
+    @Resource
+    private final AllowanceService allowanceService;
 
     private RatesDTO ratesDTO;
 

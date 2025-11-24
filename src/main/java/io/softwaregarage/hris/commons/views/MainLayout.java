@@ -29,13 +29,15 @@ import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.UserService;
 import io.softwaregarage.hris.attendance.services.EmployeeLeaveFilingService;
 import io.softwaregarage.hris.configs.SecurityConfig;
+import io.softwaregarage.hris.payroll.views.RatesListView;
+import io.softwaregarage.hris.payroll.views.TaxExemptionsListView;
 import io.softwaregarage.hris.profile.dtos.DocumentProfileDTO;
 import io.softwaregarage.hris.profile.services.DocumentProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
 import io.softwaregarage.hris.attendance.views.EmployeeShiftListView;
 import io.softwaregarage.hris.attendance.views.EmployeeLeaveApprovalsListView;
 import io.softwaregarage.hris.attendance.views.EmployeeTimesheetListView;
-import io.softwaregarage.hris.compenben.views.PayrollGeneratorView;
+import io.softwaregarage.hris.payroll.views.PayrollGeneratorView;
 import io.softwaregarage.hris.profile.views.DepartmentProfileListView;
 import io.softwaregarage.hris.profile.views.EmployeeProfileListView;
 import io.softwaregarage.hris.profile.views.PositionProfileListView;
@@ -54,9 +56,14 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
  * The main view is a top-level placeholder for other views.
  */
 public class MainLayout extends AppLayout {
-    @Resource private final UserService userService;
-    @Resource private final EmployeeLeaveFilingService employeeLeaveFilingService;
-    @Resource private final DocumentProfileService documentProfileService;
+    @Resource
+    private final UserService userService;
+
+    @Resource
+    private final EmployeeLeaveFilingService employeeLeaveFilingService;
+
+    @Resource
+    private final DocumentProfileService documentProfileService;
 
     private UserDTO userDTO;
     private H1 viewTitle;
@@ -178,6 +185,10 @@ public class MainLayout extends AppLayout {
             nav.addItem(this.createCompenbenNavigation());
         }
 
+        if (!this.createPayrollNavigation().getItems().isEmpty()) {
+            nav.addItem(this.createPayrollNavigation());
+        }
+
         if (!this.createAdminNavigation().getItems().isEmpty()) {
             nav.addItem(this.createAdminNavigation());
         }
@@ -249,7 +260,6 @@ public class MainLayout extends AppLayout {
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR")) {
-            navItem.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
             navItem.addItem(new SideNavItem("Allowances", AllowanceListView.class, LineAwesomeIcon.COINS_SOLID.create()));
             navItem.addItem(new SideNavItem("Contributions", GovernmentContributionsListView.class, LineAwesomeIcon.HAND_HOLDING_USD_SOLID.create()));
             navItem.addItem(new SideNavItem("Loan Deductions", LoanDeductionListView.class, LineAwesomeIcon.MONEY_BILL_WAVE_SOLID.create()));
@@ -267,7 +277,9 @@ public class MainLayout extends AppLayout {
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
                 userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
                 userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
-            navItem.addItem(new SideNavItem("Payroll Generator", PayrollGeneratorView.class, LineAwesomeIcon.FILE_INVOICE_DOLLAR_SOLID.create()));
+            navItem.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
+            navItem.addItem(new SideNavItem("Tax Exemptions", TaxExemptionsListView.class, LineAwesomeIcon.PERCENTAGE_SOLID.create()));
+            navItem.addItem(new SideNavItem("Generate Payroll", PayrollGeneratorView.class, LineAwesomeIcon.FILE_INVOICE_DOLLAR_SOLID.create()));
         }
 
         return navItem;

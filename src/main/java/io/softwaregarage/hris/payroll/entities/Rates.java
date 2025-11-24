@@ -1,4 +1,4 @@
-package io.softwaregarage.hris.compenben.entities;
+package io.softwaregarage.hris.payroll.entities;
 
 import io.softwaregarage.hris.commons.BaseEntity;
 import io.softwaregarage.hris.profile.entities.EmployeeProfile;

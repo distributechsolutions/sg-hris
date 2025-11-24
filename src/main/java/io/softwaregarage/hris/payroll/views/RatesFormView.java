@@ -1,4 +1,4 @@
-package io.softwaregarage.hris.compenben.views;
+package io.softwaregarage.hris.payroll.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -19,10 +19,10 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import io.softwaregarage.hris.compenben.dtos.RatesDTO;
+import io.softwaregarage.hris.payroll.dtos.RatesDTO;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 import io.softwaregarage.hris.compenben.services.AllowanceService;
-import io.softwaregarage.hris.compenben.services.RatesService;
+import io.softwaregarage.hris.payroll.services.RatesService;
 import io.softwaregarage.hris.profile.services.EmployeeProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
 import io.softwaregarage.hris.commons.views.MainLayout;
@@ -40,9 +40,14 @@ import java.util.UUID;
 @PageTitle("Rates Form")
 @Route(value = "rates-form", layout = MainLayout.class)
 public class RatesFormView extends VerticalLayout implements HasUrlParameter<String> {
-    @Resource private final RatesService ratesService;
-    @Resource private final EmployeeProfileService employeeProfileService;
-    @Resource private final AllowanceService allowanceService;
+    @Resource
+    private final RatesService ratesService;
+
+    @Resource
+    private final EmployeeProfileService employeeProfileService;
+
+    @Resource
+    private final AllowanceService allowanceService;
 
     private RatesDTO ratesDTO;
     private UUID parameterId;

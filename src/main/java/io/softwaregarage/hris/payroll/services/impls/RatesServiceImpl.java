@@ -1,11 +1,11 @@
-package io.softwaregarage.hris.compenben.services.impls;
+package io.softwaregarage.hris.payroll.services.impls;
 
-import io.softwaregarage.hris.compenben.dtos.RatesDTO;
+import io.softwaregarage.hris.payroll.dtos.RatesDTO;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
-import io.softwaregarage.hris.compenben.entities.Rates;
-import io.softwaregarage.hris.compenben.repositories.RatesRepository;
+import io.softwaregarage.hris.payroll.entities.Rates;
+import io.softwaregarage.hris.payroll.repositories.RatesRepository;
 import io.softwaregarage.hris.profile.repositories.EmployeeProfileRepository;
-import io.softwaregarage.hris.compenben.services.RatesService;
+import io.softwaregarage.hris.payroll.services.RatesService;
 import io.softwaregarage.hris.profile.services.impls.EmployeeProfileServiceImpl;
 import io.softwaregarage.hris.profile.services.EmployeeProfileService;
 
@@ -78,7 +78,6 @@ public class RatesServiceImpl implements RatesService {
         ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
         ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
         ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
-        ratesDTO.setUpdatedBy(rates.getUpdatedBy());
         ratesDTO.setCreatedBy(rates.getCreatedBy());
         ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());
         ratesDTO.setUpdatedBy(rates.getUpdatedBy());
@@ -125,7 +124,6 @@ public class RatesServiceImpl implements RatesService {
                 ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
                 ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
                 ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
-                ratesDTO.setUpdatedBy(rates.getUpdatedBy());
                 ratesDTO.setCreatedBy(rates.getCreatedBy());
                 ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());
                 ratesDTO.setUpdatedBy(rates.getUpdatedBy());
@@ -164,7 +162,6 @@ public class RatesServiceImpl implements RatesService {
                 ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
                 ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
                 ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
-                ratesDTO.setUpdatedBy(rates.getUpdatedBy());
                 ratesDTO.setCreatedBy(rates.getCreatedBy());
                 ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());
                 ratesDTO.setUpdatedBy(rates.getUpdatedBy());
@@ -195,7 +192,6 @@ public class RatesServiceImpl implements RatesService {
         ratesDTO.setOvertimeHourlyCompensationRate(rates.getOvertimeHourlyCompensationRate());
         ratesDTO.setLateHourlyDeductionRate(rates.getLateHourlyDeductionRate());
         ratesDTO.setDailyAbsentDeductionRate(rates.getDailyAbsentDeductionRate());
-        ratesDTO.setUpdatedBy(rates.getUpdatedBy());
         ratesDTO.setCreatedBy(rates.getCreatedBy());
         ratesDTO.setDateAndTimeCreated(rates.getDateAndTimeCreated());
         ratesDTO.setUpdatedBy(rates.getUpdatedBy());
