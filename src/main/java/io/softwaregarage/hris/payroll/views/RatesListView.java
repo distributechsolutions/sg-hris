@@ -1,4 +1,4 @@
-package io.softwaregarage.hris.compenben.views;
+package io.softwaregarage.hris.payroll.views;
 
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
@@ -17,8 +17,8 @@ import com.vaadin.flow.router.Route;
 
 import io.softwaregarage.hris.admin.dtos.UserDTO;
 import io.softwaregarage.hris.admin.services.UserService;
-import io.softwaregarage.hris.compenben.dtos.RatesDTO;
-import io.softwaregarage.hris.compenben.services.RatesService;
+import io.softwaregarage.hris.payroll.dtos.RatesDTO;
+import io.softwaregarage.hris.payroll.services.RatesService;
 import io.softwaregarage.hris.commons.views.MainLayout;
 import io.softwaregarage.hris.utils.SecurityUtil;
 

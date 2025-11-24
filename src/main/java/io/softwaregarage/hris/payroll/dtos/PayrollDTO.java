@@ -1,87 +1,40 @@
-package io.softwaregarage.hris.compenben.entities;
+package io.softwaregarage.hris.payroll.dtos;
 
-import io.softwaregarage.hris.commons.BaseEntity;
-import io.softwaregarage.hris.profile.entities.EmployeeProfile;
-
-import jakarta.persistence.*;
+import io.softwaregarage.hris.commons.BaseDTO;
+import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
 
 import java.math.BigDecimal;
-
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "sg_hris_employee_payroll")
-public class Payroll extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
-    private EmployeeProfile employeeProfile;
-
-    @Column(name = "cut_off_from_date", nullable = false)
+public class PayrollDTO extends BaseDTO {
+    private EmployeeProfileDTO employeeProfileDTO;
     private LocalDate cutOffFromDate;
-
-    @Column(name = "cut_off_to_date", nullable = false)
     private LocalDate cutOffToDate;
-
-    @Column(name = "payroll_frequency", length = 25, nullable = false)
     private String payrollFrequency;
-
-    @Column(name = "basic_pay_amount", nullable = false)
     private BigDecimal basicPayAmount;
-
-    @Column(name = "allowance_pay_amount", nullable = false)
     private BigDecimal allowancePayAmount;
-
-    @Column(name = "absent_deduction_amount", nullable = false)
     private BigDecimal absentDeductionAmount;
-
-    @Column(name = "late_or_undertime_deduction_amount", nullable = false)
     private BigDecimal lateOrUndertimeDeductionAmount;
-
-    @Column(name = "rest_day_overtime_pay_amount", nullable = false)
     private BigDecimal restDayOvertimePayAmount;
-
-    @Column(name = "night_differential_pay_amount", nullable = false)
     private BigDecimal nightDifferentialPayAmount;
-
-    @Column(name = "leave_pay_amount", nullable = false)
     private BigDecimal leavePayAmount;
-
-    @Column(name = "regular_holiday_pay_amount", nullable = false)
     private BigDecimal regularHolidayPayAmount;
-
-    @Column(name = "special_holiday_pay_amount", nullable = false)
     private BigDecimal specialHolidayPayAmount;
-
-    @Column(name = "adjustment_pay_amount", nullable = false)
     private BigDecimal adjustmentPayAmount;
-
-    @Column(name = "total_gross_pay_amount", nullable = false)
     private BigDecimal totalGrossPayAmount;
-
-    @Column(name = "sss_deduction_amount", nullable = false)
     private BigDecimal sssDeductionAmount;
-
-    @Column(name = "hdmf_deduction_amount", nullable = false)
     private BigDecimal hdmfDeductionAmount;
-
-    @Column(name = "philhealth_deduction_amount", nullable = false)
     private BigDecimal philhealthDeductionAmount;
-
-    @Column(name = "withholding_tax_deduction_amount", nullable = false)
     private BigDecimal withholdingTaxDeductionAmount;
-
-    @Column(name = "total_loan_deduction_amount", nullable = false)
     private BigDecimal totalLoanDeductionAmount;
-
-    @Column(name = "other_deduction_amount", nullable = false)
     private BigDecimal otherDeductionAmount;
 
-    public EmployeeProfile getEmployee() {
-        return employeeProfile;
+    public EmployeeProfileDTO getEmployeeDTO() {
+        return employeeProfileDTO;
     }
 
-    public void setEmployee(EmployeeProfile employeeProfile) {
-        this.employeeProfile = employeeProfile;
+    public void setEmployeeDTO(EmployeeProfileDTO employeeProfileDTO) {
+        this.employeeProfileDTO = employeeProfileDTO;
     }
 
     public LocalDate getCutOffFromDate() {
@@ -92,20 +45,20 @@ public class Payroll extends BaseEntity {
         this.cutOffFromDate = cutOffFromDate;
     }
 
-    public LocalDate getCutOffToDate() {
-        return cutOffToDate;
-    }
-
-    public void setCutOffToDate(LocalDate cutOffToDate) {
-        this.cutOffToDate = cutOffToDate;
-    }
-
     public String getPayrollFrequency() {
         return payrollFrequency;
     }
 
     public void setPayrollFrequency(String payrollFrequency) {
         this.payrollFrequency = payrollFrequency;
+    }
+
+    public LocalDate getCutOffToDate() {
+        return cutOffToDate;
+    }
+
+    public void setCutOffToDate(LocalDate cutOffToDate) {
+        this.cutOffToDate = cutOffToDate;
     }
 
     public BigDecimal getBasicPayAmount() {
