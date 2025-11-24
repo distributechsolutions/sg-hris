@@ -1,4 +1,4 @@
-package io.softwaregarage.hris.compenben.views;
+package io.softwaregarage.hris.payroll.views;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,12 +18,12 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoIcon;
 
 import io.softwaregarage.hris.attendance.dtos.EmployeeTimesheetDTO;
-import io.softwaregarage.hris.compenben.dtos.RatesDTO;
-import io.softwaregarage.hris.compenben.dtos.PayrollDTO;
+import io.softwaregarage.hris.payroll.dtos.RatesDTO;
+import io.softwaregarage.hris.payroll.dtos.PayrollDTO;
 import io.softwaregarage.hris.attendance.services.EmployeeTimesheetService;
 import io.softwaregarage.hris.compenben.services.AllowanceService;
-import io.softwaregarage.hris.compenben.services.RatesService;
-import io.softwaregarage.hris.compenben.services.PayrollService;
+import io.softwaregarage.hris.payroll.services.RatesService;
+import io.softwaregarage.hris.payroll.services.PayrollService;
 import io.softwaregarage.hris.profile.services.EmployeeProfileService;
 import io.softwaregarage.hris.utils.PayrollComputationUtil;
 import io.softwaregarage.hris.utils.SecurityUtil;
@@ -106,7 +106,7 @@ public class PayrollGeneratorView extends VerticalLayout {
                 confirmDialog.setHeader("Generate Payroll");
                 confirmDialog.setText("""
                                       WARNING!
-                                      Any employeeTimesheet that was not approved in the given cut-off dates will not be included in generating the payroll.
+                                      Any employee's timesheet that was not approved in the given cut-off dates will not be included in generating the payroll.
                                       Are you sure you want to generate the payroll?
                                       """);
                 confirmDialog.addConfirmListener(confirmEvent -> {

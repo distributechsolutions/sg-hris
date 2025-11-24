@@ -1,11 +1,11 @@
-package io.softwaregarage.hris.compenben.services.impls;
+package io.softwaregarage.hris.payroll.services.impls;
 
-import io.softwaregarage.hris.compenben.dtos.PayrollDTO;
-import io.softwaregarage.hris.compenben.entities.Payroll;
-import io.softwaregarage.hris.compenben.repositories.PayrollRepository;
+import io.softwaregarage.hris.payroll.dtos.PayrollDTO;
+import io.softwaregarage.hris.payroll.entities.Payroll;
+import io.softwaregarage.hris.payroll.repositories.PayrollRepository;
 import io.softwaregarage.hris.profile.repositories.EmployeeProfileRepository;
 import io.softwaregarage.hris.profile.services.impls.EmployeeProfileServiceImpl;
-import io.softwaregarage.hris.compenben.services.PayrollService;
+import io.softwaregarage.hris.payroll.services.PayrollService;
 import io.softwaregarage.hris.profile.services.EmployeeProfileService;
 
 import org.slf4j.Logger;

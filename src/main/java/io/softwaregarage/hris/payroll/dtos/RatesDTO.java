@@ -1,4 +1,4 @@
-package io.softwaregarage.hris.compenben.dtos;
+package io.softwaregarage.hris.payroll.dtos;
 
 import io.softwaregarage.hris.commons.BaseDTO;
 import io.softwaregarage.hris.profile.dtos.EmployeeProfileDTO;
