@@ -28,8 +28,9 @@ import jakarta.annotation.security.RolesAllowed;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 @RolesAllowed({"ROLE_ADMIN",
-               "ROLE_HR_MANAGER",
-               "ROLE_HR_SUPERVISOR"})
+        "ROLE_HR_MANAGER",
+        "ROLE_PAYROLL_MANAGER",
+        "ROLE_PAYROLL_EMPLOYEE"})
 @PageTitle("Rates")
 @Route(value = "rates-list", layout = MainLayout.class)
 public class RatesListView extends VerticalLayout {

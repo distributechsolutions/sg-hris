@@ -40,8 +40,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RolesAllowed({"ROLE_ADMIN",
-               "ROLE_HR_MANAGER",
-               "ROLE_HR_SUPERVISOR"})
+        "ROLE_HR_MANAGER",
+        "ROLE_PAYROLL_MANAGER",
+        "ROLE_PAYROLL_EMPLOYEE"})
 @PageTitle("Payroll Generator")
 @Route(value = "payroll-generator", layout = MainLayout.class)
 public class PayrollGeneratorView extends VerticalLayout {

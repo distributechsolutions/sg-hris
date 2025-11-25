@@ -31,6 +31,7 @@ import io.softwaregarage.hris.attendance.services.EmployeeLeaveFilingService;
 import io.softwaregarage.hris.configs.SecurityConfig;
 import io.softwaregarage.hris.payroll.views.RatesListView;
 import io.softwaregarage.hris.payroll.views.TaxExemptionsListView;
+import io.softwaregarage.hris.payroll.views.TaxRatesListView;
 import io.softwaregarage.hris.profile.dtos.DocumentProfileDTO;
 import io.softwaregarage.hris.profile.services.DocumentProfileService;
 import io.softwaregarage.hris.utils.SecurityUtil;
@@ -275,9 +276,10 @@ public class MainLayout extends AppLayout {
 
         if (userDTO.getRole().equals("ROLE_ADMIN") ||
                 userDTO.getRole().equals("ROLE_HR_MANAGER") ||
-                userDTO.getRole().equals("ROLE_HR_SUPERVISOR") ||
-                userDTO.getRole().equals("ROLE_HR_EMPLOYEE")) {
+                userDTO.getRole().equals("ROLE_PAYROLL_MANAGER") ||
+                userDTO.getRole().equals("ROLE_PAYROLL_EMPLOYEE")) {
             navItem.addItem(new SideNavItem("Rates", RatesListView.class, LineAwesomeIcon.MONEY_CHECK_SOLID.create()));
+            navItem.addItem(new SideNavItem("Tax Rates", TaxRatesListView.class, LineAwesomeIcon.PERCENT_SOLID.create()));
             navItem.addItem(new SideNavItem("Tax Exemptions", TaxExemptionsListView.class, LineAwesomeIcon.PERCENTAGE_SOLID.create()));
             navItem.addItem(new SideNavItem("Generate Payroll", PayrollGeneratorView.class, LineAwesomeIcon.FILE_INVOICE_DOLLAR_SOLID.create()));
         }
