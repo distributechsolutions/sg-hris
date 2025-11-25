@@ -29,7 +29,8 @@ import org.vaadin.lineawesome.LineAwesomeIcon;
 
 @RolesAllowed({"ROLE_ADMIN",
         "ROLE_HR_MANAGER",
-        "ROLE_HR_SUPERVISOR"})
+        "ROLE_PAYROLL_MANAGER",
+        "ROLE_PAYROLL_EMPLOYEE"})
 @PageTitle("Tax Exemptions")
 @Route(value = "tax-exemptions-list", layout = MainLayout.class)
 public class TaxExemptionsListView extends VerticalLayout {

@@ -20,7 +20,8 @@ import java.util.UUID;
 
 @RolesAllowed({"ROLE_ADMIN",
         "ROLE_HR_MANAGER",
-        "ROLE_HR_SUPERVISOR"})
+        "ROLE_PAYROLL_MANAGER",
+        "ROLE_PAYROLL_EMPLOYEE"})
 @PageTitle("Tax Exemptions Details")
 @Route(value = "tax-exemptions-details", layout = MainLayout.class)
 public class TaxExemptionsDetailsView extends VerticalLayout implements HasUrlParameter<String> {

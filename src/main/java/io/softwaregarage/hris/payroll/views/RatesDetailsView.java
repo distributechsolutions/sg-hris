@@ -20,8 +20,9 @@ import jakarta.annotation.security.RolesAllowed;
 import java.util.UUID;
 
 @RolesAllowed({"ROLE_ADMIN",
-               "ROLE_HR_MANAGER",
-               "ROLE_HR_SUPERVISOR"})
+        "ROLE_HR_MANAGER",
+        "ROLE_PAYROLL_MANAGER",
+        "ROLE_PAYROLL_EMPLOYEE"})
 @PageTitle("Rates Details")
 @Route(value = "rates-details", layout = MainLayout.class)
 public class RatesDetailsView extends VerticalLayout implements HasUrlParameter<String> {
