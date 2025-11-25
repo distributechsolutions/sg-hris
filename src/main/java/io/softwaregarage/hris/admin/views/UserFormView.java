@@ -99,6 +99,8 @@ public class UserFormView extends VerticalLayout implements HasUrlParameter<Stri
                               "ROLE_HR_MANAGER",
                               "ROLE_HR_SUPERVISOR",
                               "ROLE_HR_EMPLOYEE",
+                              "ROLE_PAYROLL_MANAGER",
+                              "ROLE_PAYROLL_EMPLOYEE",
                               "ROLE_MANAGER",
                               "ROLE_SUPERVISOR",
                               "ROLE_EMPLOYEE");
